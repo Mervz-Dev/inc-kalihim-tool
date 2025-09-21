@@ -3,5 +3,11 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["className=\"([^\"]*)\"", "className"],
+    ["className=\\{`([^`]*)`\\}", "className"],
+    ["tw`([^`]*)`", "tw"],
+    ["cn\\(([^)]*)\\)", "cn"] // if you use a helper like clsx/cn
+  ]
 }
