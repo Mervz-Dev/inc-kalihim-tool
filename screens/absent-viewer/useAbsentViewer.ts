@@ -4,6 +4,8 @@ import { generateSessionHtml } from "@/utils/generate";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 
+import { Buffer } from "buffer";
+import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
@@ -58,6 +60,59 @@ export const useAbsentViewer = (purok: string) => {
     }
   };
 
+  const createAttendance = async () => {
+    try {
+      console.log("📄 Loading Excel template from assets...");
+      const ExcelJS = await import("exceljs");
+
+      const asset = Asset.fromModule(require("@/assets/forms/attendance.xlsx"));
+      await asset.downloadAsync();
+
+      const dest = FileSystem.documentDirectory + "attendance_template.xlsx";
+      await FileSystem.copyAsync({
+        from: asset.localUri || asset.uri,
+        to: dest,
+      });
+
+      const base64 = await FileSystem.readAsStringAsync(dest, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const buffer = Buffer.from(base64, "base64");
+
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(buffer as any);
+
+      const ws = workbook.worksheets[0];
+      ws.getCell("A1").value = "Updated with ExcelJS!";
+      ws.getCell("A2").value = "Purok 1";
+      ws.getCell("A1").font = { bold: true, color: { argb: "FF2E8B57" } };
+
+      const modifiedFileUri =
+        FileSystem.documentDirectory + "attendance_updated.xlsx";
+
+      const stream = await workbook.xlsx.writeBuffer();
+      const updatedBase64 = Buffer.from(stream).toString("base64");
+      await FileSystem.writeAsStringAsync(modifiedFileUri, updatedBase64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      console.log("✅ Excel file updated:", modifiedFileUri);
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(modifiedFileUri, {
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          dialogTitle: "Share Attendance File",
+          UTI: "com.microsoft.excel.xlsx",
+        });
+      } else {
+        alert("Sharing not available on this device.");
+      }
+    } catch (e) {
+      console.error("❌ Error creating attendance file:", e);
+    }
+  };
+
   useEffect(() => {
     initFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,5 +121,6 @@ export const useAbsentViewer = (purok: string) => {
   return {
     sessionData,
     createSessionPdf,
+    createAttendance,
   };
 };

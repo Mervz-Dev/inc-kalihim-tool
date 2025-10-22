@@ -14,7 +14,8 @@ import { useAbsentViewer } from "./useAbsentViewer";
 
 export default function AbsentViewer() {
   const { purok } = useLocalSearchParams<RootStackParamList["purok"]>();
-  const { sessionData, createSessionPdf } = useAbsentViewer(purok);
+  const { sessionData, createSessionPdf, createAttendance } =
+    useAbsentViewer(purok);
 
   const pdfViewerBottomSheet = useRef<BottomSheetModal>(null);
   const pdfViewerSheetPoints = useMemo(() => ["85%"], []);
@@ -36,7 +37,15 @@ export default function AbsentViewer() {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={createSessionPdf}
+          onPress={() => {
+            setTimeout(async () => {
+              try {
+                await createAttendance();
+              } catch (e) {
+                console.warn("ExcelJS failed safely:", e);
+              }
+            }, 0);
+          }}
           className="p-2 rounded-full bg-blue-50"
         >
           <Ionicons name="share" size={24} color="#2563eb" />

@@ -159,6 +159,35 @@ export default function Purok() {
           </LinearGradient>
         </TouchableOpacity>
 
+        {/* Percent Generator */}
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() =>
+            router.push({
+              pathname: "/percent-generator",
+              params: { purok, groupCount: maleGrupo.length.toString() },
+            })
+          }
+          className="flex-1 rounded-full shadow-lg overflow-hidden"
+        >
+          <LinearGradient
+            colors={["#FACC15", "#FDE047"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            className="flex-row items-center justify-center px-6 py-3 rounded-full"
+          >
+            <Ionicons
+              name="contract-outline"
+              size={22}
+              color="white"
+              style={{ marginRight: 6 }}
+            />
+            <Text className="text-white font-semibold text-lg">
+              Percent Gen.
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+
         {/* Absent Viewer */}
         <TouchableOpacity
           activeOpacity={0.9}

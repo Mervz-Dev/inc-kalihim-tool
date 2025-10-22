@@ -10,17 +10,59 @@ import React, { useMemo, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const CODE_DATA: CodeReason[] = [
-  { code: "B", reason: "Kahirapan" },
-  { code: "D", reason: "Nagkasakit" },
-  { code: "I", reason: "Nakasamba sa ibang lokal" },
-  { code: "N", reason: "Nanlalamig" },
+export const CODE_DATA: CodeReason[] = [
+  {
+    code: "A",
+    reason: "Kahirapan, walang salapi, walang pamasahe, walang pang-gugol.",
+  },
+  {
+    code: "B",
+    reason: "Trabaho, duty or busy sa work, gipit sa oras dahil sa work.",
+  },
+  { code: "C", reason: "PMS, pamalagiang may sakit, bed ridden." },
+  {
+    code: "D",
+    reason:
+      "May sakit, nahihilo, masakit ang ulo, may sipon at inuubo, dinala sa hospital.",
+  },
+  { code: "E", reason: "Hinahadlangan, inuusig, ayaw pasambahin." },
+  {
+    code: "F",
+    reason:
+      "Iba’t ibang klaseng dahilan, nag-alaga ng bata, nag-bantay ng tindahan or bahay kaya di maka-alis.",
+  },
+  {
+    code: "G",
+    reason:
+      "UWP, di matagpuan, walang impormasyon, hindi maabutan sa bahay, umiiwas.",
+  },
+  {
+    code: "H",
+    reason:
+      "Hindi umabot sa oras ng pagsamba, napag-sarhan ng pintuan, nahuling dumating.",
+  },
+  {
+    code: "I",
+    reason: "R1-06, nasa ibang dako o lugar, nasa ibang bayan o abroad.",
+  },
+  { code: "J", reason: "Wala sa lokal." },
+  { code: "K", reason: "Kalamidad, binagyo, binaha, nasunugan." },
+  { code: "L", reason: "Pag-aaral, may exam, busy sa school, OJT." },
+  {
+    code: "M",
+    reason: "Sumamba, tumupad di nakapag taob ng tarheta, without R1-07.",
+  },
+  {
+    code: "N",
+    reason:
+      "TS, madalang sumamba, nag-wawalang bahala, tinamad, may ulat na, may pinuntahan.",
+  },
 ];
 
 export const CodesButton = () => {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const { bottom } = useSafeAreaInsets();
-  const snapPoints = useMemo(() => ["60%"], []);
+  const snapPoints = useMemo(() => ["70%", "80%"], []);
 
   const handlePress = () => {
     bottomSheetRef.current?.present();
@@ -52,6 +94,7 @@ export const CodesButton = () => {
       <BottomSheetModal
         ref={bottomSheetRef}
         index={1}
+        enableOverDrag={false}
         snapPoints={snapPoints}
         backdropComponent={(props) => (
           <BottomSheetBackdrop

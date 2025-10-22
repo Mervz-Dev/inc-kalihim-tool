@@ -1,3 +1,4 @@
+import { Percent } from "@/types/percent";
 import { User } from "@/types/user";
 
 export const generateSessionHtml = (data: User.SessionData[]) => {
@@ -179,4 +180,53 @@ export const generateSessionHtml = (data: User.SessionData[]) => {
   `;
 
   return html;
+};
+
+export const generateDefaultPercentData = (
+  groupCount: number
+): Percent.Percent => {
+  const groupValues: Percent.GroupValues[] = Array.from(
+    { length: groupCount },
+    (_, i) => {
+      const emptySession: Percent.Session = {
+        a: 0,
+        b: 0,
+        c: 0,
+        d: 0,
+        e: 0,
+        f: 0,
+        g: 0,
+        h: 0,
+        i: 0,
+        j: 0,
+        k: 0,
+        l: 0,
+        m: 0,
+        n: 0,
+        r107: 0,
+        totalDalaw: 0,
+        totalCoded: 0,
+      };
+
+      const base: Percent.GroupValues = {
+        group: i + 1,
+        in: 0,
+        out: 0,
+        firstSession: { ...emptySession },
+        secondSession: { ...emptySession },
+      };
+
+      return base;
+    }
+  );
+
+  const sNumber: Percent.SNumber[] = Array.from(
+    { length: groupCount },
+    (_, i) => ({
+      group: i + 1,
+      count: 0,
+    })
+  );
+
+  return { groupValues, sNumber };
 };

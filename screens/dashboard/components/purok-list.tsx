@@ -105,9 +105,20 @@ export const PurokList = ({
 
   return (
     <View className="flex-1 mt-4">
-      <Text className="text-neutral-600 text-lg font-semibold mb-3">
-        📋 List of Purok
-      </Text>
+      <View className="flex-row justify-between items-center mb-2">
+        <Text className="text-neutral-600 text-lg font-semibold">
+          📋 List of Purok
+        </Text>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => onAddPress()}
+          className="bg-blue-100 p-0.5 rounded-full shadow-sm"
+        >
+          <Ionicons name="add-circle" size={30} color={"#2563eb"} />
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         renderItem={renderItem}
         data={data}

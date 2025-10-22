@@ -11,6 +11,11 @@ export type RootStackParamList = {
   "attendance-viewer": {
     purok: string;
   };
+  "percent-generator": {
+    groupCount: string;
+    purok: string;
+  };
+  settings: undefined;
 };
 
 export type RootNavigationProps = NavigationProp<RootStackParamList>;

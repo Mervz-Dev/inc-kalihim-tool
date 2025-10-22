@@ -70,20 +70,22 @@ export default function Dashboard() {
         <Text className="text-3xl font-extrabold text-gray-900">Dashboard</Text>
 
         <View className="flex-row items-center space-x-3 gap-2">
-          <TouchableOpacity
+          {/* <TouchableOpacity
             activeOpacity={0.8}
             onPress={initFetch}
             className="bg-yellow-100 p-2 rounded-full shadow-sm"
           >
             <Ionicons name="refresh-outline" size={24} color={"#f59e0b"} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => addUserSheetRef.current?.present()}
-            className="bg-blue-100 p-2 rounded-full shadow-sm"
+            onPress={() => {
+              router.push("/settings");
+            }}
+            className="bg-gray-100 p-2 rounded-full shadow-sm"
           >
-            <Ionicons name="person-add" size={22} color={"#2563eb"} />
+            <Ionicons name="settings" size={22} color="#4B5563" />
           </TouchableOpacity>
         </View>
       </View>
