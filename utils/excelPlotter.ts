@@ -2,6 +2,8 @@ import { Percent } from "@/types/percent";
 import { Buffer } from "buffer";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
+import { copyExcelToDownloads } from "./file";
+import { generatePercentFileName } from "./generate";
 import { roundDecimal } from "./number";
 
 export const plotPercentToExcel = async (
@@ -10,6 +12,16 @@ export const plotPercentToExcel = async (
   const ExcelJS = await import("exceljs");
   const asset = Asset.fromModule(require("@/assets/forms/percent-format.xlsx"));
   await asset.downloadAsync();
+
+  // const fileUri = await copyExcelToDownloads(
+  //   asset.localUri || asset.uri,
+  //   "porsyento"
+  // );
+
+  // if (!fileUri) {
+  //   alert("File Error");
+  //   return null;
+  // }
 
   const fileUri = FileSystem.documentDirectory + "porsyento_test.xlsx";
   await FileSystem.copyAsync({
@@ -139,10 +151,23 @@ export const plotPercentToExcel = async (
 
   data.sNumber.forEach((value, keyIndex) => {
     const rowIndex = 6 + keyIndex;
+
+    const betweenValues =
+      value.count +
+      data.groupValues[keyIndex].firstSession.in -
+      data.groupValues[keyIndex].firstSession.out;
+
+    // WED/THU
     setCell(ws, `AN${rowIndex}`, value.count);
-    setCell(ws, `AO${rowIndex}`, data.groupValues[keyIndex].in);
-    setCell(ws, `AP${rowIndex}`, data.groupValues[keyIndex].out);
-    setCell(ws, `AQ${rowIndex}`, data.newSNumber[keyIndex].count);
+    setCell(ws, `AO${rowIndex}`, data.groupValues[keyIndex].firstSession.in);
+    setCell(ws, `AP${rowIndex}`, data.groupValues[keyIndex].firstSession.out);
+    setCell(ws, `AQ${rowIndex}`, betweenValues);
+
+    // SAT/SUN
+    setCell(ws, `AR${rowIndex}`, betweenValues);
+    setCell(ws, `AS${rowIndex}`, data.groupValues[keyIndex].secondSession.in);
+    setCell(ws, `AT${rowIndex}`, data.groupValues[keyIndex].secondSession.out);
+    setCell(ws, `AU${rowIndex}`, data.newSNumber[keyIndex].count);
   });
 
   const totalSNumber = data.sNumber.reduce(
@@ -186,6 +211,15 @@ export const plotPercentToExcel = async (
     encoding: FileSystem.EncodingType.Base64,
   });
 
-  console.log("✅ Excel data plotted (including code totals):", fileUri);
-  return fileUri;
+  const generatedFileName = generatePercentFileName(data);
+  const outputUri = await copyExcelToDownloads(fileUri, generatedFileName);
+
+  console.log("✅ Excel data plotted (including code totals):", outputUri);
+
+  if (!outputUri) {
+    alert("Error output file");
+    return null;
+  }
+
+  return outputUri;
 };

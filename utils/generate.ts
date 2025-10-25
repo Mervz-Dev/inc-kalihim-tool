@@ -232,3 +232,8 @@ export const generateDefaultPercentData = (
 
   return { groupValues, sNumber };
 };
+
+export const generatePercentFileName = (percent: Percent.ComputedPercent) => {
+  const timestamp = Date.now();
+  return `porsyento-purok-${percent.info?.purok}-week-${percent?.info?.week}-${timestamp}`;
+};

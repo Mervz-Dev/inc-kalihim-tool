@@ -1,15 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Sharing from "expo-sharing";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Percent } from "@/types/percent";
 import { computePercentage } from "@/utils/compute";
+import { delay } from "@/utils/delay";
 import { plotPercentToExcel } from "@/utils/excelPlotter";
 import { generateDefaultPercentData } from "@/utils/generate";
+import { useLoading } from "@/utils/hooks/useLoading";
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export const usePercentGenerator = (purok: string, groupCount: string) => {
+  const loader = useLoading();
   // --- Initialization ---
   const defaultValues = generateDefaultPercentData(Number(groupCount));
   const STORAGE_KEY = `@prev-percent-${purok}`;
@@ -130,6 +134,7 @@ export const usePercentGenerator = (purok: string, groupCount: string) => {
   // --- Excel Generation ---
   const generatePercentData = async () => {
     try {
+      loader.show();
       const computedResult = computePercentage({
         groupValues,
         sNumber,
@@ -155,22 +160,38 @@ export const usePercentGenerator = (purok: string, groupCount: string) => {
 
       const excelUri = await plotPercentToExcel(result);
 
+      await delay(1500);
+
       if (!excelUri) return;
 
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(excelUri, {
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          dialogTitle: "Porsyento File",
-          UTI: "com.microsoft.excel.xlsx",
-        });
-      } else {
-        Alert.alert("Sharing not available", "This device cannot share files.");
-      }
+      // if (await Sharing.isAvailableAsync()) {
+      //   await Sharing.shareAsync(excelUri, {
+      //     mimeType:
+      //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      //     dialogTitle: "Porsyento File",
+      //     UTI: "com.microsoft.excel.xlsx",
+      //   });
+      // } else {
+      //   Alert.alert("Sharing not available", "This device cannot share files.");
+      // }
+
+      router.back();
+
+      Toast.show({
+        type: "success",
+        text1: "Form Generated Successfully",
+        text2: "Your form has been saved to your device storage.",
+        swipeable: true,
+        visibilityTime: 1500,
+        topOffset: 70,
+      });
 
       console.log("Generated percent data:", computedResult);
     } catch (error) {
+      alert("Error generation");
       console.error("generatePercentData error:", error);
+    } finally {
+      loader.hide();
     }
   };
 
