@@ -19,6 +19,8 @@ export declare namespace Percent {
   }
 
   interface Session extends Codes {
+    in: number;
+    out: number;
     r107: number;
     totalDalaw: number;
     totalCoded: number;

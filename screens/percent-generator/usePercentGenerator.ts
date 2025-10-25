@@ -33,7 +33,16 @@ export const usePercentGenerator = (purok: string, groupCount: string) => {
       if (savedData) {
         const parsed = JSON.parse(savedData);
         if (Array.isArray(parsed.sNumber)) {
-          setSNumber(parsed.sNumber);
+          // Merge old and new group arrays safely
+          setSNumber((prev) => {
+            const merged = prev.map((group) => {
+              const existing = parsed.sNumber.find(
+                (item: any) => item.group === group.group
+              );
+              return existing ? existing : group;
+            });
+            return merged;
+          });
         }
         setSNumberModalVisible(true);
       } else {

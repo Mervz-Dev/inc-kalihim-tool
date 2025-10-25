@@ -20,6 +20,8 @@ const SESSION_CODES: Percent.Session = {
   totalDalaw: 0,
   totalCoded: 0,
   percent: 0,
+  in: 0,
+  out: 0,
 };
 
 export const computePercentage = (
@@ -102,6 +104,24 @@ export const computePercentage = (
     });
   });
 
+  result.firstSessionCodeTotal.in = percentData.groupValues.reduce(
+    (sum, item) => sum + (item.firstSession.in || 0),
+    0
+  );
+  result.firstSessionCodeTotal.out = percentData.groupValues.reduce(
+    (sum, item) => sum + (item.firstSession.out || 0),
+    0
+  );
+
+  result.secondSessionCodeTotal.in = percentData.groupValues.reduce(
+    (sum, item) => sum + (item.secondSession.in || 0),
+    0
+  );
+  result.secondSessionCodeTotal.out = percentData.groupValues.reduce(
+    (sum, item) => sum + (item.secondSession.out || 0),
+    0
+  );
+
   result.firstSessionCodeTotal.percent = roundDecimal(
     (result.firstSessionCodeTotal.percent || 0) / percentData.groupValues.length
   );
@@ -116,7 +136,9 @@ export const computePercentage = (
 
   const updatedSNumber = percentData.sNumber.map((s, index) => {
     const group = percentData.groupValues[index];
-    const adjustedCount = s.count + group.in - group.out;
+    const totalIn = group.firstSession.in + group.secondSession.in;
+    const totalOut = group.firstSession.out + group.secondSession.out;
+    const adjustedCount = s.count + totalIn - totalOut;
     return { ...s, count: adjustedCount };
   });
 

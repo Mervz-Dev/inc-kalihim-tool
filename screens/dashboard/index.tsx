@@ -8,7 +8,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AddUserForm } from "@/components/form/add-user-form";
@@ -67,16 +67,25 @@ export default function Dashboard() {
   return (
     <SafeAreaView className="flex-1 px-4 pt-4 bg-white">
       <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-3xl font-extrabold text-gray-900">Dashboard</Text>
+        <View className="flex-row items-center mb-3">
+          <Image
+            source={require("@/assets/icons/app-icon.png")}
+            className="w-10 h-10 rounded-lg"
+            resizeMode="cover"
+          />
+          <Text className="text-3xl font-extrabold text-gray-900 tracking-tight mt-1">
+            Kalihim Board
+          </Text>
+        </View>
 
         <View className="flex-row items-center space-x-3 gap-2">
-          {/* <TouchableOpacity
+          <TouchableOpacity
             activeOpacity={0.8}
             onPress={initFetch}
             className="bg-yellow-100 p-2 rounded-full shadow-sm"
           >
             <Ionicons name="refresh-outline" size={24} color={"#f59e0b"} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.8}
@@ -145,6 +154,27 @@ export default function Dashboard() {
         onItemPress={onItemPress}
         onAddPress={() => addUserSheetRef.current?.present()}
       />
+
+      <View className="mt-4 mb-5 p-2.5 bg-blue-50 border-l-4 border-blue-500 rounded-md flex-row items-start">
+        <Ionicons
+          name="information-circle-outline"
+          size={20}
+          color="#2563eb"
+          style={{ marginTop: 2 }}
+        />
+        <Text className="ml-2 text-blue-800 text-[12px] leading-snug flex-1">
+          <Text className="font-semibold">Important:</Text> For{" "}
+          <Text className="font-semibold">personal kalihim use only</Text>. Data
+          is <Text className="font-semibold">stored locally</Text>,{" "}
+          <Text className="font-semibold">not shared online</Text>, and{" "}
+          <Text className="font-semibold">cleared weekly</Text>. Use the{" "}
+          <Text className="font-semibold">same forms</Text> for consistency, and{" "}
+          <Text className="font-semibold text-red-600">
+            please do not share data publicly
+          </Text>
+          .
+        </Text>
+      </View>
 
       <BottomSheetModal
         index={1}

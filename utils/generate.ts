@@ -206,6 +206,8 @@ export const generateDefaultPercentData = (
         r107: 0,
         totalDalaw: 0,
         totalCoded: 0,
+        in: 0,
+        out: 0,
       };
 
       const base: Percent.GroupValues = {

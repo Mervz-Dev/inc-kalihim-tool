@@ -128,8 +128,7 @@ export default function Purok() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <View className="flex-row items-center gap-3 mt-4 mb-4">
+      <View className="flex-row items-center gap-2 mt-6 mb-6">
         {/* Attendance Viewer */}
         <TouchableOpacity
           activeOpacity={0.9}
@@ -142,20 +141,18 @@ export default function Purok() {
           className="flex-1 rounded-full shadow-lg overflow-hidden"
         >
           <LinearGradient
-            colors={["#3B82F6", "#2563EB"]} // blue gradient
+            colors={["#3B82F6", "#1D4ED8"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             className="flex-row items-center justify-center px-6 py-3 rounded-full"
           >
             <Ionicons
-              name="eye-outline"
-              size={22}
+              name="checkmark-done-circle-outline"
+              size={20}
               color="white"
               style={{ marginRight: 6 }}
             />
-            <Text className="text-white font-semibold text-lg">
-              Attnd. Viewer
-            </Text>
+            <Text className="text-white font-bold text-sm">R1-05</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -171,20 +168,18 @@ export default function Purok() {
           className="flex-1 rounded-full shadow-lg overflow-hidden"
         >
           <LinearGradient
-            colors={["#FACC15", "#FDE047"]}
+            colors={["#FACC15", "#EAB308"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             className="flex-row items-center justify-center px-6 py-3 rounded-full"
           >
             <Ionicons
-              name="contract-outline"
-              size={22}
+              name="stats-chart-outline"
+              size={20}
               color="white"
               style={{ marginRight: 6 }}
             />
-            <Text className="text-white font-semibold text-lg">
-              Percent Gen.
-            </Text>
+            <Text className="text-white font-bold text-sm">R1-04</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -200,20 +195,18 @@ export default function Purok() {
           className="flex-1 rounded-full shadow-lg overflow-hidden"
         >
           <LinearGradient
-            colors={["#EF4444", "#B91C1C"]}
+            colors={["#F87171", "#B91C1C"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
             className="flex-row items-center justify-center px-6 py-3 rounded-full"
           >
             <Ionicons
-              name="document-text-outline"
-              size={22}
+              name="person-remove-outline"
+              size={20}
               color="white"
               style={{ marginRight: 6 }}
             />
-            <Text className="text-white font-semibold text-lg">
-              Absnt. Viewer
-            </Text>
+            <Text className="text-white font-bold text-sm">R1-02-03</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
