@@ -8,7 +8,6 @@ import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CarouselControls } from "./components/carousel-controls";
-import { EditButton } from "./components/edit-button";
 import { Header } from "./components/header";
 import { SNumberModal } from "./components/s-number-modal";
 import { SessionCard } from "./components/session-card";
@@ -46,13 +45,13 @@ export default function PercentGenerator() {
     index: number;
   }) => {
     return (
-      <View style={{ width }} className="p-4">
+      <View style={{ width }} className="p-4 pt-2">
         {/* Card Container */}
         <View className="bg-white rounded-3xl shadow-md p-5 border border-gray-100">
           {/* Header */}
-          <View className="flex-row justify-between items-center mb-3">
+          <View className="flex-row justify-between items-center mb-2">
             <View>
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-xl font-bold text-gray-900">
                 Grupo {item.group}
               </Text>
               <View className="flex-row items-center mt-1">
@@ -104,13 +103,13 @@ export default function PercentGenerator() {
 
   return (
     <SafeAreaView className="flex-1 px-0 pt-4 bg-gray-50">
-      <Header purok={purok} />
+      <Header purok={purok} editPress={() => setSNumberModalVisible(true)} />
 
-      <EditButton
+      {/* <EditButton
         weekNumber={weekNumber}
         monthNumber={monthNumber}
         onPress={() => setSNumberModalVisible(true)}
-      />
+      /> */}
 
       <View className="flex-1 justify-center bg-gray-50">
         <Carousel

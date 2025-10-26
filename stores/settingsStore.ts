@@ -7,7 +7,15 @@ type SettingsState = {
   lokal?: string;
   lokalCode?: string;
   distritoCode?: string;
-  setField: (key: keyof Omit<SettingsState, "setField">, value: string) => void;
+  biometricsEnabled: boolean;
+  setField: (
+    key: keyof Omit<
+      SettingsState,
+      "setField" | "biometricsEnabled" | "setBiometrics"
+    >,
+    value: string
+  ) => void;
+  setBiometrics: (enabled: boolean) => void;
   reset: () => void;
 };
 
@@ -18,13 +26,16 @@ export const useSettingsStore = create<SettingsState>()(
       lokal: "",
       lokalCode: "",
       distritoCode: "",
+      biometricsEnabled: false, // default value
       setField: (key, value) => set({ [key]: value }),
+      setBiometrics: (enabled) => set({ biometricsEnabled: enabled }),
       reset: () =>
         set({
           distrito: "",
           lokal: "",
           lokalCode: "",
           distritoCode: "",
+          biometricsEnabled: false,
         }),
     }),
     {

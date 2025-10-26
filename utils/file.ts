@@ -4,12 +4,6 @@ export async function copyExcelToDownloads(
   sourceUri: string,
   fileName: string
 ): Promise<string | undefined> {
-  //   const internalFileUri = FileSystem.documentDirectory + `${fileName}.xlsx`;
-  //   await FileSystem.copyAsync({
-  //     from: sourceUri,
-  //     to: internalFileUri,
-  //   });
-  // Ask for access to a folder (user can pick Downloads)
   const permissions =
     await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 

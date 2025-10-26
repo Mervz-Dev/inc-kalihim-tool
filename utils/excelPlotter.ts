@@ -13,17 +13,7 @@ export const plotPercentToExcel = async (
   const asset = Asset.fromModule(require("@/assets/forms/percent-format.xlsx"));
   await asset.downloadAsync();
 
-  // const fileUri = await copyExcelToDownloads(
-  //   asset.localUri || asset.uri,
-  //   "porsyento"
-  // );
-
-  // if (!fileUri) {
-  //   alert("File Error");
-  //   return null;
-  // }
-
-  const fileUri = FileSystem.documentDirectory + "porsyento_test.xlsx";
+  const fileUri = FileSystem.documentDirectory + "porsyento_template.xlsx";
   await FileSystem.copyAsync({
     from: asset.localUri || asset.uri,
     to: fileUri,

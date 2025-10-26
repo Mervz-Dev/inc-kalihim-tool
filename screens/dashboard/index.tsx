@@ -7,7 +7,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useSQLiteContext } from "expo-sqlite";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -20,6 +20,7 @@ import { SearchButton } from "./components/search-button";
 
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 
 export default function Dashboard() {
   const [purokList, setPurokList] = useState<User.PurokCount[]>([]);
@@ -47,6 +48,15 @@ export default function Dashboard() {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    Toast.show({
+      type: "success",
+      text1: "Unlocked",
+      text2: "Access granted",
+      visibilityTime: 2000,
+    });
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -155,7 +165,10 @@ export default function Dashboard() {
         onAddPress={() => addUserSheetRef.current?.present()}
       />
 
-      <View className="mt-4 mb-5 p-2.5 bg-blue-50 border-l-4 border-blue-500 rounded-md flex-row items-start">
+      <View
+        className="mt-4 mb-5 p-2.5 border-l-4 border-blue-500 rounded-md flex-row items-start"
+        style={{ backgroundColor: "rgba(219, 234, 254, 0.9)" }}
+      >
         <Ionicons
           name="information-circle-outline"
           size={20}
@@ -163,9 +176,8 @@ export default function Dashboard() {
           style={{ marginTop: 2 }}
         />
         <Text className="ml-2 text-blue-800 text-[12px] leading-snug flex-1">
-          <Text className="font-semibold">Important:</Text> For{" "}
-          <Text className="font-semibold">personal kalihim use only</Text>. Data
-          is <Text className="font-semibold">stored locally</Text>,{" "}
+          For <Text className="font-semibold">personal kalihim use only</Text>.
+          Data is <Text className="font-semibold">stored locally</Text>,{" "}
           <Text className="font-semibold">not shared online</Text>, and{" "}
           <Text className="font-semibold">cleared weekly</Text>. Use the{" "}
           <Text className="font-semibold">same forms</Text> for consistency, and{" "}
@@ -211,6 +223,22 @@ export default function Dashboard() {
           </BottomSheetView>
         )}
       </BottomSheetModal>
+
+      {/* Background image at bottom 25% */}
+      <Image
+        source={require("@/assets/images/colors-wave.jpg")} // replace with your image
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.4,
+          height: "25%", // bottom 25% of screen
+          width: "120%",
+          resizeMode: "cover",
+          zIndex: -1, // behind content
+        }}
+      />
     </SafeAreaView>
   );
 }

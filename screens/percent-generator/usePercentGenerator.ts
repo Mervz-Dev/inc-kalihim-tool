@@ -182,8 +182,8 @@ export const usePercentGenerator = (purok: string, groupCount: string) => {
         text1: "Form Generated Successfully",
         text2: "Your form has been saved to your device storage.",
         swipeable: true,
-        visibilityTime: 1500,
-        topOffset: 70,
+        visibilityTime: 2000,
+        topOffset: 60,
       });
 
       console.log("Generated percent data:", computedResult);
