@@ -8,7 +8,7 @@ export async function copyExcelToDownloads(
     await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
   if (!permissions.granted) {
-    alert("Permission denied to access storage.");
+    // alert("Permission denied to access storage.");
     return;
   }
 
@@ -36,3 +36,10 @@ export async function copyExcelToDownloads(
     alert("❌ Failed to copy file.");
   }
 }
+
+export const getFileNameWithoutExtension = (uri: string): string => {
+  // Get the part after the last slash
+  const fileName = uri.split("/").pop() || "";
+  // Remove the extension (e.g., .xlsx, .pdf, etc.)
+  return fileName.replace(/\.[^/.]+$/, "");
+};

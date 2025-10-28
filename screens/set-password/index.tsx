@@ -43,6 +43,16 @@ export default function PasswordScreen() {
       return;
     }
 
+    if (newPassword.length < 6) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Password must be at least 6 characters",
+        visibilityTime: 2000,
+      });
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       Toast.show({
         type: "error",

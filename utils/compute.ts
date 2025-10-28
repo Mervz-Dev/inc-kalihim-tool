@@ -1,5 +1,5 @@
 import { Percent } from "@/types/percent";
-import { roundDecimal } from "./number";
+import { roundDecimal, roundPercentDecimal } from "./number";
 
 const SESSION_CODES: Percent.Session = {
   a: 0,
@@ -55,24 +55,27 @@ export const computePercentage = (
   percentData.groupValues.forEach((group, idx) => {
     const sNumberCount = percentData.sNumber[idx]?.count || 1;
 
+    const firstSessionSNumber =
+      sNumberCount + group.firstSession.in - group.firstSession.out;
+    const secondSessionSNumber =
+      firstSessionSNumber + group.secondSession.in - group.secondSession.out;
+
     // First Session
     const firstSession = group.firstSession;
     const firstTotal = letters.reduce(
       (sum, key) => sum + (firstSession[key as keyof Percent.Codes] || 0),
       0
     );
-    const firstCoded = letters
-      .filter((k) => k !== "m")
-      .reduce(
-        (sum, key) => sum + (firstSession[key as keyof Percent.Codes] || 0),
-        0
-      );
-    const firstM = firstSession.m || 0;
+    const firstCoded = letters.reduce(
+      (sum, key) => sum + (firstSession[key as keyof Percent.Codes] || 0),
+      0
+    );
 
-    firstSession.totalDalaw = firstTotal;
+    firstSession.totalDalaw = firstTotal + firstSession.r107;
     firstSession.totalCoded = firstCoded;
-    firstSession.r107 = firstM;
-    firstSession.percent = roundDecimal(firstCoded / sNumberCount) * 100;
+    firstSession.percent = roundPercentDecimal(
+      firstCoded / firstSessionSNumber
+    );
 
     // Second Session
     const secondSession = group.secondSession;
@@ -80,18 +83,16 @@ export const computePercentage = (
       (sum, key) => sum + (secondSession[key as keyof Percent.Codes] || 0),
       0
     );
-    const secondCoded = letters
-      .filter((k) => k !== "m")
-      .reduce(
-        (sum, key) => sum + (secondSession[key as keyof Percent.Codes] || 0),
-        0
-      );
-    const secondM = secondSession.m || 0;
+    const secondCoded = letters.reduce(
+      (sum, key) => sum + (secondSession[key as keyof Percent.Codes] || 0),
+      0
+    );
 
-    secondSession.totalDalaw = secondTotal;
+    secondSession.totalDalaw = secondTotal + secondSession.r107;
     secondSession.totalCoded = secondCoded;
-    secondSession.r107 = secondM;
-    secondSession.percent = roundDecimal(secondCoded / sNumberCount) * 100;
+    secondSession.percent = roundPercentDecimal(
+      secondCoded / secondSessionSNumber
+    );
   });
 
   // Calculate totals for each code

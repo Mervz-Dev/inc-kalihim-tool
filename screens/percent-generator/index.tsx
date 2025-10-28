@@ -1,21 +1,30 @@
-import { LETTER_CODES } from "@/constants/percent";
+import { CODES } from "@/constants/percent";
 import { RootStackParamList } from "@/types/navigation";
 import { Percent } from "@/types/percent";
 import { Ionicons } from "@expo/vector-icons";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CarouselControls } from "./components/carousel-controls";
 import { Header } from "./components/header";
 import { SNumberModal } from "./components/s-number-modal";
+import { SaveFileView } from "./components/save-file-view";
 import { SessionCard } from "./components/session-card";
 import { usePercentGenerator } from "./usePercentGenerator";
 
 export default function PercentGenerator() {
   const { groupCount, purok } =
     useLocalSearchParams<RootStackParamList["percent-generator"]>();
+
+  const saveFileBottomSheet = useRef<BottomSheetModal>(null);
+  const saveFileSheetPoints = useMemo(() => ["50%"], []);
 
   const {
     groupValues,
@@ -27,24 +36,22 @@ export default function PercentGenerator() {
     sNumberModalVisible,
     setSNumberModalVisible,
     generatePercentData,
-    weekNumber,
-    setWeekNumber,
-    monthNumber,
-    setMonthNumber,
-  } = usePercentGenerator(purok, groupCount);
+    handleShare,
+    handleLocalSave,
+    handleSaveOnCache,
+    currentComputedResult,
+    prevComputedResult,
+    setDateRange,
+    dateRange,
+    handleResetCache,
+  } = usePercentGenerator(purok, groupCount, saveFileBottomSheet);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<any>(null);
   const { width, height } = Dimensions.get("window");
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: Percent.GroupValues;
-    index: number;
-  }) => {
-    return (
+  const renderItem = useCallback(
+    ({ item, index }: { item: Percent.GroupValues; index: number }) => (
       <View style={{ width }} className="p-4 pt-2">
         {/* Card Container */}
         <View className="bg-white rounded-3xl shadow-md p-5 border border-gray-100">
@@ -79,11 +86,11 @@ export default function PercentGenerator() {
           <View className="h-[1px] bg-gray-100 mb-3" />
 
           {/* Sessions */}
-          <View className="space-y-4">
+          <View className="space-y-4 gap-3">
             <SessionCard
               title="First Session (Wed/Thu)"
               session={item.firstSession}
-              letters={LETTER_CODES}
+              letters={CODES}
               index={index}
               handleButtonPress={handleButtonPress}
             />
@@ -91,15 +98,17 @@ export default function PercentGenerator() {
             <SessionCard
               title="Second Session (Sat/Sun)"
               session={item.secondSession}
-              letters={LETTER_CODES}
+              letters={CODES}
               index={index}
               handleButtonPress={handleButtonPress}
             />
           </View>
         </View>
       </View>
-    );
-  };
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [handleButtonPress]
+  );
 
   return (
     <SafeAreaView className="flex-1 px-0 pt-4 bg-gray-50">
@@ -120,6 +129,8 @@ export default function PercentGenerator() {
           renderItem={({ item, index }) => renderItem({ item, index })}
           pagingEnabled
           loop={false}
+          windowSize={3}
+          modeConfig={{ moveSize: width }}
           onSnapToItem={(index) => setCurrentIndex(index)}
         />
 
@@ -132,16 +143,41 @@ export default function PercentGenerator() {
       </View>
 
       <SNumberModal
+        handleReset={handleResetCache}
         visible={sNumberModalVisible}
         onClose={() => setSNumberModalVisible(false)}
-        weekNumber={weekNumber}
-        monthNumber={monthNumber}
-        setWeekNumber={setWeekNumber}
-        setMonthNumber={setMonthNumber}
+        setDateRange={setDateRange}
+        dateRange={dateRange}
         sNumber={sNumber}
         handleChange={handleChange}
         handleSave={handleSave}
       />
+
+      <BottomSheetModal
+        index={1}
+        ref={saveFileBottomSheet}
+        snapPoints={saveFileSheetPoints}
+        keyboardBehavior="interactive"
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+          />
+        )}
+      >
+        <BottomSheetView className="flex-1 px-2 pb-6 pt-1">
+          <SaveFileView
+            currenResult={currentComputedResult}
+            prevResult={prevComputedResult}
+            onClose={() => saveFileBottomSheet.current?.close()}
+            onSaveToCache={handleSaveOnCache}
+            onSaveToDevice={handleLocalSave}
+            onShareFile={handleShare}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
     </SafeAreaView>
   );
 }

@@ -31,7 +31,7 @@ export const Header = ({
       onPress={editPress}
       className="p-2 rounded-full bg-white border border-gray-300 shadow"
     >
-      <Ionicons name="create-outline" size={18} color="#3b82f6" />
+      <Ionicons name="create" size={18} color="#3b82f6" />
     </TouchableOpacity>
   </View>
 );

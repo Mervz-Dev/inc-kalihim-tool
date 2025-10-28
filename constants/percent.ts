@@ -1,6 +1,6 @@
 import { Percent } from "@/types/percent";
 
-export const LETTER_CODES: (keyof Percent.Codes)[] = [
+export const CODES: (keyof Percent.Codes)[] = [
   "a",
   "b",
   "c",
@@ -14,5 +14,16 @@ export const LETTER_CODES: (keyof Percent.Codes)[] = [
   "k",
   "l",
   "m",
+  "r107",
   "n",
-];
+] as const;
+
+export const ALPHABET_CODES = CODES.filter((code) => code !== "r107");
+
+export const ALL_SESSION_CODES: (keyof Percent.Session)[] = [
+  ...ALPHABET_CODES,
+  "totalCoded",
+  "percent",
+  "r107",
+  "totalDalaw",
+] as const;

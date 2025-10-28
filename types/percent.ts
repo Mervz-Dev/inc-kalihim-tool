@@ -16,6 +16,7 @@ export declare namespace Percent {
     l: number;
     m: number;
     n: number;
+    r107: number;
   }
 
   interface Session extends Codes {
@@ -29,8 +30,6 @@ export declare namespace Percent {
 
   interface GroupValues {
     group: number;
-    in: number;
-    out: number;
     firstSession: Session;
     secondSession: Session;
   }
@@ -42,8 +41,11 @@ export declare namespace Percent {
 
   interface InfoDetails {
     purok: string;
+
     week: string;
     month: string;
+    year: string;
+    dateString: string;
     distrito?: string;
     lokal?: string;
     lokalCode?: string;

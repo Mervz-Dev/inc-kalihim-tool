@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
 export default function SecureScreen() {
   const { checkPassword, authenticate } = useAuth();
@@ -91,11 +90,6 @@ export default function SecureScreen() {
               borderRadius: 16,
               paddingVertical: 16,
               alignItems: "center",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 6,
-              elevation: 5,
             }}
           >
             <Text style={{ color: "white", fontWeight: "600", fontSize: 18 }}>
@@ -123,8 +117,6 @@ export default function SecureScreen() {
           </TouchableOpacity>
         )}
       </View>
-
-      <Toast />
     </KeyboardAvoidingView>
   );
 }

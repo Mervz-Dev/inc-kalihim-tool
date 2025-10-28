@@ -173,9 +173,6 @@ export default function SettingsScreen() {
           </View>
         </TouchableOpacity>
       </ScrollView>
-
-      {/* Toast */}
-      <Toast />
     </SafeAreaView>
   );
 }

@@ -16,62 +16,70 @@ const RootLayout = () => {
   usePreventScreenCapture();
 
   return (
-    <LoadingProvider>
-      <SQLiteProvider databaseName={DATABASE_NAME} onInit={initializeDB}>
-        <StatusBar style="dark" backgroundColor="#FFF" translucent={false} />
-        <GestureHandlerRootView className="flex-1">
-          <BottomSheetModalProvider>
-            <SafeAreaProvider>
-              <Stack>
-                <Stack.Screen
-                  name="auth-screen"
-                  options={{ headerShown: false, headerTitle: "Auth" }}
-                />
-                <Stack.Screen
-                  name="set-password"
-                  options={{ headerShown: false, headerTitle: "Set Password" }}
-                />
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="dashboard"
-                  options={{ headerShown: false, headerTitle: "Dashboard" }}
-                />
-                <Stack.Screen
-                  name="purok"
-                  options={{ headerShown: false, headerTitle: "Purok" }}
-                />
-                <Stack.Screen
-                  name="absent-viewer"
-                  options={{ headerShown: false, headerTitle: "Absent Viewer" }}
-                />
-                <Stack.Screen
-                  name="attendance-viewer"
-                  options={{
-                    headerShown: false,
-                    headerTitle: "Attendance Viewer",
-                  }}
-                />
-                <Stack.Screen
-                  name="percent-generator"
-                  options={{
-                    headerShown: false,
-                    headerTitle: "Percent Generator",
-                  }}
-                />
-                <Stack.Screen
-                  name="settings"
-                  options={{
-                    headerShown: false,
-                    headerTitle: "Settings",
-                  }}
-                />
-              </Stack>
-            </SafeAreaProvider>
-          </BottomSheetModalProvider>
-          <Toast />
-        </GestureHandlerRootView>
-      </SQLiteProvider>
-    </LoadingProvider>
+    <>
+      <LoadingProvider>
+        <SQLiteProvider databaseName={DATABASE_NAME} onInit={initializeDB}>
+          <StatusBar style="dark" backgroundColor="#FFF" translucent={false} />
+          <GestureHandlerRootView className="flex-1">
+            <BottomSheetModalProvider>
+              <SafeAreaProvider>
+                <Stack>
+                  <Stack.Screen
+                    name="auth-screen"
+                    options={{ headerShown: false, headerTitle: "Auth" }}
+                  />
+                  <Stack.Screen
+                    name="set-password"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Set Password",
+                    }}
+                  />
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="dashboard"
+                    options={{ headerShown: false, headerTitle: "Dashboard" }}
+                  />
+                  <Stack.Screen
+                    name="purok"
+                    options={{ headerShown: false, headerTitle: "Purok" }}
+                  />
+                  <Stack.Screen
+                    name="absent-viewer"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Absent Viewer",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="attendance-viewer"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Attendance Viewer",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="percent-generator"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Percent Generator",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="settings"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Settings",
+                    }}
+                  />
+                </Stack>
+              </SafeAreaProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </SQLiteProvider>
+      </LoadingProvider>
+      <Toast />
+    </>
   );
 };
 

@@ -212,8 +212,6 @@ export const generateDefaultPercentData = (
 
       const base: Percent.GroupValues = {
         group: i + 1,
-        in: 0,
-        out: 0,
         firstSession: { ...emptySession },
         secondSession: { ...emptySession },
       };
@@ -235,5 +233,5 @@ export const generateDefaultPercentData = (
 
 export const generatePercentFileName = (percent: Percent.ComputedPercent) => {
   const timestamp = Date.now();
-  return `porsyento-purok-${percent.info?.purok}-week-${percent?.info?.week}-${timestamp}`;
+  return `r104-pk-${percent.info?.purok}-w-${percent?.info?.week}-${timestamp}`;
 };

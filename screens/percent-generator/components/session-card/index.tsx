@@ -1,7 +1,9 @@
 import { Percent } from "@/types/percent";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useCallback } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { LetterButton } from "../letter-button";
 
 interface SessionCardProps {
   title: string;
@@ -26,8 +28,15 @@ export const SessionCard = ({
     ? "firstSession"
     : "secondSession";
 
+  const handleLetterPress = useCallback(
+    (code: keyof Percent.Codes) => {
+      handleButtonPress(index, code, sessionType);
+    },
+    [index, sessionType, handleButtonPress]
+  );
+
   return (
-    <View className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 mb-3 shadow-sm border border-gray-100">
+    <View className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 pt-2  shadow-sm border border-gray-100">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         <Text className="font-semibold text-gray-800 text-base">{title}</Text>
@@ -87,31 +96,13 @@ export const SessionCard = ({
           const isActive = value > 0;
 
           return (
-            <TouchableOpacity
+            <LetterButton
               key={key}
-              activeOpacity={0.9}
-              className={`w-[18%] p-2.5 mb-2 items-center rounded-xl border shadow-sm ${
-                isActive
-                  ? "border-green-400 bg-green-50"
-                  : "border-gray-200 bg-gray-50"
-              }`}
-              onPress={() => handleButtonPress(index, key, sessionType)}
-            >
-              <Text
-                className={`font-semibold text-sm ${
-                  isActive ? "text-green-700" : "text-gray-700"
-                }`}
-              >
-                {key.toUpperCase()}
-              </Text>
-              <Text
-                className={`text-xs ${
-                  isActive ? "text-green-600" : "text-gray-500"
-                }`}
-              >
-                {value}
-              </Text>
-            </TouchableOpacity>
+              codeKey={key}
+              value={value}
+              isActive={isActive}
+              onPress={handleLetterPress}
+            />
           );
         })}
       </View>
