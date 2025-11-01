@@ -1,10 +1,17 @@
 import { ALL_SESSION_CODES, ALPHABET_CODES } from "@/constants/percent";
 import { Percent } from "@/types/percent";
+import { User } from "@/types/user";
 import { Buffer } from "buffer";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
-import { generatePercentFileName } from "./generate";
+import { generateAbsenteeFileName, generatePercentFileName } from "./generate";
 import { roundDecimal } from "./number";
+
+// --- Helper ---
+const setCell = (ws: any, address: string, value: any) => {
+  const cell = ws.getCell(address);
+  cell.value = value ?? 0;
+};
 
 export const plotPercentToExcel = async (
   data: Percent.ComputedPercent,
@@ -32,12 +39,6 @@ export const plotPercentToExcel = async (
 
   // Main R1-04 Form
   const r104ws = workbook.worksheets[0];
-
-  // --- Helper ---
-  const setCell = (ws: any, address: string, value: any) => {
-    const cell = ws.getCell(address);
-    cell.value = value ?? 0;
-  };
 
   // --- Start plotting ---
   const startRow = 8;
@@ -294,5 +295,123 @@ export const plotPercentToExcel = async (
   }
 
   // from internal documents uri
+  return fileUri;
+};
+
+export const plotAbsenteeToExcel = async (
+  data: User.SessionData[],
+  info: User.Info
+) => {
+  const ExcelJS = await import("exceljs");
+  const asset = Asset.fromModule(require("@/assets/forms/R1-02-03-Form.xlsx"));
+  await asset.downloadAsync();
+
+  const generatedFileName = generateAbsenteeFileName(data?.[0].purok, info);
+
+  const fileUri = FileSystem.documentDirectory + `${generatedFileName}.xlsx`;
+  await FileSystem.copyAsync({
+    from: asset.localUri || asset.uri,
+    to: fileUri,
+  });
+
+  // Read and load into ExcelJS
+  const base64 = await FileSystem.readAsStringAsync(fileUri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const buffer = Buffer.from(base64, "base64");
+
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer as any);
+
+  data.forEach((sessionData, index) => {
+    // front
+    const ws = workbook.worksheets[index];
+    // back
+    const bws = workbook.worksheets[index + 20];
+
+    // Front Page
+    setCell(ws, `B5`, info.lokal);
+    setCell(ws, `B7`, info.distrito);
+
+    setCell(ws, `Z5`, info.lokal);
+    setCell(ws, `Z8`, info.distrito);
+
+    setCell(ws, `AB6`, sessionData.purok);
+    setCell(ws, `AC8`, sessionData.grupo);
+    setCell(ws, `AD6`, info.week);
+    setCell(ws, `AE7`, info.firstSession.month);
+    setCell(ws, `AG7`, info.firstSession.day);
+    setCell(ws, `AH7`, info.firstSession.year);
+
+    setCell(ws, `Z1`, info.note);
+
+    // Back
+    setCell(bws, `C4`, info.lokal);
+    setCell(bws, `C7`, info.distrito);
+
+    setCell(bws, `D5`, sessionData.purok);
+    setCell(bws, `E7`, sessionData.grupo);
+    setCell(bws, `H6`, info.secondSession.month);
+    setCell(bws, `J6`, info.secondSession.day);
+    setCell(bws, `K6`, info.secondSession.year);
+
+    let startingRowF = 11;
+
+    // --- FIRST SESSION ---
+
+    // 1️⃣ Males (if any)
+    if (sessionData.firstSession.maleUsers.length > 0) {
+      sessionData.firstSession.maleUsers.forEach((m, i) => {
+        const row = startingRowF + i * 2; // one blank after each
+        setCell(ws, `X${row}`, i + 1);
+        setCell(ws, `Y${row}`, m.fullname);
+      });
+
+      // move down: add only +1 extra blank row between last male and first female
+      startingRowF =
+        startingRowF + sessionData.firstSession.maleUsers.length * 2 + 1;
+    }
+
+    // 2️⃣ Females
+    // If no males, keep startingRowF = 10 (no blank rows on top)
+    sessionData.firstSession.femaleUsers.forEach((m, i) => {
+      const row = startingRowF + i * 2;
+      setCell(ws, `X${row}`, i + 1);
+      setCell(ws, `Y${row}`, m.fullname);
+    });
+
+    // --- SECOND SESSION ---
+    let startingRowB = 10;
+
+    // 1️⃣ Males (if any)
+    if (sessionData.secondSession.maleUsers.length > 0) {
+      sessionData.secondSession.maleUsers.forEach((m, i) => {
+        const row = startingRowB + i * 2;
+        setCell(bws, `A${row}`, i + 1);
+        setCell(bws, `B${row}`, m.fullname);
+      });
+
+      startingRowB =
+        startingRowB + sessionData.secondSession.maleUsers.length * 2 + 1;
+    }
+
+    // 2️⃣ Females
+    sessionData.secondSession.femaleUsers.forEach((m, i) => {
+      const row = startingRowB + i * 2;
+      setCell(bws, `A${row}`, i + 1);
+      setCell(bws, `B${row}`, m.fullname);
+    });
+  });
+
+  // Write it back to file
+  const newBuffer = await workbook.xlsx.writeBuffer();
+  await FileSystem.writeAsStringAsync(
+    fileUri,
+    Buffer.from(newBuffer).toString("base64"),
+    {
+      encoding: FileSystem.EncodingType.Base64,
+    }
+  );
+
   return fileUri;
 };

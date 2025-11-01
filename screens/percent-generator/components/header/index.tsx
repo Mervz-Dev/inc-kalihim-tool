@@ -10,7 +10,6 @@ export const Header = ({
   editPress: () => void;
 }) => (
   <View className="flex-row items-center justify-between mb-4 px-4">
-    {/* Left: Back button + title */}
     <View className="flex-row items-center gap-2">
       <TouchableOpacity
         activeOpacity={0.7}
@@ -25,7 +24,6 @@ export const Header = ({
       </Text>
     </View>
 
-    {/* Right: Edit button */}
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={editPress}

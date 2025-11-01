@@ -1,58 +1,60 @@
+import { Header } from "@/components/header";
+import { SaveFileView } from "@/components/save-file-view";
 import { RootStackParamList } from "@/types/navigation";
-import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useMemo, useRef } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PdfViewer } from "./components/pdf-viewer";
+import { InfoModal } from "./components/info-modal";
 import { useAbsentViewer } from "./useAbsentViewer";
 
 export default function AbsentViewer() {
   const { purok } = useLocalSearchParams<RootStackParamList["purok"]>();
-  const { sessionData, createSessionPdf, createAttendance } =
-    useAbsentViewer(purok);
 
-  const pdfViewerBottomSheet = useRef<BottomSheetModal>(null);
-  const pdfViewerSheetPoints = useMemo(() => ["85%"], []);
+  const saveFileBottomSheet = useRef<BottomSheetModal>(null);
+  const saveFileSheetPoints = useMemo(() => ["40%"], []);
+  const {
+    sessionData,
+    generateAbsenteeForm,
+    infoModalVisible,
+    setInfoModalVisible,
+    dateRange,
+    setDateRange,
+    notes,
+    setNotes,
+    weekNumber,
+    plottedExcelUri,
+  } = useAbsentViewer(purok, saveFileBottomSheet);
 
   return (
     <SafeAreaView className="flex-1 px-4 pt-4 bg-white">
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.back()}
-            className="p-1 rounded-full bg-gray-100"
-          >
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
+      <Header
+        title="R1-02-03"
+        subtitle={`Purok ${purok} | Week ${weekNumber}`}
+        buttons={[
+          {
+            icon: "create-outline",
+            color: "#2563eb",
+            bgColor: "bg-blue-50",
+            borderColor: "border-blue-200",
+            onPress: () => setInfoModalVisible(true),
+          },
+          {
+            icon: "document-text-outline",
+            color: "#16a34a",
+            bgColor: "bg-green-50",
+            borderColor: "border-green-200",
+            onPress: generateAbsenteeForm,
+          },
+        ]}
+      />
 
-          <Text className="text-black text-2xl font-bold">Absent Viewer</Text>
-        </View>
-
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => {
-            setTimeout(async () => {
-              try {
-                await createAttendance();
-              } catch (e) {
-                console.warn("ExcelJS failed safely:", e);
-              }
-            }, 0);
-          }}
-          className="p-2 rounded-full bg-blue-50"
-        >
-          <Ionicons name="share" size={24} color="#2563eb" />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView className="mt-4">
+      <ScrollView className="mt-2">
         {sessionData.map((group, groupIndex) => (
           <View key={groupIndex} className="mb-12">
             <View className="flex-row items-center justify-between bg-red-50 px-3 py-2 rounded-t-lg">
@@ -158,7 +160,16 @@ export default function AbsentViewer() {
         ))}
       </ScrollView>
 
-      <BottomSheetModal
+      <InfoModal
+        visible={infoModalVisible}
+        onClose={() => setInfoModalVisible(false)}
+        setDateRange={setDateRange}
+        dateRange={dateRange}
+        notes={notes}
+        setNotes={setNotes}
+      />
+
+      {/* <BottomSheetModal
         index={1}
         ref={pdfViewerBottomSheet}
         snapPoints={pdfViewerSheetPoints}
@@ -177,6 +188,28 @@ export default function AbsentViewer() {
             <PdfViewer uri={data} />
           </BottomSheetView>
         )}
+      </BottomSheetModal> */}
+
+      <BottomSheetModal
+        index={1}
+        ref={saveFileBottomSheet}
+        snapPoints={saveFileSheetPoints}
+        keyboardBehavior="interactive"
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+          />
+        )}
+      >
+        <BottomSheetView className="flex-1 px-2 pb-6 pt-1">
+          <SaveFileView
+            fileUri={plottedExcelUri}
+            onClose={() => saveFileBottomSheet.current?.close()}
+          />
+        </BottomSheetView>
       </BottomSheetModal>
     </SafeAreaView>
   );

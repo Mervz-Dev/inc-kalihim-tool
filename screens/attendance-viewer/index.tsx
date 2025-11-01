@@ -1,8 +1,9 @@
+import { Header } from "@/components/header";
 import { RootStackParamList } from "@/types/navigation";
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAttendanceViewer } from "./useAttendanceViewer";
 
@@ -47,7 +48,7 @@ export default function AbsentViewer() {
 
   return (
     <SafeAreaView className="flex-1 px-4 pt-4  bg-white">
-      <View className="flex-row items-center justify-between mb-1">
+      {/* <View className="flex-row items-center justify-between mb-1">
         <View className="flex-row items-center gap-2">
           <TouchableOpacity
             activeOpacity={0.7}
@@ -61,7 +62,9 @@ export default function AbsentViewer() {
             Attendance Viewer
           </Text>
         </View>
-      </View>
+      </View> */}
+
+      <Header title="R1-05" subtitle={`Purok ${purok}`} />
 
       <ScrollView showsVerticalScrollIndicator={false} className="mt-2">
         {attendanceData.map((group, groupIndex) => (

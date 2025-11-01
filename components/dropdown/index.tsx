@@ -61,28 +61,45 @@ export const Dropdown = ({
   return (
     <View className={`w-full ${className ?? ""}`}>
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={0.9}
         onPress={() => {
           Keyboard.dismiss();
           bottomSheetRef.current?.present();
           toggleChevron(true);
         }}
-        className="flex-row justify-between items-center bg-white border border-gray-200 rounded-full px-5 py-3 shadow-md"
+        className="flex-row items-center justify-between bg-white border border-gray-200 rounded-2xl px-4 py-3"
+        style={{
+          shadowColor: "#000",
+          shadowOpacity: 0.06,
+          shadowOffset: { width: 0, height: 2 },
+          shadowRadius: 3,
+          elevation: 1,
+        }}
       >
-        <View className="flex-row items-center gap-2 flex-1">
+        <View className="flex-row items-center flex-1 space-x-2">
           {selectedValue?.leftItem && selectedValue.leftItem}
-          <Text
-            className={`flex-1 ${
-              value ? "text-gray-900 font-semibold" : "text-gray-400"
-            }`}
-            numberOfLines={1}
-          >
-            {value ? selectedValue?.label : placeholder ?? "Select..."}
-          </Text>
+
+          <View className="flex-1">
+            <Text
+              className={`text-sm ${
+                value ? "text-gray-900 font-medium" : "text-gray-400"
+              }`}
+              numberOfLines={1}
+            >
+              {value ? selectedValue?.label : placeholder ?? "Select..."}
+            </Text>
+          </View>
         </View>
 
-        <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-          <Ionicons name="chevron-down" size={20} color="#6B7280" />
+        <Animated.View
+          style={{
+            transform: [{ rotate: rotation }],
+            backgroundColor: "#F3F4F6",
+            borderRadius: 999,
+            padding: 6,
+          }}
+        >
+          <Ionicons name="chevron-down" size={16} color="#4B5563" />
         </Animated.View>
       </TouchableOpacity>
 

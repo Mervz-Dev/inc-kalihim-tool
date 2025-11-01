@@ -38,6 +38,25 @@ export declare namespace User {
 
   type Session = "first" | "second";
 
+  type Info = {
+    week: string;
+    firstSession: {
+      month: string;
+      year: string;
+      day: string;
+    };
+    secondSession: {
+      month: string;
+      year: string;
+      day: string;
+    };
+    distrito?: string;
+    lokal?: string;
+    lokalCode?: string;
+    distritoCode?: string;
+    note?: string;
+  };
+
   interface SessionData {
     purok: string;
     grupo: string;

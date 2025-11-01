@@ -178,6 +178,7 @@ export default function PasswordScreen() {
           {hasPassword && (
             <View style={{ position: "relative", marginBottom: 16 }}>
               <TextInput
+                autoCapitalize="none"
                 placeholder="Current password"
                 secureTextEntry={!showOld}
                 value={oldPassword}
@@ -207,6 +208,7 @@ export default function PasswordScreen() {
           {/* New password */}
           <View style={{ position: "relative", marginBottom: 16 }}>
             <TextInput
+              autoCapitalize="none"
               placeholder="New password"
               secureTextEntry={!showNew}
               value={newPassword}
@@ -235,6 +237,7 @@ export default function PasswordScreen() {
           {/* Confirm password */}
           <View style={{ position: "relative", marginBottom: 24 }}>
             <TextInput
+              autoCapitalize="none"
               placeholder="Confirm new password"
               secureTextEntry={!showConfirm}
               value={confirmPassword}

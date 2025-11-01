@@ -178,7 +178,61 @@ export const SNumberModal = ({
               onChange={({ startDate, endDate }) =>
                 setDateRange({ startDate, endDate })
               }
-              styles={defaultStyles}
+              styles={{
+                ...defaultStyles,
+
+                day_label: {
+                  color: "#1F2937", // gray-800 — dark text for visibility
+                },
+
+                selected: {
+                  backgroundColor: "#3B82F6", // blue-500
+                },
+                selected_label: {
+                  color: "white",
+                  fontWeight: "600",
+                },
+
+                today: {
+                  backgroundColor: "#FBBF24", // orange-400
+                  borderRadius: 8,
+                },
+                today_label: {
+                  color: "white",
+                  fontWeight: "600",
+                },
+
+                range_fill: {
+                  backgroundColor: "#E5E7EB",
+                },
+
+                month_label: {
+                  color: "#111827",
+                  fontWeight: "600",
+                },
+                month_selector_label: {
+                  color: "#1F2937",
+                },
+                year_selector_label: {
+                  color: "#1F2937",
+                },
+
+                // ◀️ ▶️ Navigation buttons
+                button_prev: {
+                  backgroundColor: "#F3F4F6", // gray-100 background
+                  borderRadius: 20,
+                },
+                button_next: {
+                  backgroundColor: "#F3F4F6",
+                  borderRadius: 20,
+                },
+                button_prev_image: {
+                  tintColor: "#3B82F6", // blue arrows
+                },
+                button_next_image: {
+                  tintColor: "#3B82F6",
+                },
+              }}
             />
 
             <TouchableOpacity

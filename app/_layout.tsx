@@ -10,7 +10,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import "../global.css";
 
-const DATABASE_NAME = "kapatid.db";
+const DATABASE_NAME = "inc-kapatid.db";
 
 const RootLayout = () => {
   usePreventScreenCapture();

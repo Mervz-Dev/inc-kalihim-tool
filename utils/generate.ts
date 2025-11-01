@@ -233,5 +233,10 @@ export const generateDefaultPercentData = (
 
 export const generatePercentFileName = (percent: Percent.ComputedPercent) => {
   const timestamp = Date.now();
-  return `r104-pk-${percent.info?.purok}-w-${percent?.info?.week}-${timestamp}`;
+  return `r104-pk${percent.info?.purok}-w${percent?.info?.week}-${timestamp}`;
+};
+
+export const generateAbsenteeFileName = (purok: string, info: User.Info) => {
+  const timestamp = Date.now();
+  return `r102-03-pk${purok}-w${info?.week}-${timestamp}`;
 };

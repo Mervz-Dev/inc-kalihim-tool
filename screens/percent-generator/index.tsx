@@ -1,3 +1,5 @@
+import { Header } from "@/components/header";
+import { SaveFileView } from "@/components/save-file-view";
 import { CODES } from "@/constants/percent";
 import { RootStackParamList } from "@/types/navigation";
 import { Percent } from "@/types/percent";
@@ -13,9 +15,8 @@ import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CarouselControls } from "./components/carousel-controls";
-import { Header } from "./components/header";
+import { PorsyentoFeedback } from "./components/porsyento-feedback";
 import { SNumberModal } from "./components/s-number-modal";
-import { SaveFileView } from "./components/save-file-view";
 import { SessionCard } from "./components/session-card";
 import { usePercentGenerator } from "./usePercentGenerator";
 
@@ -36,14 +37,14 @@ export default function PercentGenerator() {
     sNumberModalVisible,
     setSNumberModalVisible,
     generatePercentData,
-    handleShare,
-    handleLocalSave,
-    handleSaveOnCache,
     currentComputedResult,
     prevComputedResult,
     setDateRange,
     dateRange,
     handleResetCache,
+    weekNumber,
+    STORAGE_KEY,
+    plottedExcelUri,
   } = usePercentGenerator(purok, groupCount, saveFileBottomSheet);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -112,19 +113,34 @@ export default function PercentGenerator() {
 
   return (
     <SafeAreaView className="flex-1 px-0 pt-4 bg-gray-50">
-      <Header purok={purok} editPress={() => setSNumberModalVisible(true)} />
+      <View className="px-4 mb-2">
+        <Header
+          title="R1-04"
+          subtitle={`Purok ${purok} | Week ${weekNumber}`}
+          buttons={[
+            {
+              icon: "create-outline",
+              color: "#2563eb",
+              bgColor: "bg-blue-50",
+              borderColor: "border-blue-200",
+              onPress: () => setSNumberModalVisible(true),
+            },
+            {
+              icon: "document-text-outline",
+              color: "#16a34a",
+              bgColor: "bg-green-50",
+              borderColor: "border-green-200",
+              onPress: generatePercentData,
+            },
+          ]}
+        />
+      </View>
 
-      {/* <EditButton
-        weekNumber={weekNumber}
-        monthNumber={monthNumber}
-        onPress={() => setSNumberModalVisible(true)}
-      /> */}
-
-      <View className="flex-1 justify-center bg-gray-50">
+      <View className="flex-1 justify-center">
         <Carousel
           ref={carouselRef}
           width={width}
-          height={height * 0.75}
+          height={height * 0.72}
           data={groupValues}
           renderItem={({ item, index }) => renderItem({ item, index })}
           pagingEnabled
@@ -169,12 +185,16 @@ export default function PercentGenerator() {
       >
         <BottomSheetView className="flex-1 px-2 pb-6 pt-1">
           <SaveFileView
-            currenResult={currentComputedResult}
-            prevResult={prevComputedResult}
+            resultData={currentComputedResult}
+            storageKey={STORAGE_KEY}
+            fileUri={plottedExcelUri}
             onClose={() => saveFileBottomSheet.current?.close()}
-            onSaveToCache={handleSaveOnCache}
-            onSaveToDevice={handleLocalSave}
-            onShareFile={handleShare}
+            renderCenter={
+              <PorsyentoFeedback
+                prev={prevComputedResult?.overAllPercentage}
+                current={currentComputedResult?.overAllPercentage || 0}
+              />
+            }
           />
         </BottomSheetView>
       </BottomSheetModal>

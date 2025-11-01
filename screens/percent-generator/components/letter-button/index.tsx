@@ -1,5 +1,4 @@
 import { Percent } from "@/types/percent";
-import { Audio } from "expo-av";
 import React, { memo, useCallback, useRef } from "react";
 import { Animated, Text, TouchableWithoutFeedback } from "react-native";
 
@@ -16,26 +15,9 @@ const LetterButtonComponent = ({
   isActive,
   onPress,
 }: LetterButtonProps) => {
-  const soundRef = useRef<Audio.Sound | null>(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const popSound = useCallback(async () => {
-    if (!soundRef.current) {
-      const { sound } = await Audio.Sound.createAsync(
-        require("@/assets/sounds/pop.mp3"),
-        { volume: 0.5 }
-      );
-      soundRef.current = sound;
-    }
-  }, []);
-
-  const playSound = useCallback(async () => {
-    await popSound();
-    await soundRef.current?.replayAsync();
-  }, [popSound]);
-
   const handlePressIn = () => {
-    playSound();
     Animated.spring(scaleAnim, {
       toValue: 0.9,
       speed: 25,
@@ -48,7 +30,7 @@ const LetterButtonComponent = ({
     Animated.spring(scaleAnim, {
       toValue: 1,
       speed: 20,
-      bounciness: 15, // more bounce when releasing
+      bounciness: 15,
       useNativeDriver: true,
     }).start();
   };

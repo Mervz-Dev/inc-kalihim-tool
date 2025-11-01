@@ -1,5 +1,6 @@
 import { Dropdown, DropdownOption } from "@/components/dropdown";
 import { AddUserForm } from "@/components/form/add-user-form";
+import { Header } from "@/components/header";
 import { SESSION_KEY } from "@/constants/session";
 import { getGrupoByPurok } from "@/services/sql-lite/db";
 import { RootStackParamList } from "@/types/navigation";
@@ -86,49 +87,35 @@ export default function Purok() {
 
   return (
     <SafeAreaView className="flex-1 p-4 bg-white">
-      <View className="flex-row items-center justify-between mb-2">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shadow-sm"
-          >
-            <Ionicons name="arrow-back" size={22} color="#111827" />
-          </TouchableOpacity>
+      <Header
+        title={`Purok ${purok}`}
+        showBack
+        buttons={[
+          {
+            icon: "trash-bin",
+            color: "#ef4444",
+            bgColor: "bg-red-50",
+            borderColor: "border-red-200",
+            onPress: () => resetSessionBottomSheet?.current?.present(),
+          },
+          {
+            icon: "refresh-sharp",
+            color: "#f59e0b",
+            bgColor: "bg-yellow-50",
+            borderColor: "border-yellow-200",
+            onPress: initFetch,
+          },
+          {
+            icon: "person-add",
+            color: "#2563eb",
+            bgColor: "bg-blue-50",
+            borderColor: "border-blue-200",
+            onPress: () => addUserBottomSheet.current?.present(),
+          },
+        ]}
+      />
 
-          <Text className="text-gray-900 text-2xl font-bold">
-            Purok {purok}
-          </Text>
-        </View>
-
-        {/* Right: Actions */}
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => resetSessionBottomSheet?.current?.present()}
-            className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shadow-sm"
-          >
-            <Ionicons name="trash-bin" size={20} color="#ef4444" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={initFetch}
-            className="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center shadow-sm"
-          >
-            <Ionicons name="refresh-sharp" size={20} color="#f59e0b" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => addUserBottomSheet.current?.present()}
-            className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shadow-sm"
-          >
-            <Ionicons name="person-add" size={20} color="#2563eb" />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View className="flex-row items-center gap-2 mt-6 mb-6">
+      <View className="flex-row gap-2 mt-3 mb-4">
         {/* Attendance Viewer */}
         <TouchableOpacity
           activeOpacity={0.9}
@@ -138,21 +125,20 @@ export default function Purok() {
               params: { purok },
             })
           }
-          className="flex-1 rounded-full shadow-lg overflow-hidden"
+          className="flex-1 rounded-xl shadow-sm overflow-hidden"
         >
           <LinearGradient
-            colors={["#3B82F6", "#1D4ED8"]}
+            colors={["#60A5FA", "#2563EB"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="flex-row items-center justify-center px-6 py-3 rounded-full"
+            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
           >
             <Ionicons
               name="checkmark-done-circle-outline"
               size={20}
               color="white"
-              style={{ marginRight: 6 }}
             />
-            <Text className="text-white font-bold text-sm">R1-05</Text>
+            <Text className="text-white font-semibold text-xs mt-1">R1-05</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -165,21 +151,16 @@ export default function Purok() {
               params: { purok, groupCount: maleGrupo.length.toString() },
             })
           }
-          className="flex-1 rounded-full shadow-lg overflow-hidden"
+          className="flex-1 rounded-xl shadow-sm overflow-hidden"
         >
           <LinearGradient
-            colors={["#FACC15", "#EAB308"]}
+            colors={["#FACC15", "#CA8A04"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="flex-row items-center justify-center px-6 py-3 rounded-full"
+            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
           >
-            <Ionicons
-              name="stats-chart-outline"
-              size={20}
-              color="white"
-              style={{ marginRight: 6 }}
-            />
-            <Text className="text-white font-bold text-sm">R1-04</Text>
+            <Ionicons name="stats-chart-outline" size={20} color="white" />
+            <Text className="text-white font-semibold text-xs mt-1">R1-04</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -192,21 +173,18 @@ export default function Purok() {
               params: { purok },
             })
           }
-          className="flex-1 rounded-full shadow-lg overflow-hidden"
+          className="flex-1 rounded-xl shadow-sm overflow-hidden"
         >
           <LinearGradient
-            colors={["#F87171", "#B91C1C"]}
+            colors={["#FB7185", "#B91C1C"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className="flex-row items-center justify-center px-6 py-3 rounded-full"
+            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
           >
-            <Ionicons
-              name="person-remove-outline"
-              size={20}
-              color="white"
-              style={{ marginRight: 6 }}
-            />
-            <Text className="text-white font-bold text-sm">R1-02-03</Text>
+            <Ionicons name="person-remove-outline" size={20} color="white" />
+            <Text className="text-white font-semibold text-xs mt-1">
+              R1-02-03
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>

@@ -23,6 +23,19 @@ export const initializeDB = async (db: SQLiteDatabase) => {
         `);
 };
 
+export const clearDatabase = async (db: SQLiteDatabase) => {
+  try {
+    await db.execAsync(`DELETE FROM ${TABLE_USER};`);
+    await db.execAsync(
+      `DELETE FROM sqlite_sequence WHERE name='${TABLE_USER}';`
+    );
+    console.log("✅ Database cleared successfully");
+  } catch (error) {
+    console.error("❌ Error clearing database:", error);
+    throw error;
+  }
+};
+
 export const addNewUser = async (
   params: User.UserFormData,
   db: SQLiteDatabase
@@ -141,6 +154,8 @@ export const getSessionAbsentees = async (
 `,
     [purok]
   );
+
+  console.log("getSessionAbsentees", purok);
 
   const grouped = Object.values(
     rows.reduce((acc, row) => {

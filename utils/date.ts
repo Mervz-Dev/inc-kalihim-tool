@@ -6,19 +6,21 @@ import { DateType } from "react-native-ui-datepicker";
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
 
-export const getPreviousWeekWedToSun = () => {
+export const getWeekWedToSun = (
+  weekType: "current" | "previous" = "current"
+) => {
   const today = dayjs();
 
-  const prevWeekSun = today.subtract(1, "week").isoWeekday(7);
+  const baseWeek = weekType === "previous" ? today.subtract(1, "week") : today;
 
-  const prevWeekWed = prevWeekSun.isoWeekday(3);
+  const endDate = baseWeek.isoWeekday(7);
+  const startDate = endDate.isoWeekday(3);
 
   return {
-    startDate: prevWeekWed as DateType,
-    endDate: prevWeekSun as DateType,
+    startDate: startDate as DateType,
+    endDate: endDate as DateType,
   };
 };
-
 export const getNumberOfWeeks = (date: DateType): number => {
   const d = dayjs(date);
   return d.isoWeek();
@@ -38,4 +40,42 @@ export const getYearFromDate = (date: DateType): number => {
 
 export const formatFullDate = (date: DateType): string => {
   return dayjs(date).format("MMM D, YYYY");
+};
+
+export const getWeekdayBetween = (
+  startDate?: DateType | null,
+  endDate?: DateType | null,
+  targetWeekday: number = 7 // default: Sunday
+) => {
+  if (!startDate || !endDate) return null;
+
+  const start = dayjs(startDate);
+  const end = dayjs(endDate);
+
+  if (!start.isValid() || !end.isValid()) return null;
+
+  let current = start.startOf("day");
+
+  while (current.isBefore(end) || current.isSame(end, "day")) {
+    if (current.isoWeekday() === targetWeekday) {
+      return {
+        hasWeekday: true,
+        date: current, // actual date (dayjs)
+        dayNumber: current.date(), // e.g. 30
+        day: current.format("dddd"), // e.g. "Thursday"
+        month: current.format("MMM"), // e.g. "Oct"
+        year: current.year(), // e.g. 2025
+      };
+    }
+    current = current.add(1, "day");
+  }
+
+  return {
+    hasWeekday: false,
+    date: null,
+    dayNumber: null,
+    day: null,
+    month: null,
+    year: null,
+  };
 };

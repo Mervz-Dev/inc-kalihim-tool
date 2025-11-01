@@ -8,21 +8,16 @@ import { computePercentage } from "@/utils/compute";
 import {
   formatFullDate,
   getNumberOfWeeks,
-  getPreviousWeekWedToSun,
   getRangeTextFormat,
+  getWeekWedToSun,
   getYearFromDate,
 } from "@/utils/date";
 import { delay } from "@/utils/delay";
 import { plotPercentToExcel } from "@/utils/excelPlotter";
-import {
-  copyExcelToDownloads,
-  getFileNameWithoutExtension,
-} from "@/utils/file";
 import { generateDefaultPercentData } from "@/utils/generate";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { router } from "expo-router";
-import * as Sharing from "expo-sharing";
+import { useAudioPlayer } from "expo-audio";
 import Toast from "react-native-toast-message";
 import { DateType } from "react-native-ui-datepicker";
 
@@ -33,6 +28,8 @@ export const usePercentGenerator = (
 ) => {
   const loader = useLoading();
   // --- Initialization ---
+
+  const player = useAudioPlayer(require("@/assets/sounds/pop.mp3"));
 
   const defaultValues = generateDefaultPercentData(Number(groupCount));
   const STORAGE_KEY = `@prev-percent-${purok}`;
@@ -47,7 +44,12 @@ export const usePercentGenerator = (
   const [dateRange, setDateRange] = useState<{
     startDate?: DateType;
     endDate?: DateType;
-  }>(getPreviousWeekWedToSun());
+  }>(getWeekWedToSun("previous"));
+
+  const weekNumber = getNumberOfWeeks(dateRange.startDate);
+  const range = getRangeTextFormat(dateRange.startDate, dateRange.endDate);
+  const yearNumber = getYearFromDate(dateRange.startDate);
+  const dateString = formatFullDate(dateRange.endDate);
 
   const [plottedExcelUri, setPlottedExcelUri] = useState<string>();
   const [currentComputedResult, setCurrentComputedResult] =
@@ -59,9 +61,21 @@ export const usePercentGenerator = (
 
   const [sNumberModalVisible, setSNumberModalVisible] = useState(false);
 
+  const isFromLastWeekResult =
+    weekNumber - parseInt(prevComputedResult?.info?.week || "0", 10) === 1;
+
+  console.log(
+    isFromLastWeekResult,
+    "last week",
+    parseInt(prevComputedResult?.info?.week || "0", 10),
+    prevComputedResult?.info?.week,
+    weekNumber
+  );
+
   // --- Load Previous Data ---
   const loadPrevData = async () => {
     try {
+      loader.show();
       const savedData = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedData) {
         const parsed = JSON.parse(savedData);
@@ -80,7 +94,7 @@ export const usePercentGenerator = (
             return merged;
           });
         }
-
+        console.log(parsed?.info, "parsed");
         setPrevComputedResult(parsed);
         setSNumberModalVisible(true);
       } else {
@@ -93,6 +107,8 @@ export const usePercentGenerator = (
     } catch (error) {
       console.error("Failed to load previous data:", error);
       Alert.alert("Error", "Failed to load group data.");
+    } finally {
+      loader.hide();
     }
   };
 
@@ -107,6 +123,9 @@ export const usePercentGenerator = (
     codeKey: keyof Percent.Session | "in" | "out",
     sessionKey: Percent.SessionKey
   ) => {
+    player.seekTo(0);
+    player.play();
+
     setGroupValues((prev) =>
       prev.map((group, i) => {
         if (i !== groupIndex) return group;
@@ -162,16 +181,14 @@ export const usePercentGenerator = (
   // --- Excel Generation ---
   const generatePercentData = async () => {
     try {
-      loader.show();
+      loader.show("Calculating...");
       const computedResult = computePercentage({
         groupValues,
         sNumber,
       });
 
-      const weekNumber = getNumberOfWeeks(dateRange.startDate);
-      const range = getRangeTextFormat(dateRange.startDate, dateRange.endDate);
-      const yearNumber = getYearFromDate(dateRange.startDate);
-      const dateString = formatFullDate(dateRange.endDate);
+      await delay(1000);
+
       const result: Percent.ComputedPercent = {
         ...computedResult,
         info: {
@@ -187,10 +204,16 @@ export const usePercentGenerator = (
         },
       };
 
-      const excelUri = await plotPercentToExcel(result, prevComputedResult);
+      loader.show("Generating...");
 
-      setCurrentComputedResult(computedResult);
-      await delay(1000);
+      const excelUri = await plotPercentToExcel(
+        result,
+        isFromLastWeekResult ? prevComputedResult : undefined
+      );
+
+      setCurrentComputedResult(result);
+
+      await delay(500);
 
       if (!excelUri) return;
 
@@ -202,99 +225,6 @@ export const usePercentGenerator = (
     } catch (error) {
       alert("Error generation");
       console.error("generatePercentData error:", error);
-    } finally {
-      loader.hide();
-    }
-  };
-
-  const handleShare = async () => {
-    try {
-      if ((await Sharing.isAvailableAsync()) && plottedExcelUri) {
-        await Sharing.shareAsync(plottedExcelUri, {
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          dialogTitle: "Porsyento File",
-          UTI: "com.microsoft.excel.xlsx",
-        });
-
-        Toast.show({
-          type: "success",
-          text1: "File shared successfully",
-          swipeable: true,
-          visibilityTime: 2000,
-          topOffset: 60,
-        });
-
-        await handleSaveOnCache();
-      } else {
-        Toast.show({
-          type: "info",
-          text1: "Sharing not available",
-          text2: "This device cannot share files.",
-          position: "bottom",
-        });
-      }
-    } catch (error) {
-      console.log("handleShare error: ", error);
-      Toast.show({
-        type: "error",
-        text1: "Error sharing file",
-        text2: "Something went wrong.",
-        position: "bottom",
-      });
-    }
-  };
-
-  const handleLocalSave = async () => {
-    try {
-      if (plottedExcelUri) {
-        const savedUri = await copyExcelToDownloads(
-          plottedExcelUri,
-          getFileNameWithoutExtension(plottedExcelUri)
-        );
-
-        if (savedUri) {
-          Toast.show({
-            type: "success",
-            text1: "File Saved",
-            text2: "Your Excel file has been saved.",
-            swipeable: true,
-            visibilityTime: 2000,
-            topOffset: 60,
-          });
-
-          await handleSaveOnCache();
-        }
-      } else {
-        Toast.show({
-          type: "info",
-          text1: "No File Found",
-          text2: "Please generate a file before saving.",
-        });
-      }
-    } catch (error) {
-      console.log("handleLocalSave error: ", error);
-      Toast.show({
-        type: "error",
-        text1: "Save Failed",
-        text2: "Something went wrong while saving the file.",
-      });
-    }
-  };
-
-  const handleSaveOnCache = async () => {
-    try {
-      loader.show();
-      if (currentComputedResult) {
-        await AsyncStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify(currentComputedResult)
-        );
-        await delay(500);
-        router.back();
-      }
-    } catch (error) {
-      console.log("handleSaveOnCache error:", error);
     } finally {
       loader.hide();
     }
@@ -333,13 +263,13 @@ export const usePercentGenerator = (
     handleChange,
     handleSave,
     generatePercentData,
-    handleShare,
-    handleLocalSave,
-    handleSaveOnCache,
     currentComputedResult,
-    prevComputedResult,
+    prevComputedResult: isFromLastWeekResult ? prevComputedResult : undefined,
     setDateRange,
     dateRange,
     handleResetCache,
+    weekNumber,
+    STORAGE_KEY,
+    plottedExcelUri,
   };
 };

@@ -40,7 +40,7 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
   const isLast = currentIndex === total - 1;
 
   return (
-    <View className="w-full flex-row justify-between items-center px-6 mt-6">
+    <View className="w-full flex-row justify-between items-center px-6 mt-4 mb-2">
       {/* Prev Button */}
       <TouchableOpacity
         disabled={isFirst}

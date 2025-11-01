@@ -26,9 +26,7 @@ export function PorsyentoFeedback({
 
   const getMessage = () => {
     if (diff === null)
-      return `📈 Ito ang iyong unang tala — kasalukuyang porsyento ay ${currentValue?.toFixed(
-        2
-      )}%.`;
+      return `📈  kasalukuyang porsyento ay ${currentValue?.toFixed(2)}%.`;
     if (diff > 0)
       return `Tumaas ng ${Math.abs(diff).toFixed(
         2
@@ -50,7 +48,7 @@ export function PorsyentoFeedback({
         borderColor: "#bfdbfe",
         borderRadius: 16,
         padding: 20,
-        marginBottom: 16,
+        marginBottom: 4,
         shadowColor: "#000",
         shadowOpacity: 0.05,
         shadowRadius: 4,

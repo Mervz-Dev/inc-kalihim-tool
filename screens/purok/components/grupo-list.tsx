@@ -1,13 +1,32 @@
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface GrupoListProps {
   maleData: User.PurokGrupoStat[];
   femaleData: User.PurokGrupoStat[];
   onItemPress: (item: User.PurokGrupoStat, gender: User.Gender) => void;
 }
+
+const { width } = Dimensions.get("window");
+
+// parent horizontal padding
+const PADDING_HORIZONTAL = 16; // 👈 same as your container padding
+const CARD_MARGIN = 6;
+const NUM_COLUMNS = 4;
+
+// subtract left + right padding before dividing
+const CARD_WIDTH =
+  (width - PADDING_HORIZONTAL * 2 - CARD_MARGIN * (NUM_COLUMNS * 2)) /
+  NUM_COLUMNS;
 
 export const GrupoList = ({
   maleData,
@@ -20,74 +39,122 @@ export const GrupoList = ({
 
     return (
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={0.9}
         onPress={() => onItemPress(item, gender)}
         style={{
-          borderRadius: 16,
+          width: CARD_WIDTH,
+          borderRadius: 14,
           overflow: "hidden",
+          backgroundColor: "#fff",
           shadowColor: "#000",
-          shadowOpacity: 0.15,
+          shadowOpacity: 0.08,
           shadowRadius: 6,
           shadowOffset: { width: 0, height: 2 },
           elevation: 3,
+          margin: CARD_MARGIN,
+          transform: [{ scale: 1 }],
         }}
       >
         <LinearGradient
           colors={gradientColors as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ padding: 14, borderRadius: 16 }}
+          style={{
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: 14,
+            minHeight: 78,
+            justifyContent: "center",
+          }}
         >
-          <View style={{ gap: 6 }}>
-            <Text className="text-white text-lg font-bold tracking-wide">
-              {item.purok} - {item.grupo}
-            </Text>
+          {/* Title */}
+          <Text
+            numberOfLines={1}
+            style={{
+              color: "white",
+              fontSize: 13,
+              fontWeight: "700",
+              letterSpacing: 0.3,
+              textAlign: "center",
+            }}
+          >
+            {item.purok}-{item.grupo}
+          </Text>
 
-            <View className="flex-row items-center gap-2 mt-1 bg-white/20 px-2 py-1 rounded-lg self-start">
-              <Ionicons name="person" size={16} color="white" />
-              <Text className="text-white font-semibold text-sm">
-                {item.userCount}
-              </Text>
-            </View>
+          {/* Divider line for structure */}
+          <View
+            style={{
+              height: 1,
+              backgroundColor: "rgba(255,255,255,0.25)",
+              marginVertical: 6,
+            }}
+          />
+
+          {/* Count section */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(255,255,255,0.2)",
+              paddingVertical: 3,
+              paddingHorizontal: 8,
+              borderRadius: 20,
+              alignSelf: "center",
+            }}
+          >
+            <Ionicons name="person-outline" size={14} color="white" />
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "600",
+                fontSize: 12,
+                marginLeft: 4,
+              }}
+            >
+              {item.userCount}
+            </Text>
           </View>
         </LinearGradient>
       </TouchableOpacity>
     );
   };
 
-  return (
-    <View className="flex-1 mt-4">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-row items-center mb-3">
-          <Ionicons name="male" size={20} color="#2563eb" />
-          <Text className="text-neutral-700 text-xl font-semibold ml-2">
-            Lalaki
-          </Text>
-        </View>
-        <View className="flex-row flex-wrap">
-          {maleData.map((m, index) => (
-            <View key={index} className="w-[32%] mr-[1.33%] mb-3">
-              {renderItem(m, "male")}
-            </View>
-          ))}
-        </View>
+  const renderSection = (
+    title: string,
+    icon: keyof typeof Ionicons.glyphMap,
+    color: string,
+    data: User.PurokGrupoStat[],
+    gender: User.Gender
+  ) => (
+    <View className="mb-6">
+      <View className="flex-row items-center mb-2 px-1">
+        <Ionicons name={icon} size={20} color={color} />
+        <Text className="text-neutral-700 text-lg font-semibold ml-2">
+          {title}
+        </Text>
+      </View>
 
-        <View className="mb-6" />
-
-        <View className="flex-row items-center mb-3">
-          <Ionicons name="female" size={20} color="#db2777" />
-          <Text className="text-neutral-700 text-xl font-semibold ml-2">
-            Babae
-          </Text>
-        </View>
-        <View className="flex-row flex-wrap">
-          {femaleData.map((f, index) => (
-            <View key={index} className="w-[32%] mr-[1.33%] mb-3">
-              {renderItem(f, "female")}
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+      <FlatList
+        data={data}
+        keyExtractor={(_, i) => i.toString()}
+        numColumns={NUM_COLUMNS}
+        renderItem={({ item }) => renderItem(item, gender)}
+        scrollEnabled={false}
+      />
     </View>
+  );
+
+  return (
+    <ScrollView
+      className="flex-1 mt-4"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 20 }}
+    >
+      {maleData.length > 0 &&
+        renderSection("Lalaki", "male", "#2563eb", maleData, "male")}
+      {femaleData.length > 0 &&
+        renderSection("Babae", "female", "#db2777", femaleData, "female")}
+    </ScrollView>
   );
 };

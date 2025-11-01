@@ -57,6 +57,7 @@ export default function SecureScreen() {
         {/* Password Input */}
         <View className="relative w-full mb-6">
           <TextInput
+            autoCapitalize="none"
             placeholder="Enter Password"
             value={password}
             onChangeText={setPassword}

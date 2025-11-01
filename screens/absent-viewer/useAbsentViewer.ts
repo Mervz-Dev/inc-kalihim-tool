@@ -2,26 +2,66 @@ import { getSessionAbsentees } from "@/services/sql-lite/db";
 import { User } from "@/types/user";
 import { generateSessionHtml } from "@/utils/generate";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 
+import { useSettingsStore } from "@/stores/settingsStore";
+import {
+  getNumberOfWeeks,
+  getWeekdayBetween,
+  getWeekWedToSun,
+} from "@/utils/date";
+import { plotAbsenteeToExcel } from "@/utils/excelPlotter";
+import { useLoading } from "@/utils/hooks/useLoading";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Buffer } from "buffer";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
+import { DateType } from "react-native-ui-datepicker";
 
-export const useAbsentViewer = (purok: string) => {
+export const useAbsentViewer = (
+  purok: string,
+  saveBottomRef: RefObject<BottomSheetModal | null>
+) => {
   const [sessionData, setSessionData] = useState<User.SessionData[]>([]);
+  const loader = useLoading();
+  const { lokalCode, distritoCode, lokal, distrito } = useSettingsStore();
+
+  const [dateRange, setDateRange] = useState<{
+    startDate?: DateType;
+    endDate?: DateType;
+  }>(getWeekWedToSun());
+
+  const weekNumber = getNumberOfWeeks(dateRange.startDate);
+  const firstSessionDay = getWeekdayBetween(
+    dateRange.startDate,
+    dateRange.endDate,
+    4
+  );
+  const secondSessionDay = getWeekdayBetween(
+    dateRange.startDate,
+    dateRange.endDate,
+    7
+  );
+
+  const [notes, setNotes] = useState<string>("");
+
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [plottedExcelUri, setPlottedExcelUri] = useState<string>("");
 
   const db = useSQLiteContext();
 
   const initFetch = async () => {
     try {
+      loader.show();
       const sessionResult = await getSessionAbsentees(purok, db);
-
+      console.log(sessionResult, "session", purok);
       setSessionData(sessionResult);
     } catch (error) {
       console.log(error);
+    } finally {
+      loader.hide();
     }
   };
 
@@ -113,8 +153,55 @@ export const useAbsentViewer = (purok: string) => {
     }
   };
 
+  const generateAbsenteeForm = async () => {
+    try {
+      loader.show("Generating...");
+      // TODO:
+      // store uri on state
+      // save bottom form
+
+      console.log("seee", sessionData);
+      if (!sessionData) {
+        return;
+      }
+
+      const info: User.Info = {
+        week: weekNumber.toString(),
+        firstSession: {
+          day: firstSessionDay?.dayNumber?.toString() || "",
+          month: firstSessionDay?.month || "",
+          year: firstSessionDay?.year?.toString() || "",
+        },
+        secondSession: {
+          day: secondSessionDay?.dayNumber?.toString() || "",
+          month: secondSessionDay?.month || "",
+          year: secondSessionDay?.year?.toString() || "",
+        },
+        lokalCode,
+        distritoCode,
+        lokal,
+        distrito,
+        note: notes,
+      };
+
+      const plottedExcelUri = await plotAbsenteeToExcel(sessionData, info);
+
+      if (!plottedExcelUri) return;
+      setPlottedExcelUri(plottedExcelUri);
+
+      saveBottomRef?.current?.present();
+
+      return plottedExcelUri;
+    } catch (error) {
+      console.log("generateAbsenteeForm error: ", error);
+    } finally {
+      loader.hide();
+    }
+  };
+
   useEffect(() => {
     initFetch();
+    setInfoModalVisible(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -122,5 +209,14 @@ export const useAbsentViewer = (purok: string) => {
     sessionData,
     createSessionPdf,
     createAttendance,
+    generateAbsenteeForm,
+    dateRange,
+    setDateRange,
+    notes,
+    setNotes,
+    infoModalVisible,
+    setInfoModalVisible,
+    weekNumber,
+    plottedExcelUri,
   };
 };

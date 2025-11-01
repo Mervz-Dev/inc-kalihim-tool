@@ -1,9 +1,12 @@
+import { clearDatabase } from "@/services/sql-lite/db";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { Ionicons } from "@expo/vector-icons";
 import * as LocalAuthentication from "expo-local-authentication";
 import { router } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import React from "react";
 import {
+  Alert,
   ScrollView,
   Switch,
   Text,
@@ -25,6 +28,8 @@ export default function SettingsScreen() {
     setBiometrics,
     biometricsEnabled,
   } = useSettingsStore();
+
+  const db = useSQLiteContext();
 
   const toggleBiometrics = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
@@ -58,6 +63,41 @@ export default function SettingsScreen() {
       text2: "All settings have been cleared",
       visibilityTime: 1500,
     });
+  };
+
+  // --- CLEAR DATABASE ---
+  const handleClearDB = () => {
+    Alert.alert(
+      "Confirm Reset",
+      "Are you sure you want to clear all database data? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes, clear it",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await clearDatabase(db);
+
+              Toast.show({
+                type: "success",
+                text1: "Database Cleared",
+                text2: "All tables have been dropped successfully",
+                visibilityTime: 2000,
+              });
+            } catch (err) {
+              console.error("DB clear error:", err);
+              Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Failed to clear database",
+                visibilityTime: 2000,
+              });
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -111,7 +151,7 @@ export default function SettingsScreen() {
           ))}
         </View>
 
-        {/* Section: Account */}
+        {/* Section: Security */}
         <Text className="text-gray-500 font-semibold text-sm mb-3 mt-4">
           Security
         </Text>
@@ -122,7 +162,7 @@ export default function SettingsScreen() {
             onPress={() => router.push("/set-password")}
             className="flex-row items-center justify-between bg-white rounded-3xl p-4 shadow-sm"
           >
-            <View className="flex-row items-center space-x-4 gap-2">
+            <View className="flex-row items-center gap-2">
               <View className="bg-blue-100 p-2 rounded-full">
                 <Ionicons name="key-outline" size={20} color="#2563eb" />
               </View>
@@ -139,7 +179,7 @@ export default function SettingsScreen() {
 
           {/* Biometrics Toggle */}
           <View className="flex-row items-center justify-between bg-white rounded-3xl p-4 shadow-sm">
-            <View className="flex-row items-center space-x-4 gap-2">
+            <View className="flex-row items-center gap-2">
               <View className="bg-green-100 p-2 rounded-full">
                 <Ionicons
                   name="finger-print-outline"
@@ -161,17 +201,27 @@ export default function SettingsScreen() {
         </View>
 
         {/* Section: Reset */}
-        <TouchableOpacity
-          onPress={handleReset}
-          activeOpacity={0.85}
-          className="pt-4"
-        >
-          <View className="bg-red-500 py-4 rounded-2xl shadow-lg items-center">
+        <View className="mt-6 space-y-3 gap-2.5">
+          <TouchableOpacity
+            onPress={handleReset}
+            activeOpacity={0.85}
+            className="bg-red-500 py-4 rounded-2xl shadow-lg items-center"
+          >
             <Text className="text-white font-semibold text-lg tracking-wide">
               Reset Settings
             </Text>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleClearDB}
+            activeOpacity={0.85}
+            className="bg-amber-500 py-4 rounded-2xl shadow-lg items-center"
+          >
+            <Text className="text-white font-semibold text-lg tracking-wide">
+              Clear All Data
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
