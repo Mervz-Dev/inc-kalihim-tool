@@ -1,8 +1,5 @@
 import { delay } from "@/utils/delay";
-import {
-  copyExcelToDownloads,
-  getFileNameWithoutExtension,
-} from "@/utils/file";
+import { copyFileToDownloads, getFileNameWithoutExtension } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -105,7 +102,7 @@ export const SaveFileView = ({
   const handleLocalSave = async () => {
     try {
       if (fileUri) {
-        const savedUri = await copyExcelToDownloads(
+        const savedUri = await copyFileToDownloads(
           fileUri,
           getFileNameWithoutExtension(fileUri)
         );
@@ -113,7 +110,7 @@ export const SaveFileView = ({
           Toast.show({
             type: "success",
             text1: "File Saved",
-            text2: "Your Excel file has been saved.",
+            text2: "Your Zipped Excel file has been saved.",
             swipeable: true,
             visibilityTime: 2000,
             topOffset: 60,

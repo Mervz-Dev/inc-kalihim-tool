@@ -61,9 +61,7 @@ export const usePercentGenerator = (
   const { lokalCode, distritoCode, lokal, distrito } = useSettingsStore();
 
   const [sNumberModalVisible, setSNumberModalVisible] = useState(false);
-
-  const isFromLastWeekResult =
-    weekNumber - parseInt(prevComputedResult?.info?.week || "0", 10) === 1;
+  const [isFromLastWeekResult, setIsFromLastWeekResult] = useState(false);
 
   // --- Load Previous Data ---
   const loadPrevData = async () => {
@@ -171,6 +169,46 @@ export const usePercentGenerator = (
     }
   };
 
+  const generateLastData = async () => {
+    try {
+      if (!prevComputedResult) {
+        Toast.show({
+          type: "error",
+          text1: "Error Generating",
+          text2: "cannot generate previous data",
+        });
+        return;
+      }
+
+      setSNumberModalVisible(false);
+
+      loader.show("Generating...");
+
+      await delay(1000);
+
+      const excelUri = await plotPercentToExcel(prevComputedResult);
+
+      setCurrentComputedResult(prevComputedResult);
+
+      await delay(500);
+
+      if (!excelUri) return;
+
+      const zippedUri = await zipExcelFileWithPassword(excelUri);
+
+      setPlottedExcelUri(zippedUri);
+
+      saveBottomRef?.current?.present();
+
+      console.log("Generated prev percent data:", prevComputedResult);
+    } catch (error) {
+      alert("Error generation");
+      console.error("generatePercentData error:", error);
+    } finally {
+      loader.hide();
+    }
+  };
+
   // --- Excel Generation ---
   const generatePercentData = async () => {
     try {
@@ -203,6 +241,10 @@ export const usePercentGenerator = (
         result,
         isFromLastWeekResult ? prevComputedResult : undefined
       );
+
+      const fromLast =
+        weekNumber - parseInt(prevComputedResult?.info?.week || "0", 10) === 1;
+      setIsFromLastWeekResult(fromLast);
 
       setCurrentComputedResult(result);
 
@@ -266,5 +308,6 @@ export const usePercentGenerator = (
     weekNumber,
     STORAGE_KEY,
     plottedExcelUri,
+    generateLastData,
   };
 };

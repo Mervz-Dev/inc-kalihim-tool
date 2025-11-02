@@ -45,6 +45,7 @@ export default function PercentGenerator() {
     weekNumber,
     STORAGE_KEY,
     plottedExcelUri,
+    generateLastData,
   } = usePercentGenerator(purok, groupCount, saveFileBottomSheet);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -115,6 +116,8 @@ export default function PercentGenerator() {
     <SafeAreaView className="flex-1 px-0 pt-4 bg-gray-50">
       <View className="px-4 mb-2">
         <Header
+          confirmBeforeBack
+          confirmMessage="Going back will discard the changes you’ve made."
           title="R1-04"
           subtitle={`Purok ${purok} | Week ${weekNumber}`}
           buttons={[
@@ -159,7 +162,7 @@ export default function PercentGenerator() {
       </View>
 
       <SNumberModal
-        handleReset={handleResetCache}
+        handleGeneratePrev={generateLastData}
         visible={sNumberModalVisible}
         onClose={() => setSNumberModalVisible(false)}
         setDateRange={setDateRange}
