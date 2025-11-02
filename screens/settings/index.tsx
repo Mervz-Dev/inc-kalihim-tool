@@ -1,6 +1,12 @@
+import { Header } from "@/components/header";
 import { clearDatabase } from "@/services/sql-lite/db";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { delay } from "@/utils/delay";
+import { useLoading } from "@/utils/hooks/useLoading";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as FileSystem from "expo-file-system";
+import { LinearGradient } from "expo-linear-gradient";
 import * as LocalAuthentication from "expo-local-authentication";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -30,6 +36,7 @@ export default function SettingsScreen() {
   } = useSettingsStore();
 
   const db = useSQLiteContext();
+  const loader = useLoading();
 
   const toggleBiometrics = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
@@ -65,34 +72,49 @@ export default function SettingsScreen() {
     });
   };
 
-  // --- CLEAR DATABASE ---
-  const handleClearDB = () => {
+  const handleClearAllData = () => {
     Alert.alert(
       "Confirm Reset",
-      "Are you sure you want to clear all database data? This action cannot be undone.",
+      "Are you sure you want to clear all data (database, cache, and local files)? This action cannot be undone.",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Yes, clear it",
+          text: "Yes, clear all",
           style: "destructive",
           onPress: async () => {
             try {
+              loader.show("Clearing...");
               await clearDatabase(db);
+              await AsyncStorage.clear();
+
+              const files = await FileSystem.readDirectoryAsync(
+                FileSystem.documentDirectory || ""
+              );
+              for (const file of files) {
+                await FileSystem.deleteAsync(
+                  FileSystem.documentDirectory + file,
+                  { idempotent: true }
+                );
+              }
+
+              await delay(600);
 
               Toast.show({
                 type: "success",
-                text1: "Database Cleared",
-                text2: "All tables have been dropped successfully",
+                text1: "All Data Cleared",
+                text2: "Database, cache, and files removed successfully.",
                 visibilityTime: 2000,
               });
             } catch (err) {
-              console.error("DB clear error:", err);
+              console.error("Full clear error:", err);
               Toast.show({
                 type: "error",
                 text1: "Error",
-                text2: "Failed to clear database",
+                text2: "Failed to clear all data.",
                 visibilityTime: 2000,
               });
+            } finally {
+              loader.hide();
             }
           },
         },
@@ -101,9 +123,9 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 px-4">
       {/* Header */}
-      <View className="flex-row items-center justify-between p-5 bg-white shadow-md">
+      {/* <View className="flex-row items-center justify-between p-5 bg-white shadow-sm border-b border-gray-100">
         <View className="flex-row items-center gap-3">
           <TouchableOpacity
             activeOpacity={0.7}
@@ -112,20 +134,22 @@ export default function SettingsScreen() {
           >
             <Ionicons name="arrow-back" size={22} color="#374151" />
           </TouchableOpacity>
-          <Text className="text-gray-900 text-2xl font-bold">Settings</Text>
+          <Text className="text-gray-900 text-xl font-bold">Settings</Text>
         </View>
-      </View>
+      </View> */}
+
+      <Header title={`Settings`} showBack />
 
       <ScrollView
-        className="flex-1 p-5"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        className="flex-1 pt-4"
+        contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section: Local Information */}
-        <Text className="text-gray-500 font-semibold text-sm mb-3 mt-2">
+        {/* Section: Local Info */}
+        <Text className="text-gray-500 font-semibold text-sm mb-2">
           Local Information
         </Text>
-        <View className="bg-white rounded-2xl p-4 shadow-md space-y-4">
+        <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-3">
           {(
             [
               { label: "Distrito", value: distrito, field: "distrito" },
@@ -138,56 +162,46 @@ export default function SettingsScreen() {
               },
             ] as const
           ).map(({ label, value, field }, i) => (
-            <View key={i} className="mb-2">
+            <View key={i}>
               <Text className="text-gray-700 font-medium mb-1">{label}</Text>
               <TextInput
                 value={value}
                 onChangeText={(text) => setField(field, text)}
                 placeholder={`Enter ${label.toLowerCase()}`}
                 placeholderTextColor="#9CA3AF"
-                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900 bg-gray-50 shadow-sm"
+                className="border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 bg-gray-50 mb-2"
               />
             </View>
           ))}
         </View>
 
         {/* Section: Security */}
-        <Text className="text-gray-500 font-semibold text-sm mb-3 mt-4">
+        <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
           Security
         </Text>
-        <View className="bg-white rounded-2xl py-4 px-2 shadow-md space-y-4">
-          {/* Update Password Row */}
+        <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => router.push("/set-password")}
-            className="flex-row items-center justify-between bg-white rounded-3xl p-4 shadow-sm"
+            className="flex-row items-center justify-between py-4 px-3 border-b border-gray-100"
           >
             <View className="flex-row items-center gap-2">
-              <View className="bg-blue-100 p-2 rounded-full">
-                <Ionicons name="key-outline" size={20} color="#2563eb" />
-              </View>
-              <Text className="text-gray-900 font-semibold text-lg">
+              <Ionicons name="key-outline" size={20} color="#2563eb" />
+              <Text className="text-gray-900 font-medium text-base">
                 Update Password
               </Text>
             </View>
             <Ionicons
               name="chevron-forward-outline"
-              size={24}
+              size={20}
               color="#9CA3AF"
             />
           </TouchableOpacity>
 
-          {/* Biometrics Toggle */}
-          <View className="flex-row items-center justify-between bg-white rounded-3xl p-4 shadow-sm">
+          <View className="flex-row items-center justify-between py-4 px-3">
             <View className="flex-row items-center gap-2">
-              <View className="bg-green-100 p-2 rounded-full">
-                <Ionicons
-                  name="finger-print-outline"
-                  size={20}
-                  color="#10b981"
-                />
-              </View>
-              <Text className="text-gray-900 font-semibold text-lg">
+              <Ionicons name="finger-print-outline" size={20} color="#10b981" />
+              <Text className="text-gray-900 font-medium text-base">
                 Enable Biometrics / Face ID
               </Text>
             </View>
@@ -201,25 +215,55 @@ export default function SettingsScreen() {
         </View>
 
         {/* Section: Reset */}
-        <View className="mt-6 space-y-3 gap-2.5">
+        <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
+          Maintenance
+        </Text>
+
+        <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <TouchableOpacity
-            onPress={handleReset}
             activeOpacity={0.85}
-            className="bg-red-500 py-4 rounded-2xl shadow-lg items-center"
+            onPress={handleReset}
+            className="rounded-xl overflow-hidden mb-3 shadow-md"
           >
-            <Text className="text-white font-semibold text-lg tracking-wide">
-              Reset Settings
-            </Text>
+            <LinearGradient
+              colors={["#F87171", "#DC2626"]} // red gradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="py-3 px-4 flex-row items-center justify-center"
+            >
+              <Ionicons
+                name="refresh-outline"
+                size={20}
+                color="white"
+                className="mr-2"
+              />
+              <Text className="text-white font-semibold text-base">
+                Reset Settings
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={handleClearDB}
             activeOpacity={0.85}
-            className="bg-amber-500 py-4 rounded-2xl shadow-lg items-center"
+            onPress={handleClearAllData}
+            className="rounded-xl overflow-hidden shadow-md"
           >
-            <Text className="text-white font-semibold text-lg tracking-wide">
-              Clear All Data
-            </Text>
+            <LinearGradient
+              colors={["#FBBF24", "#D97706"]} // amber/orange gradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="py-3 px-4 flex-row items-center justify-center"
+            >
+              <Ionicons
+                name="trash-outline"
+                size={20}
+                color="white"
+                className="mr-2"
+              />
+              <Text className="text-white font-semibold text-base">
+                Clear All Data
+              </Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
