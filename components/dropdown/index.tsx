@@ -76,7 +76,7 @@ export const Dropdown = ({
           elevation: 1,
         }}
       >
-        <View className="flex-row items-center flex-1 space-x-2">
+        <View className="flex-row items-center flex-1 space-x-2 gap-2">
           {selectedValue?.leftItem && selectedValue.leftItem}
 
           <View className="flex-1">

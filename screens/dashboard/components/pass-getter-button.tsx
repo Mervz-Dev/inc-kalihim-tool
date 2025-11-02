@@ -1,0 +1,245 @@
+import { APP_PASSWORD_KEY } from "@/constants/encryption";
+import { generatePasswordFromKey } from "@/utils/generate";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
+import { LinearGradient } from "expo-linear-gradient";
+import * as SecureStore from "expo-secure-store";
+import React, { useRef, useState } from "react";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+
+export const PassGetterButton = () => {
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const { bottom } = useSafeAreaInsets();
+
+  const [timestamp, setTimestamp] = useState("");
+  const [password, setPassword] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handlePress = () => bottomSheetRef.current?.present();
+
+  const handleGetPassword = async () => {
+    Keyboard.dismiss();
+    if (!timestamp) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Please enter a timestamp.",
+        visibilityTime: 2000,
+      });
+      return;
+    }
+
+    try {
+      const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
+      const key = `${stored || "inc"}${timestamp}`;
+      const generated = generatePasswordFromKey(key);
+      setPassword(generated);
+
+      Toast.show({
+        type: "success",
+        text1: "Password Ready",
+        text2: "Your password has been generated.",
+        visibilityTime: 2000,
+      });
+    } catch (error) {
+      console.error("Password generation failed:", error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to get password.",
+        visibilityTime: 2000,
+      });
+    }
+  };
+
+  const handleCopyPassword = () => {
+    if (!password) return;
+    navigator.clipboard.writeText(password);
+    Toast.show({
+      type: "success",
+      text1: "Copied",
+      text2: "Password copied to clipboard.",
+      visibilityTime: 2000,
+    });
+  };
+
+  // Reset states when bottom sheet is closed
+  const handleSheetDismiss = () => {
+    setTimestamp("");
+    setPassword(null);
+    setShowPassword(false);
+  };
+
+  return (
+    <>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={handlePress}
+        className="flex-1 rounded-full shadow-lg overflow-hidden"
+      >
+        <LinearGradient
+          colors={["#EF4444", "#DC2626"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          className="flex-row items-center justify-center px-6 py-3 rounded-full"
+        >
+          <Ionicons
+            name="key-outline"
+            size={20}
+            color="white"
+            style={{ marginRight: 6 }}
+          />
+          <Text className="text-white font-semibold text-sm">File Pass</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        index={0}
+        keyboardBehavior="interactive"
+        snapPoints={["85%"]}
+        enableContentPanningGesture={true}
+        enableHandlePanningGesture={false}
+        enablePanDownToClose={true}
+        onDismiss={handleSheetDismiss} // Reset states
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+          />
+        )}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <BottomSheetScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ padding: 20, paddingBottom: bottom + 40 }}
+          >
+            <View className="flex-1">
+              {/* Title */}
+              <View>
+                <Text className="text-2xl font-bold text-gray-900 mb-2">
+                  File Password Getter
+                </Text>
+                <View className="flex-row items-start bg-blue-50 border border-blue-100 rounded-xl p-4 mb-2 mt-2">
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={24}
+                    color="#3B82F6"
+                    className="mr-3 mt-1"
+                  />
+                  <Text className="text-gray-700 text-sm leading-relaxed flex-1">
+                    You can only retrieve the password for files generated
+                    within this app.
+                  </Text>
+                </View>
+              </View>
+
+              {/* Input Card */}
+              <View className="bg-white rounded-2xl shadow-lg p-2 mb-4">
+                <Text className="text-gray-700 font-semibold mb-3 text-base">
+                  Enter Timestamp
+                </Text>
+                <TextInput
+                  value={timestamp}
+                  onChangeText={setTimestamp}
+                  placeholder="e.g. 1762046434524"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  className="border border-gray-200 rounded-2xl px-4 py-3 text-gray-900 bg-gray-50 shadow-sm"
+                />
+
+                <TouchableOpacity
+                  onPress={handleGetPassword}
+                  activeOpacity={0.85}
+                  className="rounded-2xl shadow-md overflow-hidden mt-5"
+                >
+                  <LinearGradient
+                    colors={["#EF4444", "#F87171"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    className="flex-row items-center justify-center px-6 py-3"
+                  >
+                    <Ionicons name="key-outline" size={20} color="white" />
+                    <Text className="text-white font-semibold text-base ml-2">
+                      Get Password
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+
+              {/* Password Output */}
+              {password && (
+                <View className="bg-white rounded-2xl shadow-lg p-2 mb-6">
+                  <Text className="text-gray-700 font-semibold mb-3 text-base">
+                    Password
+                  </Text>
+                  <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 py-3">
+                    <TextInput
+                      value={password}
+                      editable={false}
+                      secureTextEntry={!showPassword}
+                      className="flex-1 text-gray-900 font-semibold text-base"
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                      className="p-1 ml-3"
+                    >
+                      <Ionicons
+                        name={showPassword ? "eye-off-outline" : "eye-outline"}
+                        size={22}
+                        color="#EF4444"
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleCopyPassword}
+                      className="p-1 ml-3"
+                    >
+                      <Ionicons name="copy-outline" size={22} color="#EF4444" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+
+              {/* Warning Card */}
+              <View className="bg-yellow-50 border-l-4 border-yellow-400 rounded-xl p-4">
+                <View className="flex-row items-center mb-2">
+                  <Ionicons
+                    name="alert-circle-outline"
+                    size={20}
+                    color="#B45309"
+                  />
+                  <Text className="text-yellow-900 font-semibold ml-2 text-base">
+                    Warning
+                  </Text>
+                </View>
+                <Text className="text-yellow-900 text-sm">
+                  Do not share this password with anyone. Keep it secure to
+                  protect your files.
+                </Text>
+              </View>
+            </View>
+          </BottomSheetScrollView>
+        </KeyboardAvoidingView>
+      </BottomSheetModal>
+    </>
+  );
+};

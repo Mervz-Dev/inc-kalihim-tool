@@ -62,24 +62,19 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
   return (
     <>
       {/* Modern Gradient Button */}
+
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={handlePress}
-        className="flex-1 rounded-full shadow-lg overflow-hidden"
+        className="w-10 h-10 rounded-full overflow-hidden shadow-lg"
       >
         <LinearGradient
-          colors={["#EF4444", "#F87171"]}
+          colors={["#9CA3AF", "#6B7280"]} // grey gradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="py-3 px-6 flex-row items-center justify-center rounded-full"
+          className="flex-1 items-center justify-center"
         >
-          <Ionicons
-            name="search"
-            size={20}
-            color="white"
-            style={{ marginRight: 8 }}
-          />
-          <Text className="text-white font-semibold text-lg">Search</Text>
+          <Ionicons name="search-outline" size={20} color="white" />
         </LinearGradient>
       </TouchableOpacity>
 

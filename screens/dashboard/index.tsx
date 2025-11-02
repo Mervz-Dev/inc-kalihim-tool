@@ -15,6 +15,7 @@ import { AddUserForm } from "@/components/form/add-user-form";
 import { router } from "expo-router";
 import { AboutButton } from "./components/about-button";
 import { CodesButton } from "./components/codes-button";
+import { PassGetterButton } from "./components/pass-getter-button";
 import { PurokList } from "./components/purok-list";
 import { SearchButton } from "./components/search-button";
 
@@ -89,13 +90,18 @@ export default function Dashboard() {
         </View>
 
         <View className="flex-row items-center space-x-3 gap-2">
-          <TouchableOpacity
+          <SearchButton
+            onClickUser={(user) => {
+              addUserSheetRef.current?.present(user);
+            }}
+          />
+          {/* <TouchableOpacity
             activeOpacity={0.8}
             onPress={initFetch}
             className="bg-yellow-100 p-2 rounded-full shadow-sm"
           >
             <Ionicons name="refresh-outline" size={24} color={"#f59e0b"} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             activeOpacity={0.8}
@@ -112,12 +118,7 @@ export default function Dashboard() {
       <View className="flex-row items-center gap-2 mt-4">
         <AboutButton />
         <CodesButton />
-
-        <SearchButton
-          onClickUser={(user) => {
-            addUserSheetRef.current?.present(user);
-          }}
-        />
+        <PassGetterButton />
       </View>
 
       {purokList.length > 0 && (

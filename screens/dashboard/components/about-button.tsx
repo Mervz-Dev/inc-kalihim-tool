@@ -35,7 +35,7 @@ export const AboutButton = () => {
             color="white"
             style={{ marginRight: 6 }}
           />
-          <Text className="text-white font-semibold text-lg">About</Text>
+          <Text className="text-white font-semibold text-sm">About</Text>
         </LinearGradient>
       </TouchableOpacity>
 

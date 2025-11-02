@@ -19,7 +19,7 @@ export const CODE_DATA: CodeReason[] = [
     code: "B",
     reason: "Trabaho, duty or busy sa work, gipit sa oras dahil sa work.",
   },
-  { code: "C", reason: "PMS, pamalagiang may sakit, bed ridden." },
+  { code: "C", reason: "Pamalagiang may sakit (PMS), bed ridden." },
   {
     code: "D",
     reason:
@@ -55,7 +55,7 @@ export const CODE_DATA: CodeReason[] = [
   {
     code: "N",
     reason:
-      "TS, madalang sumamba, nag-wawalang bahala, tinamad, may ulat na, may pinuntahan.",
+      "TS, madalang sumamba (MS), nag-wawalang bahala, tinamad, may ulat na, may pinuntahan.",
   },
 ];
 
@@ -87,7 +87,7 @@ export const CodesButton = () => {
             color="black"
             style={{ marginRight: 8 }}
           />
-          <Text className="text-black font-semibold text-lg">Codes</Text>
+          <Text className="text-black font-semibold text-sm">Codes</Text>
         </LinearGradient>
       </TouchableOpacity>
 

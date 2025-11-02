@@ -1,5 +1,7 @@
+import { FILE_PASSWORD_PREFIX } from "@/constants/encryption";
 import { Percent } from "@/types/percent";
 import { User } from "@/types/user";
+import CryptoJS from "crypto-js";
 
 export const generateSessionHtml = (data: User.SessionData[]) => {
   const chunkSize = 3;
@@ -239,4 +241,16 @@ export const generatePercentFileName = (percent: Percent.ComputedPercent) => {
 export const generateAbsenteeFileName = (purok: string, info: User.Info) => {
   const timestamp = Date.now();
   return `r102-03-pk${purok}-w${info?.week}-${timestamp}`;
+};
+
+// timestamp + default password
+export const generatePasswordFromKey = (key: string) => {
+  const hash = CryptoJS.SHA256(key).toString(CryptoJS.enc.Base64);
+  // Make it URL-safe and trim
+  const safe = hash.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  // Return first 12–16 chars (you can adjust)
+  const generatedChars = safe.slice(0, 8);
+
+  const finalPassword = FILE_PASSWORD_PREFIX + generatedChars;
+  return finalPassword;
 };

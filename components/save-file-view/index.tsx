@@ -232,11 +232,12 @@ export const SaveFileView = ({
           >
             {fileName}
           </Text>
-          <Text style={{ color: "#6b7280", fontSize: 12 }}>Excel file</Text>
+          <Text style={{ color: "#6b7280", fontSize: 12 }}>
+            Zipped Excel file (Password-Protected)
+          </Text>
         </View>
       </LinearGradient>
 
-      {/* 🔸 Confidentiality Card */}
       <LinearGradient
         colors={["#fff1f2", "#ffe4e6"]}
         start={{ x: 0, y: 0 }}
@@ -277,8 +278,10 @@ export const SaveFileView = ({
             <Text style={{ fontWeight: "600" }}>
               confidential internal data
             </Text>
-            . Do not share, upload, or transfer this file to unauthorized
-            parties.
+            . To access it, check the password using the{" "}
+            <Text style={{ fontWeight: "600" }}>File Password Getter</Text> in
+            this app. Do not share, upload, or transfer this file to
+            unauthorized parties.
           </Text>
         </View>
       </LinearGradient>

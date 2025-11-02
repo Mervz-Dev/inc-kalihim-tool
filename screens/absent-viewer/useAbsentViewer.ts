@@ -11,6 +11,7 @@ import {
   getWeekWedToSun,
 } from "@/utils/date";
 import { plotAbsenteeToExcel } from "@/utils/excelPlotter";
+import { zipExcelFileWithPassword } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Buffer } from "buffer";
@@ -187,11 +188,16 @@ export const useAbsentViewer = (
       const plottedExcelUri = await plotAbsenteeToExcel(sessionData, info);
 
       if (!plottedExcelUri) return;
-      setPlottedExcelUri(plottedExcelUri);
+
+      const zippedUri = await zipExcelFileWithPassword(plottedExcelUri);
+
+      if (!zippedUri) return;
+
+      setPlottedExcelUri(zippedUri);
 
       saveBottomRef?.current?.present();
 
-      return plottedExcelUri;
+      return zippedUri;
     } catch (error) {
       console.log("generateAbsenteeForm error: ", error);
     } finally {

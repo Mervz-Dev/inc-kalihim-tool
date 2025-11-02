@@ -14,6 +14,7 @@ import {
 } from "@/utils/date";
 import { delay } from "@/utils/delay";
 import { plotPercentToExcel } from "@/utils/excelPlotter";
+import { zipExcelFileWithPassword } from "@/utils/file";
 import { generateDefaultPercentData } from "@/utils/generate";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -64,14 +65,6 @@ export const usePercentGenerator = (
   const isFromLastWeekResult =
     weekNumber - parseInt(prevComputedResult?.info?.week || "0", 10) === 1;
 
-  console.log(
-    isFromLastWeekResult,
-    "last week",
-    parseInt(prevComputedResult?.info?.week || "0", 10),
-    prevComputedResult?.info?.week,
-    weekNumber
-  );
-
   // --- Load Previous Data ---
   const loadPrevData = async () => {
     try {
@@ -94,7 +87,7 @@ export const usePercentGenerator = (
             return merged;
           });
         }
-        console.log(parsed?.info, "parsed");
+
         setPrevComputedResult(parsed);
         setSNumberModalVisible(true);
       } else {
@@ -217,7 +210,9 @@ export const usePercentGenerator = (
 
       if (!excelUri) return;
 
-      setPlottedExcelUri(excelUri);
+      const zippedUri = await zipExcelFileWithPassword(excelUri);
+
+      setPlottedExcelUri(zippedUri);
 
       saveBottomRef?.current?.present();
 

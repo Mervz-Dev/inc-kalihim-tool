@@ -1,4 +1,8 @@
+import { APP_PASSWORD_KEY } from "@/constants/encryption";
 import * as FileSystem from "expo-file-system";
+import * as SecureStore from "expo-secure-store";
+import { zipWithPassword } from "react-native-zip-archive";
+import { generatePasswordFromKey } from "./generate";
 
 export async function copyExcelToDownloads(
   sourceUri: string,
@@ -42,4 +46,32 @@ export const getFileNameWithoutExtension = (uri: string): string => {
   const fileName = uri.split("/").pop() || "";
   // Remove the extension (e.g., .xlsx, .pdf, etc.)
   return fileName.replace(/\.[^/.]+$/, "");
+};
+
+export const zipExcelFileWithPassword = async (sourceUri: string) => {
+  try {
+    const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
+    const timestamp = getTimestampFromFileName(sourceUri);
+    const password = generatePasswordFromKey(`${stored || "inc"}${timestamp}`);
+
+    console.log("password", password);
+
+    const fileName = getFileNameWithoutExtension(sourceUri);
+    const targetPath = `${FileSystem.documentDirectory}/${fileName}.zip`;
+    await zipWithPassword(sourceUri, targetPath, password);
+
+    return targetPath;
+  } catch (error) {
+    console.log("zipExcelFileWithPassword error: ", error);
+  }
+};
+
+export const getTimestampFromFileName = (fileName: string): string => {
+  const match = fileName.match(/-(\d+)\.xlsx$/);
+  if (match && match[1]) {
+    return match[1];
+  }
+
+  const newTimeStamp = Date.now();
+  return newTimeStamp.toString();
 };

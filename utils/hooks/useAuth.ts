@@ -1,3 +1,4 @@
+import { APP_PASSWORD_KEY } from "@/constants/encryption";
 import * as LocalAuthentication from "expo-local-authentication";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -9,14 +10,14 @@ export function useAuth() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null);
 
   const checkIfPasswordExists = async () => {
-    const stored = await SecureStore.getItemAsync("app_password");
+    const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
     setHasPassword(!!stored);
     return !!stored;
   };
 
   // Save a local password securely
   const setPassword = async (password: string) => {
-    await SecureStore.setItemAsync("app_password", password, {
+    await SecureStore.setItemAsync(APP_PASSWORD_KEY, password, {
       keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
     });
     setHasPassword(true);
@@ -29,7 +30,7 @@ export function useAuth() {
 
   // Check password from SecureStore
   const checkPassword = async (password: string) => {
-    const stored = await SecureStore.getItemAsync("app_password");
+    const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
     if (stored === password) {
       setIsAuthenticated(true);
       return true;
