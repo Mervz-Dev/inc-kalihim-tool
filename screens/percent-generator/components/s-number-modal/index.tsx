@@ -50,7 +50,10 @@ export const SNumberModal = ({
     <>
       {/* Main Animated Modal */}
       <AnimatedModal visible={visible} onClose={onClose}>
-        <View className="bg-white/95 rounded-3xl w-full max-w-md">
+        <View
+          className="bg-white/95 rounded-3xl w-full max-w-md"
+          style={{ flexGrow: 0, maxHeight: 550 }}
+        >
           {/* Header */}
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-xl font-bold text-gray-900">
@@ -59,7 +62,7 @@ export const SNumberModal = ({
           </View>
 
           {/* Date Range */}
-          <View className="flex-row justify-between mb-5">
+          <View className="flex-row justify-between mb-2">
             <View className="flex-1">
               <Text className="text-gray-600 font-medium mb-2 text-sm">
                 Date Range
@@ -90,7 +93,7 @@ export const SNumberModal = ({
           </View>
 
           {/* Scrollable List */}
-          <ScrollView className="mt-2 mb-6" style={{ maxHeight: 300 }}>
+          <ScrollView className="mt-2 mb-4" style={{ maxHeight: 300 }}>
             {sNumber.map((group, index) => (
               <View
                 key={group.group}

@@ -1,18 +1,8 @@
-import { Header } from "@/components/header";
-import { clearDatabase } from "@/services/sql-lite/db";
-import { useSettingsStore } from "@/stores/settingsStore";
-import { delay } from "@/utils/delay";
-import { useLoading } from "@/utils/hooks/useLoading";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
+import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
-import * as LocalAuthentication from "expo-local-authentication";
-import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import React from "react";
+import React, { useMemo, useRef } from "react";
 import {
-  Alert,
   ScrollView,
   Switch,
   Text,
@@ -21,131 +11,74 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
+
+import { Header } from "@/components/header";
+import { ExportPromptModal } from "./components/export-prompt-modal";
+import { ImportPromptModal } from "./components/import-prompt-modal";
+import { useSettingsScreen } from "./useSettings";
+
+import { SaveFileView } from "@/components/save-file-view";
+import { useAuthAction } from "@/utils/hooks/useAuthAction";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 
 export default function SettingsScreen() {
+  const saveFileBottomSheet = useRef<BottomSheetModal>(null);
+  const saveFileSheetPoints = useMemo(() => ["50%"], []);
+
   const {
     distrito,
     lokal,
     lokalCode,
     distritoCode,
-    setField,
-    reset,
-    setBiometrics,
     biometricsEnabled,
-  } = useSettingsStore();
-
-  const db = useSQLiteContext();
-  const loader = useLoading();
-
-  const toggleBiometrics = async () => {
-    const hasHardware = await LocalAuthentication.hasHardwareAsync();
-    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-
-    if (!hasHardware || !isEnrolled) {
-      setBiometrics(false);
-      Toast.show({
-        type: "error",
-        text1: "Unavailable",
-        text2: "Biometric authentication not available on this device",
-        visibilityTime: 2000,
-      });
-      return;
-    }
-
-    setBiometrics(!biometricsEnabled);
-    Toast.show({
-      type: "success",
-      text1: "Success",
-      text2: `Biometrics ${!biometricsEnabled ? "enabled" : "disabled"}`,
-      visibilityTime: 1500,
-    });
-  };
-
-  const handleReset = () => {
-    reset();
-    Toast.show({
-      type: "success",
-      text1: "Settings Reset",
-      text2: "All settings have been cleared",
-      visibilityTime: 1500,
-    });
-  };
-
-  const handleClearAllData = () => {
-    Alert.alert(
-      "Confirm Reset",
-      "Are you sure you want to clear all data (database, cache, and local files)? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Yes, clear all",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              loader.show("Clearing...");
-              await clearDatabase(db);
-              await AsyncStorage.clear();
-
-              const files = await FileSystem.readDirectoryAsync(
-                FileSystem.documentDirectory || ""
-              );
-              for (const file of files) {
-                await FileSystem.deleteAsync(
-                  FileSystem.documentDirectory + file,
-                  { idempotent: true }
-                );
-              }
-
-              await delay(600);
-
-              Toast.show({
-                type: "success",
-                text1: "All Data Cleared",
-                text2: "Database, cache, and files removed successfully.",
-                visibilityTime: 2000,
-              });
-            } catch (err) {
-              console.error("Full clear error:", err);
-              Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Failed to clear all data.",
-                visibilityTime: 2000,
-              });
-            } finally {
-              loader.hide();
-            }
-          },
-        },
-      ]
-    );
-  };
+    showImportModal,
+    setShowImportModal,
+    setField,
+    toggleBiometrics,
+    handleReset,
+    handleClearAllData,
+    handleImportFile,
+    exportUsersToExcel,
+    showExportModal,
+    setShowExportModal,
+    goToPassword,
+    exportFileUri,
+  } = useSettingsScreen(saveFileBottomSheet);
+  const { requireAuth } = useAuthAction();
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-4">
-      {/* Header */}
-      {/* <View className="flex-row items-center justify-between p-5 bg-white shadow-sm border-b border-gray-100">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.back()}
-            className="p-2 rounded-full bg-gray-100"
-          >
-            <Ionicons name="arrow-back" size={22} color="#374151" />
-          </TouchableOpacity>
-          <Text className="text-gray-900 text-xl font-bold">Settings</Text>
-        </View>
-      </View> */}
-
-      <Header title={`Settings`} showBack />
+      <Header
+        title="Settings"
+        showBack
+        buttons={[
+          {
+            icon: "cloud-upload-outline", // upload = import
+            color: "#2563eb", // blue tone
+            bgColor: "bg-blue-50",
+            borderColor: "border-blue-200",
+            onPress: () => setShowImportModal(true),
+          },
+          {
+            icon: "cloud-download-outline", // download = export
+            color: "#16a34a", // green tone
+            bgColor: "bg-green-50",
+            borderColor: "border-green-200",
+            onPress: () => setShowExportModal(true),
+          },
+        ]}
+      />
 
       <ScrollView
         className="flex-1 pt-4"
         contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section: Local Info */}
+        {/* Local Info Section */}
         <Text className="text-gray-500 font-semibold text-sm mb-2">
           Local Information
         </Text>
@@ -175,14 +108,14 @@ export default function SettingsScreen() {
           ))}
         </View>
 
-        {/* Section: Security */}
+        {/* Security Section */}
         <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
           Security
         </Text>
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => router.push("/set-password")}
+            onPress={goToPassword}
             className="flex-row items-center justify-between py-4 px-3 border-b border-gray-100"
           >
             <View className="flex-row items-center gap-2">
@@ -214,11 +147,10 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* Section: Reset */}
+        {/* Maintenance Section */}
         <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
           Maintenance
         </Text>
-
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <TouchableOpacity
             activeOpacity={0.85}
@@ -226,18 +158,13 @@ export default function SettingsScreen() {
             className="rounded-xl overflow-hidden mb-3 shadow-md"
           >
             <LinearGradient
-              colors={["#F87171", "#DC2626"]} // red gradient
+              colors={["#F87171", "#DC2626"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="py-3 px-4 flex-row items-center justify-center"
             >
-              <Ionicons
-                name="refresh-outline"
-                size={20}
-                color="white"
-                className="mr-2"
-              />
-              <Text className="text-white font-semibold text-base">
+              <Ionicons name="refresh-outline" size={20} color="white" />
+              <Text className="text-white font-semibold text-base ml-2">
                 Reset Settings
               </Text>
             </LinearGradient>
@@ -245,28 +172,88 @@ export default function SettingsScreen() {
 
           <TouchableOpacity
             activeOpacity={0.85}
-            onPress={handleClearAllData}
+            onPress={() => {
+              requireAuth({
+                description:
+                  "For security, please enter your password before deleting all data.",
+                type: "action",
+                onConfirm: handleClearAllData,
+              });
+            }}
             className="rounded-xl overflow-hidden shadow-md"
           >
             <LinearGradient
-              colors={["#FBBF24", "#D97706"]} // amber/orange gradient
+              colors={["#FBBF24", "#D97706"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               className="py-3 px-4 flex-row items-center justify-center"
             >
-              <Ionicons
-                name="trash-outline"
-                size={20}
-                color="white"
-                className="mr-2"
-              />
-              <Text className="text-white font-semibold text-base">
+              <Ionicons name="trash-outline" size={20} color="white" />
+              <Text className="text-white font-semibold text-base ml-2">
                 Clear All Data
               </Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
+
+        {/* Footer */}
+        <View className="items-center mt-8 opacity-60">
+          <Text className="text-gray-500 text-sm">
+            Version {Constants.expoConfig?.version || "1.0.0"} (
+            {Constants.expoConfig?.extra?.buildNumber || "1"})
+          </Text>
+        </View>
       </ScrollView>
+
+      <ImportPromptModal
+        visible={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onImport={() => {
+          setShowImportModal(false);
+          requireAuth({
+            description:
+              "For security, enter your password to continue importing.",
+            type: "action",
+            onConfirm: handleImportFile,
+          });
+        }}
+      />
+
+      <ExportPromptModal
+        visible={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={() => {
+          setShowExportModal(false);
+          requireAuth({
+            description:
+              "For security, enter your password before generating the exported file.",
+            type: "action",
+            onConfirm: exportUsersToExcel,
+          });
+        }}
+      />
+
+      <BottomSheetModal
+        index={1}
+        ref={saveFileBottomSheet}
+        snapPoints={saveFileSheetPoints}
+        keyboardBehavior="interactive"
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+          />
+        )}
+      >
+        <BottomSheetView className="flex-1 px-2 pb-6 pt-1">
+          <SaveFileView
+            fileUri={exportFileUri}
+            onClose={() => saveFileBottomSheet.current?.close()}
+          />
+        </BottomSheetView>
+      </BottomSheetModal>
     </SafeAreaView>
   );
 }

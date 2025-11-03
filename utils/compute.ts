@@ -123,12 +123,25 @@ export const computePercentage = (
     0
   );
 
-  result.firstSessionCodeTotal.percent = roundDecimal(
-    (result.firstSessionCodeTotal.percent || 0) / percentData.groupValues.length
+  const totalSNumber = percentData.sNumber.reduce(
+    (sum, item) => sum + (item.count || 0),
+    0
   );
-  result.secondSessionCodeTotal.percent = roundDecimal(
-    (result.secondSessionCodeTotal.percent || 0) /
-      percentData.groupValues.length
+
+  const firstSessionTotalSNumber =
+    totalSNumber +
+    result.firstSessionCodeTotal.in -
+    result.firstSessionCodeTotal.out;
+  const secondSessionTotalSNumber =
+    firstSessionTotalSNumber +
+    result.secondSessionCodeTotal.in -
+    result.secondSessionCodeTotal.out;
+
+  result.firstSessionCodeTotal.percent = roundPercentDecimal(
+    (result.firstSessionCodeTotal.totalCoded || 0) / firstSessionTotalSNumber
+  );
+  result.secondSessionCodeTotal.percent = roundPercentDecimal(
+    (result.secondSessionCodeTotal.totalCoded || 0) / secondSessionTotalSNumber
   );
 
   const firstPercent = result.firstSessionCodeTotal.percent || 0;

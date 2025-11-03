@@ -1,4 +1,4 @@
-import { ALL_SESSION_CODES, ALPHABET_CODES } from "@/constants/percent";
+import { ALL_SESSION_CODES, ALPHABET_CODES, CODES } from "@/constants/percent";
 import { Percent } from "@/types/percent";
 import { User } from "@/types/user";
 import { Buffer } from "buffer";
@@ -67,8 +67,11 @@ export const plotPercentToExcel = async (
     ALL_SESSION_CODES.forEach((key, keyIndex) => {
       const colLetter = String.fromCharCode("B".charCodeAt(0) + keyIndex);
 
-      if (key === "m") {
-        setCell(r104ws, `${colLetter}${row}`, 0);
+      if (
+        !group.firstSession[key] &&
+        CODES.includes(key as keyof Percent.Codes)
+      ) {
+        setCell(r104ws, `${colLetter}${row}`, "");
       } else {
         setCell(r104ws, `${colLetter}${row}`, group.firstSession[key]);
       }
@@ -79,8 +82,11 @@ export const plotPercentToExcel = async (
       const colIndex = 20 + keyIndex; // T=20
       const colLetter = r104ws.getColumn(colIndex).letter;
 
-      if (key === "m") {
-        setCell(r104ws, `${colLetter}${row}`, 0);
+      if (
+        !group.secondSession[key] &&
+        CODES.includes(key as keyof Percent.Codes)
+      ) {
+        setCell(r104ws, `${colLetter}${row}`, "");
       } else {
         setCell(r104ws, `${colLetter}${row}`, group.secondSession[key]);
       }
@@ -91,18 +97,37 @@ export const plotPercentToExcel = async (
   const totalRow = 39;
   ALL_SESSION_CODES.forEach((key, keyIndex) => {
     const colLetter = String.fromCharCode("B".charCodeAt(0) + keyIndex);
-    setCell(r104ws, `${colLetter}${totalRow}`, data.firstSessionCodeTotal[key]);
+    if (
+      !data.firstSessionCodeTotal[key] &&
+      CODES.includes(key as keyof Percent.Codes)
+    ) {
+      setCell(r104ws, `${colLetter}${totalRow}`, "");
+    } else {
+      setCell(
+        r104ws,
+        `${colLetter}${totalRow}`,
+        data.firstSessionCodeTotal[key]
+      );
+    }
   });
 
   // --- Plot Second Session Code Totals (T39–AK39)
   ALL_SESSION_CODES.forEach((key, keyIndex) => {
     const colIndex = 20 + keyIndex; // T = 20
     const colLetter = r104ws.getColumn(colIndex).letter;
-    setCell(
-      r104ws,
-      `${colLetter}${totalRow}`,
-      data.secondSessionCodeTotal[key]
-    );
+
+    if (
+      !data.secondSessionCodeTotal[key] &&
+      CODES.includes(key as keyof Percent.Codes)
+    ) {
+      setCell(r104ws, `${colLetter}${totalRow}`, "");
+    } else {
+      setCell(
+        r104ws,
+        `${colLetter}${totalRow}`,
+        data.secondSessionCodeTotal[key]
+      );
+    }
   });
 
   // TOTAL PERCENTAGE
@@ -127,22 +152,22 @@ export const plotPercentToExcel = async (
     setCell(
       r104ws,
       `AP${rowIndex}`,
-      data.groupValues[keyIndex].firstSession.in
+      data.groupValues[keyIndex].firstSession.in || ""
     );
     setCell(
       r104ws,
       `AQ${rowIndex}`,
-      data.groupValues[keyIndex].secondSession.in
+      data.groupValues[keyIndex].secondSession.in || ""
     );
     setCell(
       r104ws,
       `AR${rowIndex}`,
-      data.groupValues[keyIndex].firstSession.out
+      data.groupValues[keyIndex].firstSession.out || ""
     );
     setCell(
       r104ws,
       `AS${rowIndex}`,
-      data.groupValues[keyIndex].secondSession.out
+      data.groupValues[keyIndex].secondSession.out || ""
     );
 
     setCell(r104ws, `AT${rowIndex}`, firstValues);

@@ -46,6 +46,34 @@ export const addNewUser = async (
     `);
 };
 
+export const addBulkUsers = async (
+  users: User.UserFormData[],
+  db: SQLiteDatabase
+) => {
+  try {
+    await db.execAsync("BEGIN TRANSACTION;");
+
+    const insertQuery = `
+      INSERT INTO ${TABLE_USER} (fullname, purok, grupo, gender)
+      VALUES (?, ?, ?, ?);
+    `;
+
+    for (const user of users) {
+      await db.runAsync(insertQuery, [
+        user.fullname.toString(),
+        user.purok.toString(),
+        user.grupo.toString(),
+        user.gender.toString(),
+      ]);
+    }
+
+    await db.execAsync("COMMIT;");
+    console.log(`Inserted ${users.length} users successfully.`);
+  } catch (error) {
+    await db.execAsync("ROLLBACK;");
+    console.error("Failed to insert users:", error);
+  }
+};
 export const getAllUsers = async (db: SQLiteDatabase): Promise<User.User[]> => {
   const data = await db.getAllAsync<User.ServerUser>(
     `SELECT * FROM ${TABLE_USER}`
@@ -154,8 +182,6 @@ export const getSessionAbsentees = async (
 `,
     [purok]
   );
-
-  console.log("getSessionAbsentees", purok);
 
   const grouped = Object.values(
     rows.reduce((acc, row) => {

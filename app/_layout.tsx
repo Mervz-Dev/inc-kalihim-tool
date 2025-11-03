@@ -1,4 +1,5 @@
 import { LoadingProvider } from "@/components/loader";
+import { DATABASE_FILE_NAME } from "@/constants/database";
 import { initializeDB } from "@/services/sql-lite/db";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
@@ -10,15 +11,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import "../global.css";
 
-const DATABASE_NAME = "inc-kapatid.db";
-
 const RootLayout = () => {
   usePreventScreenCapture();
 
   return (
     <>
       <LoadingProvider>
-        <SQLiteProvider databaseName={DATABASE_NAME} onInit={initializeDB}>
+        <SQLiteProvider databaseName={DATABASE_FILE_NAME} onInit={initializeDB}>
           <StatusBar style="dark" backgroundColor="#FFF" translucent={false} />
           <GestureHandlerRootView className="flex-1">
             <BottomSheetModalProvider>

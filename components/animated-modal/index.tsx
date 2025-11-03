@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalProps,
-  Pressable,
   StyleProp,
   ViewProps,
   ViewStyle,
@@ -77,12 +76,12 @@ export const AnimatedModal: React.FC<AnimatedModalProps> = ({
         style={[animatedOverlayStyle, { backgroundColor: overlayColor }]}
         className={containerClassName}
       >
-        {onClose && (
+        {/* {onClose && (
           <Pressable
             onPress={onClose}
             className="absolute top-0 bottom-0 left-0 right-0"
           />
-        )}
+        )} */}
 
         <Animated.View
           style={[animatedContentStyle, contentStyle]}

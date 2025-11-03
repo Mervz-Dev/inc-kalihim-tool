@@ -5,17 +5,12 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import {
   useSafeAreaFrame,
   useSafeAreaInsets,
@@ -61,15 +56,14 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
 
   return (
     <>
-      {/* Modern Gradient Button */}
-
+      {/* Search Icon Button */}
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={handlePress}
         className="w-10 h-10 rounded-full overflow-hidden shadow-lg"
       >
         <LinearGradient
-          colors={["#9CA3AF", "#6B7280"]} // grey gradient
+          colors={["#9CA3AF", "#6B7280"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           className="flex-1 items-center justify-center"
@@ -108,7 +102,7 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
           {/* Search Input */}
           <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3 mb-5 shadow-sm">
             <Ionicons name="search" size={20} color="#6B7280" />
-            <TextInput
+            <BottomSheetTextInput
               className="flex-1 ml-2 text-base text-gray-800"
               placeholder="Search by name..."
               placeholderTextColor="#9CA3AF"
@@ -117,9 +111,16 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
             />
           </View>
 
-          {/* Loader */}
+          {/* Content States */}
           {loading ? (
             <ActivityIndicator size="small" color="gray" />
+          ) : query.trim().length === 0 ? (
+            <View className="flex-1 justify-center items-center mt-20">
+              <Ionicons name="people-outline" size={50} color="#9CA3AF" />
+              <Text className="text-gray-500 text-base mt-3">
+                Start typing to search kapatid
+              </Text>
+            </View>
           ) : results.length > 0 ? (
             <>
               <Text className="text-gray-500 text-sm mb-3">Results</Text>
@@ -170,14 +171,15 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
                 </TouchableOpacity>
               ))}
             </>
-          ) : query.length > 0 ? (
+          ) : (
+            // 🟡 No results state
             <View className="flex-1 justify-center items-center mt-20">
               <Ionicons name="search-outline" size={42} color="#9CA3AF" />
               <Text className="text-gray-500 text-base mt-3">
                 No results found
               </Text>
             </View>
-          ) : null}
+          )}
         </BottomSheetScrollView>
       </BottomSheetModal>
     </>

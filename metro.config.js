@@ -7,7 +7,6 @@ const config = getDefaultConfig(__dirname);
 // Add support for NativeWind
 const metroConfig = withNativeWind(config, { input: "./global.css" });
 
-// Update resolver to handle .xlsx and polyfill buffer
 metroConfig.resolver = {
   ...metroConfig.resolver,
   extraNodeModules: {

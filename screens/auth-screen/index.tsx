@@ -2,8 +2,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -16,9 +15,17 @@ import {
 
 export default function SecureScreen() {
   const { checkPassword, authenticate } = useAuth();
+  const { biometricsEnabled } = useSettingsStore();
+
+  // 🧠 get params (for flexible use)
+  const { title, description, type } = useLocalSearchParams<{
+    title?: string;
+    description?: string;
+    type?: string;
+  }>();
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { biometricsEnabled } = useSettingsStore();
 
   const handleUnlock = async () => {
     const success = await checkPassword(password);
@@ -27,7 +34,16 @@ export default function SecureScreen() {
       return;
     }
 
-    router.replace("/dashboard");
+    // ✅ if has callback route, go there
+    const pendingAction = globalThis.__authCallback;
+    if (pendingAction) {
+      const action = pendingAction;
+      delete globalThis.__authCallback;
+      action(); // call it
+      router.back();
+    } else {
+      router.replace("/dashboard");
+    }
   };
 
   return (
@@ -41,17 +57,29 @@ export default function SecureScreen() {
       }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View className="bg-white rounded-3xl p-8 pb-12 w-full shadow-lg items-center">
-        {/* Top lock icon */}
+      <View className="bg-white rounded-3xl p-8 pb-12 w-full shadow-lg items-center relative">
+        {/* Back button if opened for callback */}
+        {type && (
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="absolute left-5 top-5 bg-gray-100 p-2 rounded-full"
+          >
+            <Ionicons name="arrow-back-outline" size={22} color="#374151" />
+          </TouchableOpacity>
+        )}
+
+        {/* Lock icon */}
         <View className="bg-blue-100 rounded-full p-5 mb-4">
           <Ionicons name="lock-closed-outline" size={48} color="#2563eb" />
         </View>
 
         <Text className="text-2xl font-extrabold text-gray-900 mb-2 text-center">
-          Kalihim Secure Access
+          {title || "Kalihim Secure Access"}
         </Text>
+
         <Text className="text-gray-500 text-center mb-6 px-4">
-          Enter your password or use biometrics to unlock your dashboard
+          {description ||
+            "Enter your password or use biometrics to unlock your dashboard."}
         </Text>
 
         {/* Password Input */}
@@ -94,12 +122,12 @@ export default function SecureScreen() {
             }}
           >
             <Text style={{ color: "white", fontWeight: "600", fontSize: 18 }}>
-              Unlock
+              {type === "action" ? "Confirm Action" : "Unlock"}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Biometric Unlock Button */}
+        {/* Biometric Unlock */}
         {biometricsEnabled && (
           <TouchableOpacity
             activeOpacity={0.8}
