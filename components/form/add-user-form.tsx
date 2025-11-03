@@ -84,13 +84,13 @@ export const AddUserForm = ({
 
   return (
     <View className="flex-1 mt-2" style={{ marginBottom: bottom + 10 }}>
-      <Text className="text-gray-900 text-2xl font-bold mb-6">
+      <Text className="text-gray-900 text-2xl font-jakarta-bold mb-6">
         {isEdit ? "Update Kapatid" : "Add New Kapatid"}
       </Text>
 
       <View className="space-y-4 mb-6 gap-2">
         <View className="space-y-1">
-          <Text className="text-gray-800 font-medium text-base mb-2">
+          <Text className="text-gray-800 font-jakarta-medium text-base mb-2">
             Full Name
           </Text>
           <InputField
@@ -103,7 +103,7 @@ export const AddUserForm = ({
 
         <View className="flex-row gap-4">
           <View className="flex-1 space-y-1">
-            <Text className="text-gray-800 font-medium text-base mb-2">
+            <Text className="text-gray-800 font-jakarta-medium text-base mb-2">
               Purok
             </Text>
             <InputField
@@ -115,7 +115,7 @@ export const AddUserForm = ({
             />
           </View>
           <View className="flex-1 space-y-1">
-            <Text className="text-gray-800 font-medium text-base  mb-2">
+            <Text className="text-gray-800 font-jakarta-medium text-base  mb-2">
               Grupo
             </Text>
             <InputField
@@ -129,7 +129,7 @@ export const AddUserForm = ({
         </View>
 
         <View className="space-y-1">
-          <Text className="text-gray-800 font-medium text-base  mb-2">
+          <Text className="text-gray-800 font-jakarta-medium text-base  mb-2">
             Gender
           </Text>
           <DropdownField
@@ -166,7 +166,7 @@ export const AddUserForm = ({
               end={{ x: 1, y: 0 }}
               className="px-6 py-4 rounded-full"
             >
-              <Text className="text-white font-semibold text-center">
+              <Text className="text-white font-jakarta-semibold text-center">
                 Delete
               </Text>
             </LinearGradient>
@@ -188,7 +188,7 @@ export const AddUserForm = ({
             end={{ x: 1, y: 0 }}
             className="px-6 py-4 rounded-full"
           >
-            <Text className="text-white font-semibold text-center">
+            <Text className="text-white font-jakarta-semibold text-center">
               {isEdit ? "Update" : "Add"} Now
             </Text>
           </LinearGradient>

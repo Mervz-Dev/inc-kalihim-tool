@@ -58,10 +58,10 @@ export const UserCard = ({
           </View>
 
           <View className="flex-1 items-center">
-            <Text className="text-white font-semibold text-sm opacity-90">
+            <Text className="text-white font-jakarta-semibold text-sm opacity-90">
               {user.purok} - {user.grupo}
             </Text>
-            <Text className="text-white text-xl font-bold text-center mt-1">
+            <Text className="text-white text-xl font-jakarta-bold text-center mt-1">
               {user.fullname}
             </Text>
           </View>

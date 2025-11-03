@@ -26,6 +26,7 @@ interface SNumberModalProps {
   setDateRange: React.Dispatch<
     React.SetStateAction<{ startDate?: DateType; endDate?: DateType }>
   >;
+  isNoPrevious?: boolean;
 }
 
 export const SNumberModal = ({
@@ -36,6 +37,7 @@ export const SNumberModal = ({
   dateRange,
   handleGeneratePrev,
   setDateRange,
+  isNoPrevious,
 }: SNumberModalProps) => {
   const defaultStyles = useDefaultStyles();
   const [dateModalVisible, setDateModalVisible] = useState(false);
@@ -55,16 +57,22 @@ export const SNumberModal = ({
           style={{ flexGrow: 0, maxHeight: 550 }}
         >
           {/* Header */}
-          <View className="flex-row items-center justify-between mb-5">
-            <Text className="text-xl font-bold text-gray-900">
+          <View className="mb-5">
+            <Text className="text-xl jakarta-bold text-gray-900">
               Enter S# for Each Group
             </Text>
+            {isNoPrevious && (
+              <Text className="text-orange-600 text-xs jakarta-regular mt-1">
+                No previous data is available. Please fill in the S# manually
+                for each group.
+              </Text>
+            )}
           </View>
 
           {/* Date Range */}
           <View className="flex-row justify-between mb-2">
             <View className="flex-1">
-              <Text className="text-gray-600 font-medium mb-2 text-sm">
+              <Text className="text-gray-600 font-jakarta-medium mb-2 text-sm">
                 Date Range
               </Text>
               <TouchableOpacity
@@ -80,7 +88,7 @@ export const SNumberModal = ({
                 }}
               >
                 <Text
-                  className={`text-gray-800 font-medium ${
+                  className={`text-gray-800 font-jakarta-medium ${
                     !dateRange.startDate ? "text-gray-400" : ""
                   }`}
                 >
@@ -99,14 +107,14 @@ export const SNumberModal = ({
                 key={group.group}
                 className="flex-row justify-between items-center mb-2.5 px-3 py-2 bg-gray-50 rounded-xl shadow-sm"
               >
-                <Text className="text-base font-semibold text-gray-800">
+                <Text className="text-base font-jakarta-semibold text-gray-800">
                   Group {group.group}
                 </Text>
                 <TextInput
                   keyboardType="number-pad"
                   value={group.count === 0 ? "" : group.count.toString()}
                   onChangeText={(value) => handleChange(index, value)}
-                  className="bg-white rounded-lg px-3 py-2 w-20 text-center text-gray-800 font-medium focus:border-blue-400"
+                  className="bg-white rounded-lg px-3 py-2 w-20 text-center text-gray-800 font-jakarta-medium focus:border-blue-400"
                   placeholder="0"
                   placeholderTextColor="#9ca3af"
                 />
@@ -126,7 +134,7 @@ export const SNumberModal = ({
                 end={{ x: 1, y: 1 }}
                 className="py-3.5 rounded-full items-center"
               >
-                <Text className="text-white font-semibold text-base tracking-wide">
+                <Text className="text-white font-jakarta-semibold text-base tracking-wide">
                   Save
                 </Text>
               </LinearGradient>
@@ -151,7 +159,7 @@ export const SNumberModal = ({
                   color="#15803d"
                   className="mr-2"
                 />
-                <Text className="text-sm font-semibold text-green-700">
+                <Text className="text-sm font-jakarta-semibold text-green-700">
                   Generate From Previous Data
                 </Text>
               </TouchableOpacity>
@@ -170,7 +178,7 @@ export const SNumberModal = ({
         onClose={() => setDateModalVisible(false)}
       >
         <View className="bg-white rounded-3xl w-full max-w-md">
-          <Text className="text-lg font-semibold text-gray-800 mb-3">
+          <Text className="text-lg font-jakarta-semibold text-gray-800 mb-3">
             Select Date Range
           </Text>
 
@@ -209,7 +217,7 @@ export const SNumberModal = ({
             onPress={() => setDateModalVisible(false)}
             className="mt-4 bg-gray-100 py-3 rounded-full items-center"
           >
-            <Text className="text-gray-700 font-semibold">Done</Text>
+            <Text className="text-gray-700 font-jakarta-semibold">Done</Text>
           </TouchableOpacity>
         </View>
       </AnimatedModal>

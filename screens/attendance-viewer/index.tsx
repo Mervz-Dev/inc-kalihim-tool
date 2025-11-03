@@ -21,7 +21,7 @@ export default function AbsentViewer() {
       >
         <Text
           className={`flex-1 text-base ${
-            attendedOnce ? "font-bold text-black" : "text-gray-500"
+            attendedOnce ? "font-jakarta-bold text-black" : "text-gray-500"
           }`}
         >
           {user.fullname}
@@ -58,7 +58,7 @@ export default function AbsentViewer() {
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
 
-          <Text className="text-black text-2xl font-bold">
+          <Text className="text-black text-2xl font-jakarta-bold">
             Attendance Viewer
           </Text>
         </View>
@@ -73,26 +73,28 @@ export default function AbsentViewer() {
             className="mb-6 rounded-2xl border border-gray-300 bg-white shadow"
           >
             <View className="bg-gray-100 px-4 py-3 rounded-t-2xl">
-              <Text className="font-semibold text-lg">
+              <Text className="font-jakarta-semibold text-lg">
                 {`${group.purok} - ${group.grupo}`}
               </Text>
             </View>
 
             <View className="flex-row bg-gray-50 border-b border-gray-300 px-3 py-2">
-              <Text className="flex-1 font-medium">Name</Text>
-              <Text className="w-12 text-center font-medium">W/Th</Text>
-              <Text className="w-12 text-center font-medium">S/S</Text>
+              <Text className="flex-1 font-jakarta-medium">Name</Text>
+              <Text className="w-12 text-center font-jakarta-medium">W/Th</Text>
+              <Text className="w-12 text-center font-jakarta-medium">S/S</Text>
             </View>
 
             {/* Male Section */}
             <View className="bg-gray-200 px-3 py-2">
-              <Text className="font-semibold text-blue-500">Lalaki</Text>
+              <Text className="font-jakarta-semibold text-blue-500">
+                Lalaki
+              </Text>
             </View>
             {group.maleUsers.map(renderRow)}
 
             {/* Female Section */}
             <View className="bg-gray-200 px-3 py-2">
-              <Text className="font-semibold text-pink-500">Babae</Text>
+              <Text className="font-jakarta-semibold text-pink-500">Babae</Text>
             </View>
             {group.femaleUsers.map(renderRow)}
           </View>

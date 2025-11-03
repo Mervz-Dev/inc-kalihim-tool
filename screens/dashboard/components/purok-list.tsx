@@ -36,7 +36,7 @@ export const PurokList = ({
         >
           {/* Left side */}
           <View className="flex-1">
-            <Text className="text-white text-2xl font-extrabold">
+            <Text className="text-white text-2xl font-jakarta-extrabold">
               Purok {item.purok}
             </Text>
             <Text className="text-gray-200 text-sm mt-1">
@@ -49,7 +49,7 @@ export const PurokList = ({
             {/* Total Users */}
             <View className="flex-row items-center bg-white/20 px-3 py-1 rounded-full">
               <Ionicons name="people" size={18} color="white" />
-              <Text className="text-white font-semibold ml-1">
+              <Text className="text-white font-jakarta-semibold ml-1">
                 {item.userCount}
               </Text>
             </View>
@@ -58,13 +58,13 @@ export const PurokList = ({
             <View className="flex-row items-center gap-2">
               <View className="flex-row items-center bg-white/20 px-2 py-1 rounded-full">
                 <Ionicons name="woman" size={16} color="#f472b6" />
-                <Text className="text-white text-sm font-semibold ml-1">
+                <Text className="text-white text-sm font-jakarta-semibold ml-1">
                   {item.femaleCount}
                 </Text>
               </View>
               <View className="flex-row items-center bg-white/20 px-2 py-1 rounded-full">
                 <Ionicons name="man" size={16} color="#60a5fa" />
-                <Text className="text-white text-sm font-semibold ml-1">
+                <Text className="text-white text-sm font-jakarta-semibold ml-1">
                   {item.maleCount}
                 </Text>
               </View>
@@ -82,7 +82,7 @@ export const PurokList = ({
           <Ionicons name="people-outline" size={56} color="#9ca3af" />
         </View>
 
-        <Text className="text-center text-2xl font-bold text-gray-800 mb-2">
+        <Text className="text-center text-2xl font-jakarta-bold text-gray-800 mb-2">
           Walang Purok pa
         </Text>
 
@@ -95,7 +95,7 @@ export const PurokList = ({
           className="flex-row items-center bg-blue-600 px-6 py-3 rounded-full shadow-lg"
         >
           <Ionicons name="add" size={22} color="white" />
-          <Text className="text-white font-semibold text-lg ml-2">
+          <Text className="text-white font-jakarta-semibold text-lg ml-2">
             Add Kapatid
           </Text>
         </Pressable>
@@ -106,7 +106,7 @@ export const PurokList = ({
   return (
     <View className="flex-1 mt-4">
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-neutral-600 text-lg font-semibold">
+        <Text className="text-neutral-600 text-lg font-jakarta-semibold">
           📋 List of Purok
         </Text>
 

@@ -87,7 +87,9 @@ export const CodesButton = () => {
             color="black"
             style={{ marginRight: 8 }}
           />
-          <Text className="text-black font-semibold text-sm">Codes</Text>
+          <Text className="text-black font-jakarta-semibold text-sm">
+            Codes
+          </Text>
         </LinearGradient>
       </TouchableOpacity>
 
@@ -108,7 +110,9 @@ export const CodesButton = () => {
         <BottomSheetScrollView
           contentContainerStyle={{ padding: 20, paddingBottom: bottom + 24 }}
         >
-          <Text className="text-2xl font-bold text-gray-900 mb-5">Codes</Text>
+          <Text className="text-2xl font-jakarta-bold text-gray-900 mb-5">
+            Codes
+          </Text>
 
           {CODE_DATA.map((item) => (
             <View
@@ -117,13 +121,13 @@ export const CodesButton = () => {
             >
               {/* Left side: Code in a chip */}
               <View className="bg-yellow-400 rounded-full w-12 h-12 items-center justify-center shadow-sm">
-                <Text className="text-black font-bold text-lg">
+                <Text className="text-black font-jakarta-bold text-lg">
                   {item.code}
                 </Text>
               </View>
 
               {/* Right side: Reason */}
-              <Text className="flex-1 ml-4 text-gray-800 text-base font-medium">
+              <Text className="flex-1 ml-4 text-gray-800 text-base font-jakarta-medium">
                 {item.reason}
               </Text>
             </View>

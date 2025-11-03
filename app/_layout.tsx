@@ -2,10 +2,12 @@ import { LoadingProvider } from "@/components/loader";
 import { DATABASE_FILE_NAME } from "@/constants/database";
 import { initializeDB } from "@/services/sql-lite/db";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { usePreventScreenCapture } from "expo-screen-capture";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
+import { Text as RNText } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -13,6 +15,23 @@ import "../global.css";
 
 const RootLayout = () => {
   usePreventScreenCapture();
+
+  const [fontsLoaded] = useFonts({
+    "PlusJakartaSans-Light": require("@/assets/fonts/PlusJakartaSans-Light.ttf"),
+    "PlusJakartaSans-Regular": require("@/assets/fonts/PlusJakartaSans-Regular.ttf"),
+    "PlusJakartaSans-Medium": require("@/assets/fonts/PlusJakartaSans-Medium.ttf"),
+    "PlusJakartaSans-SemiBold": require("@/assets/fonts/PlusJakartaSans-SemiBold.ttf"),
+    "PlusJakartaSans-Bold": require("@/assets/fonts/PlusJakartaSans-Bold.ttf"),
+    "PlusJakartaSans-ExtraBold": require("@/assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
+  });
+
+  if (!fontsLoaded) return null;
+
+  // Global default (React Native built-in way)
+  (RNText as any).defaultProps = {
+    ...(RNText as any).defaultProps,
+    style: { fontFamily: "PlusJakartaSans-Regular" },
+  };
 
   return (
     <>

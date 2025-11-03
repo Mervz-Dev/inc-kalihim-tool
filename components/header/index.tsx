@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { BackHandler, Text, TouchableOpacity, View } from "react-native";
 import {
   runOnJS,
-  useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
@@ -45,14 +44,14 @@ export const Header: React.FC<HeaderProps> = ({
   const scale = useSharedValue(0.9);
   const contentOpacity = useSharedValue(0);
 
-  const animatedOverlayStyle = useAnimatedStyle(() => ({
-    opacity: overlayOpacity.value,
-  }));
+  // const animatedOverlayStyle = useAnimatedStyle(() => ({
+  //   opacity: overlayOpacity.value,
+  // }));
 
-  const animatedContentStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: contentOpacity.value,
-  }));
+  // const animatedContentStyle = useAnimatedStyle(() => ({
+  //   transform: [{ scale: scale.value }],
+  //   opacity: contentOpacity.value,
+  // }));
 
   const openModal = useCallback(() => {
     setShowConfirm(true);
@@ -111,12 +110,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           <View>
             <Text
-              className={`text-gray-900 font-semibold leading-tight ${titleSize}`}
+              className={`text-gray-900 font-jakarta-semibold leading-tight ${titleSize}`}
             >
               {title}
             </Text>
             {subtitle && (
-              <Text className="text-gray-400 text-sm font-medium">
+              <Text className="text-gray-400 text-sm font-jakarta-medium">
                 {subtitle}
               </Text>
             )}
@@ -154,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
           <View className="w-12 h-12 rounded-full bg-yellow-100 items-center justify-center mb-2">
             <Ionicons name="alert-circle-outline" size={26} color="#ca8a04" />
           </View>
-          <Text className="text-lg font-semibold text-gray-900">
+          <Text className="text-lg font-jakarta-semibold text-gray-900">
             Are you sure?
           </Text>
         </View>
@@ -171,7 +170,7 @@ export const Header: React.FC<HeaderProps> = ({
             activeOpacity={0.8}
             className="flex-1 py-2.5 rounded-xl border border-gray-300 bg-white"
           >
-            <Text className="text-gray-700 font-medium text-center">
+            <Text className="text-gray-700 font-jakarta-medium text-center">
               Cancel
             </Text>
           </TouchableOpacity>
@@ -180,7 +179,9 @@ export const Header: React.FC<HeaderProps> = ({
             activeOpacity={0.8}
             className="flex-1 py-2.5 rounded-xl bg-blue-600 shadow-sm"
           >
-            <Text className="text-white font-medium text-center">Leave</Text>
+            <Text className="text-white font-jakarta-medium text-center">
+              Leave
+            </Text>
           </TouchableOpacity>
         </View>
       </AnimatedModal>

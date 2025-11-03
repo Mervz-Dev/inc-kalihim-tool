@@ -130,7 +130,7 @@ export const GrupoList = ({
     <View className="mb-6">
       <View className="flex-row items-center mb-2 px-1">
         <Ionicons name={icon} size={20} color={color} />
-        <Text className="text-neutral-700 text-lg font-semibold ml-2">
+        <Text className="text-neutral-700 text-lg font-jakarta-semibold ml-2">
           {title}
         </Text>
       </View>

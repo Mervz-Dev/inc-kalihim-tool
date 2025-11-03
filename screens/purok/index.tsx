@@ -138,7 +138,9 @@ export default function Purok() {
               size={20}
               color="white"
             />
-            <Text className="text-white font-semibold text-xs mt-1">R1-05</Text>
+            <Text className="text-white font-jakarta-semibold text-xs mt-1">
+              R1-05
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -160,7 +162,9 @@ export default function Purok() {
             className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
           >
             <Ionicons name="stats-chart-outline" size={20} color="white" />
-            <Text className="text-white font-semibold text-xs mt-1">R1-04</Text>
+            <Text className="text-white font-jakarta-semibold text-xs mt-1">
+              R1-04
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -182,7 +186,7 @@ export default function Purok() {
             className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
           >
             <Ionicons name="person-remove-outline" size={20} color="white" />
-            <Text className="text-white font-semibold text-xs mt-1">
+            <Text className="text-white font-jakarta-semibold text-xs mt-1">
               R1-02-03
             </Text>
           </LinearGradient>

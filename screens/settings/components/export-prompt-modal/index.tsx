@@ -23,7 +23,9 @@ export function ExportPromptModal({
           <View className="bg-green-100 rounded-full p-4 mb-2">
             <Ionicons name="cloud-download-outline" size={36} color="#16a34a" />
           </View>
-          <Text className="text-2xl font-bold text-gray-900">Export Data</Text>
+          <Text className="text-2xl font-jakarta-bold text-gray-900">
+            Export Data
+          </Text>
         </View>
 
         {/* Description */}
@@ -48,7 +50,7 @@ export function ExportPromptModal({
               alignItems: "center",
             }}
           >
-            <Text className="text-white font-semibold text-base">
+            <Text className="text-white font-jakarta-semibold text-base">
               Generate Export File
             </Text>
           </LinearGradient>
@@ -61,7 +63,9 @@ export function ExportPromptModal({
           className="mb-1"
         >
           <View className="bg-gray-100 py-3 rounded-2xl items-center shadow-sm">
-            <Text className="text-gray-700 font-medium text-base">Cancel</Text>
+            <Text className="text-gray-700 font-jakarta-medium text-base">
+              Cancel
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

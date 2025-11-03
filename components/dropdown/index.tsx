@@ -82,7 +82,7 @@ export const Dropdown = ({
           <View className="flex-1">
             <Text
               className={`text-sm ${
-                value ? "text-gray-900 font-medium" : "text-gray-400"
+                value ? "text-gray-900 font-jakarta-medium" : "text-gray-400"
               }`}
               numberOfLines={1}
             >
@@ -118,7 +118,7 @@ export const Dropdown = ({
         )}
       >
         <BottomSheetView className="px-4 pt-4">
-          <Text className="text-lg font-bold text-gray-900 mb-3">
+          <Text className="text-lg font-jakarta-bold text-gray-900 mb-3">
             Choose an option
           </Text>
 
@@ -146,7 +146,7 @@ export const Dropdown = ({
                 <Text
                   className={`flex-1 text-base ${
                     value === item.value
-                      ? "text-blue-600 font-semibold"
+                      ? "text-blue-600 font-jakarta-semibold"
                       : "text-gray-800"
                   }`}
                 >

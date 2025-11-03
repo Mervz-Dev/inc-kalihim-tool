@@ -62,7 +62,7 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
             color={isFirst ? "#6b7280" : "#fff"}
           />
           <Text
-            className={`font-semibold ${
+            className={`font-jakarta-semibold ${
               isFirst ? "text-gray-600" : "text-white"
             }`}
           >
@@ -73,7 +73,7 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
 
       {/* Progress Indicator */}
       <View className="px-4 py-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm items-center justify-center">
-        <Text className="font-semibold text-gray-800 tracking-wide">
+        <Text className="font-jakarta-semibold text-gray-800 tracking-wide">
           {currentIndex + 1} / {total}
         </Text>
       </View>
@@ -90,7 +90,7 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
           end={{ x: 1, y: 1 }}
           className="w-28 py-3 rounded-2xl items-center justify-center flex-row gap-1"
         >
-          <Text className="font-semibold text-white">
+          <Text className="font-jakarta-semibold text-white">
             {isLast ? "Generate" : "Next"}
           </Text>
           <Ionicons

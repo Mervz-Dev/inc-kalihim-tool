@@ -41,6 +41,7 @@ export const usePercentGenerator = (
   const [sNumber, setSNumber] = useState<Percent.SNumber[]>(
     defaultValues.sNumber
   );
+  const [isNoPrev, setIsNoPrev] = useState<boolean>(false);
 
   const [dateRange, setDateRange] = useState<{
     startDate?: DateType;
@@ -87,14 +88,11 @@ export const usePercentGenerator = (
         }
 
         setPrevComputedResult(parsed);
-        setSNumberModalVisible(true);
       } else {
-        Alert.alert(
-          "No Previous S Number Found",
-          "Please enter the S number values for each group before proceeding.",
-          [{ text: "OK", onPress: () => setSNumberModalVisible(true) }]
-        );
+        setIsNoPrev(true);
       }
+
+      setSNumberModalVisible(true);
     } catch (error) {
       console.error("Failed to load previous data:", error);
       Alert.alert("Error", "Failed to load group data.");
@@ -309,5 +307,6 @@ export const usePercentGenerator = (
     STORAGE_KEY,
     plottedExcelUri,
     generateLastData,
+    isNoPrev,
   };
 };

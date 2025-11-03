@@ -39,14 +39,17 @@ export const SessionCard = ({
     <View className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 pt-2  shadow-sm border border-gray-100">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="font-semibold text-gray-800 text-base">{title}</Text>
+        <Text className="font-jakarta-semibold text-gray-800 text-sm">
+          {title}
+        </Text>
 
         {/* IN / OUT Buttons */}
         <View className="flex-row gap-2">
           {/* IN Button */}
           <TouchableOpacity
             className="rounded-xl overflow-hidden shadow-sm"
-            activeOpacity={0.9}
+            activeOpacity={0.7}
+            style={{ minWidth: 54 }}
             onPress={() => handleButtonPress(index, "in", sessionType)}
           >
             <LinearGradient
@@ -58,7 +61,7 @@ export const SessionCard = ({
               className="flex-row items-center px-3 py-1.5 rounded-xl"
             >
               <Ionicons name="arrow-down-circle" size={18} color="#166534" />
-              <Text className="ml-1 text-sm font-semibold text-green-900">
+              <Text className="ml-1 text-sm font-jakarta-semibold text-green-900">
                 {session.in}
               </Text>
             </LinearGradient>
@@ -67,7 +70,8 @@ export const SessionCard = ({
           {/* OUT Button */}
           <TouchableOpacity
             className="rounded-xl overflow-hidden shadow-sm"
-            activeOpacity={0.9}
+            style={{ minWidth: 54 }}
+            activeOpacity={0.7}
             onPress={() => handleButtonPress(index, "out", sessionType)}
           >
             <LinearGradient
@@ -81,7 +85,7 @@ export const SessionCard = ({
               className="flex-row items-center px-3 py-1.5 rounded-xl"
             >
               <Ionicons name="arrow-up-circle" size={18} color="#7f1d1d" />
-              <Text className="ml-1 text-sm font-semibold text-red-900">
+              <Text className="ml-1 text-sm font-jakarta-semibold text-red-900">
                 {session.out}
               </Text>
             </LinearGradient>

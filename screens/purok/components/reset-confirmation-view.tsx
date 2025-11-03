@@ -27,15 +27,17 @@ export const ResetConfirmationView = ({
 
   return (
     <View className="flex-1 mt-6 " style={{ marginBottom: bottom + 20 }}>
-      <Text className="text-gray-900 text-2xl font-bold mb-4">
+      <Text className="text-gray-900 text-2xl font-jakarta-bold mb-4">
         Reset Sessions for Purok {purok}
       </Text>
 
       <View className="bg-red-50 border border-red-300 rounded-2xl p-4 mb-6 shadow-sm">
-        <Text className="text-red-700 font-bold text-lg mb-1">⚠️ Warning</Text>
+        <Text className="text-red-700 font-jakarta-bold text-lg mb-1">
+          ⚠️ Warning
+        </Text>
         <Text className="text-red-600 text-sm leading-relaxed">
           This action will reset{" "}
-          <Text className="font-semibold">
+          <Text className="font-jakarta-semibold">
             all first and second session data
           </Text>{" "}
           for users in this purok. Make sure sessions are completed before
@@ -59,7 +61,7 @@ export const ResetConfirmationView = ({
             end={{ x: 1, y: 0 }}
             className="py-3 items-center justify-center rounded-full"
           >
-            <Text className="text-gray-800 font-semibold">Cancel</Text>
+            <Text className="text-gray-800 font-jakarta-semibold">Cancel</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -74,7 +76,9 @@ export const ResetConfirmationView = ({
             end={{ x: 1, y: 0 }}
             className="py-3 items-center justify-center rounded-full"
           >
-            <Text className="text-white font-semibold">Confirm Reset</Text>
+            <Text className="text-white font-jakarta-semibold">
+              Confirm Reset
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>

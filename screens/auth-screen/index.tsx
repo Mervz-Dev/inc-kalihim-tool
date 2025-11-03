@@ -73,11 +73,11 @@ export default function SecureScreen() {
           <Ionicons name="lock-closed-outline" size={48} color="#2563eb" />
         </View>
 
-        <Text className="text-2xl font-extrabold text-gray-900 mb-2 text-center">
+        <Text className="text-2xl font-jakarta-extrabold text-gray-900 mb-2 text-center">
           {title || "Kalihim Secure Access"}
         </Text>
 
-        <Text className="text-gray-500 text-center mb-6 px-4">
+        <Text className="text-gray-500 font-jakarta-regular text-center mb-6 px-4">
           {description ||
             "Enter your password or use biometrics to unlock your dashboard."}
         </Text>
@@ -90,7 +90,8 @@ export default function SecureScreen() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
-            className="border border-gray-200 rounded-xl p-4 text-center text-lg text-gray-800 w-full"
+            className="border border-gray-200 rounded-xl p-4 text-center text-lg font-jakarta-regular text-gray-800 w-full"
+            placeholderClassName="font-jakarta-regular"
             placeholderTextColor="#9ca3af"
           />
           <TouchableOpacity
@@ -121,7 +122,7 @@ export default function SecureScreen() {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "white", fontWeight: "600", fontSize: 18 }}>
+            <Text className="jakarta-semibold text-[18px] text-white">
               {type === "action" ? "Confirm Action" : "Unlock"}
             </Text>
           </LinearGradient>
@@ -140,7 +141,7 @@ export default function SecureScreen() {
               color="#10b981"
               className="mr-3"
             />
-            <Text className="text-gray-900 font-semibold text-lg">
+            <Text className="text-gray-900 font-jakarta-semibold text-lg">
               Unlock with Biometrics
             </Text>
           </TouchableOpacity>

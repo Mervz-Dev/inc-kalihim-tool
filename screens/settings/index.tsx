@@ -79,7 +79,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Local Info Section */}
-        <Text className="text-gray-500 font-semibold text-sm mb-2">
+        <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2">
           Local Information
         </Text>
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-3">
@@ -96,20 +96,23 @@ export default function SettingsScreen() {
             ] as const
           ).map(({ label, value, field }, i) => (
             <View key={i}>
-              <Text className="text-gray-700 font-medium mb-1">{label}</Text>
+              <Text className="text-gray-700 font-jakarta-medium mb-1">
+                {label}
+              </Text>
               <TextInput
                 value={value}
                 onChangeText={(text) => setField(field, text)}
                 placeholder={`Enter ${label.toLowerCase()}`}
                 placeholderTextColor="#9CA3AF"
-                className="border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 bg-gray-50 mb-2"
+                className="border border-gray-200 rounded-lg px-3 py-2.5 text-gray-900 font-jakarta-regular bg-gray-50 mb-2"
+                placeholderClassName="font-jakarta-regular"
               />
             </View>
           ))}
         </View>
 
         {/* Security Section */}
-        <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
+        <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2 mt-6">
           Security
         </Text>
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
@@ -120,7 +123,7 @@ export default function SettingsScreen() {
           >
             <View className="flex-row items-center gap-2">
               <Ionicons name="key-outline" size={20} color="#2563eb" />
-              <Text className="text-gray-900 font-medium text-base">
+              <Text className="text-gray-900 font-jakarta-medium text-base">
                 Update Password
               </Text>
             </View>
@@ -134,7 +137,7 @@ export default function SettingsScreen() {
           <View className="flex-row items-center justify-between py-4 px-3">
             <View className="flex-row items-center gap-2">
               <Ionicons name="finger-print-outline" size={20} color="#10b981" />
-              <Text className="text-gray-900 font-medium text-base">
+              <Text className="text-gray-900 font-jakarta-medium text-base">
                 Enable Biometrics / Face ID
               </Text>
             </View>
@@ -148,7 +151,7 @@ export default function SettingsScreen() {
         </View>
 
         {/* Maintenance Section */}
-        <Text className="text-gray-500 font-semibold text-sm mb-2 mt-6">
+        <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2 mt-6">
           Maintenance
         </Text>
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -164,7 +167,7 @@ export default function SettingsScreen() {
               className="py-3 px-4 flex-row items-center justify-center"
             >
               <Ionicons name="refresh-outline" size={20} color="white" />
-              <Text className="text-white font-semibold text-base ml-2">
+              <Text className="text-white font-jakarta-semibold text-base ml-2">
                 Reset Settings
               </Text>
             </LinearGradient>
@@ -189,7 +192,7 @@ export default function SettingsScreen() {
               className="py-3 px-4 flex-row items-center justify-center"
             >
               <Ionicons name="trash-outline" size={20} color="white" />
-              <Text className="text-white font-semibold text-base ml-2">
+              <Text className="text-white font-jakarta-semibold text-base ml-2">
                 Clear All Data
               </Text>
             </LinearGradient>

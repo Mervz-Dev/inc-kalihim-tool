@@ -84,7 +84,10 @@ export default function Dashboard() {
             className="w-10 h-10 rounded-lg"
             resizeMode="cover"
           />
-          <Text className="text-3xl font-extrabold text-gray-900 tracking-tight mt-1">
+          <Text
+            // style={{ fontFamily: "Poppins-Bold" }}
+            className="text-3xl font-jakarta-bold text-gray-900 tracking-tight mt-1"
+          >
             Kalihim Board
           </Text>
         </View>
@@ -145,7 +148,7 @@ export default function Dashboard() {
                 paddingRight: 6,
               }}
             >
-              <Text className="text-white text-xs font-semibold">
+              <Text className="text-white text-xs font-jakarta-semibold">
                 {attendanceHealth.userTotalSessions > 0
                   ? `${Math.round(
                       ((attendanceHealth.userTotalSessions -
@@ -177,12 +180,17 @@ export default function Dashboard() {
           style={{ marginTop: 2 }}
         />
         <Text className="ml-2 text-blue-800 text-[12px] leading-snug flex-1">
-          For <Text className="font-semibold">personal kalihim use only</Text>.
-          Data is <Text className="font-semibold">stored locally</Text>,{" "}
-          <Text className="font-semibold">not shared online</Text>, and{" "}
-          <Text className="font-semibold">cleared weekly</Text>. Use the{" "}
-          <Text className="font-semibold">same forms</Text> for consistency, and{" "}
-          <Text className="font-semibold text-red-600">
+          For{" "}
+          <Text className="font-jakarta-semibold">
+            personal kalihim use only
+          </Text>
+          . Data is{" "}
+          <Text className="font-jakarta-semibold">stored locally</Text>,{" "}
+          <Text className="font-jakarta-semibold">not shared online</Text>, and{" "}
+          <Text className="font-jakarta-semibold">cleared weekly</Text>. Use the{" "}
+          <Text className="font-jakarta-semibold">same forms</Text> for
+          consistency, and{" "}
+          <Text className="font-jakarta-semibold text-red-600">
             please do not share data publicly
           </Text>
           .

@@ -58,10 +58,10 @@ export default function AbsentViewer() {
         {sessionData.map((group, groupIndex) => (
           <View key={groupIndex} className="mb-12">
             <View className="flex-row items-center justify-between bg-red-50 px-3 py-2 rounded-t-lg">
-              <Text className="text-lg font-semibold text-red-600">
+              <Text className="text-lg font-jakarta-semibold text-red-600">
                 {group.purok} - {group.grupo}
               </Text>
-              <Text className="text-base text-neutral-600 font-medium">
+              <Text className="text-base text-neutral-600 font-jakarta-medium">
                 Wed/Thu
               </Text>
             </View>
@@ -72,7 +72,7 @@ export default function AbsentViewer() {
                   key={`male-${index}`}
                   className="flex-row items-center gap-2 py-1"
                 >
-                  <Text className="text-gray-400 font-semibold text-lg w-6 text-right">
+                  <Text className="text-gray-400 font-jakarta-semibold text-lg w-6 text-right">
                     {index + 1}.
                   </Text>
                   <Text className="text-blue-800 text-lg">{user.fullname}</Text>
@@ -89,7 +89,7 @@ export default function AbsentViewer() {
                   key={`female-${index}`}
                   className="flex-row items-center gap-2 py-1"
                 >
-                  <Text className="text-gray-400 font-semibold text-lg w-6 text-right">
+                  <Text className="text-gray-400 font-jakarta-semibold text-lg w-6 text-right">
                     {index + 1}.
                   </Text>
                   <Text className="text-pink-700 text-lg">{user.fullname}</Text>
@@ -109,10 +109,10 @@ export default function AbsentViewer() {
             <View className="h-6" />
 
             <View className="flex-row items-center justify-between bg-blue-50 px-3 py-2 rounded-t-lg">
-              <Text className="text-lg font-semibold text-blue-600">
+              <Text className="text-lg font-jakarta-semibold text-blue-600">
                 {group.purok} - {group.grupo}
               </Text>
-              <Text className="text-base text-neutral-600 font-medium">
+              <Text className="text-base text-neutral-600 font-jakarta-medium">
                 Sat/Sun
               </Text>
             </View>
@@ -123,7 +123,7 @@ export default function AbsentViewer() {
                   key={`male-${index}`}
                   className="flex-row items-center gap-2 py-1"
                 >
-                  <Text className="text-gray-400 font-semibold text-lg w-6 text-right">
+                  <Text className="text-gray-400 font-jakarta-semibold text-lg w-6 text-right">
                     {index + 1}.
                   </Text>
                   <Text className="text-blue-800 text-lg">{user.fullname}</Text>
@@ -140,7 +140,7 @@ export default function AbsentViewer() {
                   key={`female-${index}`}
                   className="flex-row items-center gap-2 py-1"
                 >
-                  <Text className="text-gray-400 font-semibold text-lg w-6 text-right">
+                  <Text className="text-gray-400 font-jakarta-semibold text-lg w-6 text-right">
                     {index + 1}.
                   </Text>
                   <Text className="text-pink-700 text-lg">{user.fullname}</Text>

@@ -35,7 +35,9 @@ export const AboutButton = () => {
             color="white"
             style={{ marginRight: 6 }}
           />
-          <Text className="text-white font-semibold text-sm">About</Text>
+          <Text className="text-white font-jakarta-semibold text-sm">
+            About
+          </Text>
         </LinearGradient>
       </TouchableOpacity>
 
@@ -73,7 +75,9 @@ export const AboutButton = () => {
                   color="white"
                   style={{ marginBottom: 8 }}
                 />
-                <Text className="text-white text-xl font-bold mb-1">About</Text>
+                <Text className="text-white text-xl font-jakarta-bold mb-1">
+                  About
+                </Text>
                 <Text className="text-white/90 text-sm text-center">
                   A simple automated tool that helps Kalihim organize records
                   and generate forms quickly.
@@ -86,7 +90,7 @@ export const AboutButton = () => {
           <View className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
             <View className="flex-row items-center mb-2">
               <Ionicons name="person-outline" size={20} color="#2563eb" />
-              <Text className="ml-2 text-gray-800 text-base font-semibold">
+              <Text className="ml-2 text-gray-800 text-base font-jakarta-semibold">
                 Developer
               </Text>
             </View>
@@ -96,7 +100,7 @@ export const AboutButton = () => {
           <View className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
             <View className="flex-row items-center mb-2">
               <Ionicons name="bulb-outline" size={20} color="#f59e0b" />
-              <Text className="ml-2 text-gray-800 text-base font-semibold">
+              <Text className="ml-2 text-gray-800 text-base font-jakarta-semibold">
                 Purpose
               </Text>
             </View>
@@ -112,7 +116,7 @@ export const AboutButton = () => {
           <View className="bg-white p-4 rounded-xl mb-4 shadow-sm border border-gray-100">
             <View className="flex-row items-center mb-2">
               <Ionicons name="list-outline" size={20} color="#10b981" />
-              <Text className="ml-2 text-gray-800 text-base font-semibold">
+              <Text className="ml-2 text-gray-800 text-base font-jakarta-semibold">
                 Features
               </Text>
             </View>
@@ -123,9 +127,12 @@ export const AboutButton = () => {
               views and summaries.{"\n"}• View code references and local records
               for transparency and easy checking.{"\n"}• Works fully offline —
               all data is stored and processed locally on your device.{"\n\n"}
-              ⚠️ <Text className="font-semibold text-gray-700">Note:</Text> Data
-              is saved only for the current session and should be cleared or
-              refreshed weekly to ensure accuracy and avoid mix-ups.
+              ⚠️{" "}
+              <Text className="font-jakarta-semibold text-gray-700">
+                Note:
+              </Text>{" "}
+              Data is saved only for the current session and should be cleared
+              or refreshed weekly to ensure accuracy and avoid mix-ups.
             </Text>
           </View>
 
@@ -133,7 +140,7 @@ export const AboutButton = () => {
           <View className="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm">
             <View className="flex-row items-center mb-2">
               <Ionicons name="lock-closed-outline" size={20} color="#b91c1c" />
-              <Text className="ml-2 text-red-800 text-base font-semibold">
+              <Text className="ml-2 text-red-800 text-base font-jakarta-semibold">
                 Personal Use Only
               </Text>
             </View>

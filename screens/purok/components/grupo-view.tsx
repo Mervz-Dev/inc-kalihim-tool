@@ -82,10 +82,10 @@ export const GrupoView = ({
   return (
     <View className="flex-1 mt-2 px-4" style={{ marginBottom: bottom + 10 }}>
       <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-gray-900 text-2xl font-bold">
+        <Text className="text-gray-900 text-2xl font-jakarta-bold">
           {gender === "male" ? "Lalaki" : "Babae"} {purok} - {grupo}
         </Text>
-        <Text className="text-gray-500 font-semibold text-base">
+        <Text className="text-gray-500 font-jakarta-semibold text-base">
           {session === "first" ? "📅 Wed/Thu" : "📅 Sat/Sun"}
         </Text>
       </View>
@@ -97,18 +97,22 @@ export const GrupoView = ({
             size={20}
             color="#6B7280"
           />
-          <Text className="ml-2 text-gray-600 flex-1">
+          <Text className="ml-2 text-gray-600 font-jakarta-regular flex-1">
             Tap to toggle Present/Absent. Long-press to Edit or Delete user.
           </Text>
         </View>
         <View className="flex-row justify-around">
           <View className="flex-row items-center gap-2">
             <View className="w-6 h-4 bg-green-500 rounded-md border border-gray-200" />
-            <Text className="text-gray-700 font-medium text-sm">Present</Text>
+            <Text className="text-gray-700 font-jakarta-medium text-sm">
+              Present
+            </Text>
           </View>
           <View className="flex-row items-center gap-2">
             <View className="w-6 h-4 bg-red-500 rounded-md border border-gray-200" />
-            <Text className="text-gray-700 font-medium text-sm">Absent</Text>
+            <Text className="text-gray-700 font-jakarta-medium text-sm">
+              Absent
+            </Text>
           </View>
         </View>
       </View>

@@ -102,7 +102,9 @@ export const PassGetterButton = () => {
             color="white"
             style={{ marginRight: 6 }}
           />
-          <Text className="text-white font-semibold text-sm">File Pass</Text>
+          <Text className="text-white font-jakarta-semibold text-sm">
+            File Pass
+          </Text>
         </LinearGradient>
       </TouchableOpacity>
 
@@ -133,7 +135,7 @@ export const PassGetterButton = () => {
             <View>
               {/* Header row */}
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-2xl font-bold text-gray-900">
+                <Text className="text-2xl font-jakarta-bold text-gray-900">
                   File Password Getter
                 </Text>
 
@@ -163,7 +165,7 @@ export const PassGetterButton = () => {
 
             {/* Input Card */}
             <View className="bg-white rounded-2xl shadow-lg p-2 mb-4">
-              <Text className="text-gray-700 font-semibold mb-3 text-base">
+              <Text className="text-gray-700 font-jakarta-semibold mb-3 text-base">
                 Enter Timestamp
               </Text>
               <BottomSheetTextInput
@@ -187,7 +189,7 @@ export const PassGetterButton = () => {
                   className="flex-row items-center justify-center px-6 py-3"
                 >
                   <Ionicons name="key-outline" size={20} color="white" />
-                  <Text className="text-white font-semibold text-base ml-2">
+                  <Text className="text-white font-jakarta-semibold text-base ml-2">
                     Get Password
                   </Text>
                 </LinearGradient>
@@ -197,7 +199,7 @@ export const PassGetterButton = () => {
             {/* Password Output */}
             {password && (
               <View className="bg-white rounded-2xl shadow-lg p-2 mb-6">
-                <Text className="text-gray-700 font-semibold mb-3 text-base">
+                <Text className="text-gray-700 font-jakarta-semibold mb-3 text-base">
                   Password
                 </Text>
                 <View className="flex-row items-center bg-gray-100 rounded-2xl px-4 py-3">
@@ -205,7 +207,8 @@ export const PassGetterButton = () => {
                     value={password}
                     editable={false}
                     secureTextEntry={!showPassword}
-                    className="flex-1 text-gray-900 font-semibold text-base"
+                    className="flex-1 text-gray-900 font-jakarta-semibold text-base"
+                    placeholderClassName="font-jakarta-regular"
                   />
                   <TouchableOpacity
                     onPress={() => setShowPassword(!showPassword)}
@@ -235,7 +238,7 @@ export const PassGetterButton = () => {
                   size={20}
                   color="#B45309"
                 />
-                <Text className="text-yellow-900 font-semibold ml-2 text-base">
+                <Text className="text-yellow-900 font-jakarta-semibold ml-2 text-base">
                   Warning
                 </Text>
               </View>

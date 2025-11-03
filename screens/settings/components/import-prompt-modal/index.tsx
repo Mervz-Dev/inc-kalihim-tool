@@ -24,7 +24,7 @@ export function ImportPromptModal({
           <View className="bg-blue-100 rounded-full p-4 mb-2">
             <Ionicons name="cloud-upload-outline" size={36} color="#2563eb" />
           </View>
-          <Text className="text-2xl font-bold text-gray-900">
+          <Text className="text-2xl font-jakarta-bold text-gray-900">
             Import Purok Names
           </Text>
         </View>
@@ -37,7 +37,7 @@ export function ImportPromptModal({
 
         {/* Expected Columns */}
         <View className="bg-gray-50 rounded-2xl p-4 mb-6 border border-gray-200 shadow-sm">
-          <Text className="text-gray-700 font-semibold mb-3 text-center">
+          <Text className="text-gray-700 font-jakarta-semibold mb-3 text-center">
             Expected Excel Columns
           </Text>
 
@@ -45,7 +45,7 @@ export function ImportPromptModal({
             {["fullname", "purok", "grupo", "gender"].map((col) => (
               <Text
                 key={col}
-                className="text-gray-500 font-medium w-1/4 text-center"
+                className="text-gray-500 font-jakarta-medium w-1/4 text-center"
               >
                 {col}
               </Text>
@@ -88,7 +88,7 @@ export function ImportPromptModal({
               alignItems: "center",
             }}
           >
-            <Text className="text-white font-semibold text-base">
+            <Text className="text-white font-jakarta-semibold text-base">
               Select File
             </Text>
           </LinearGradient>
@@ -100,7 +100,9 @@ export function ImportPromptModal({
           className="mb-1"
         >
           <View className="bg-gray-100 py-3 rounded-2xl items-center shadow-sm">
-            <Text className="text-gray-700 font-medium text-base">Cancel</Text>
+            <Text className="text-gray-700 font-jakarta-medium text-base">
+              Cancel
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

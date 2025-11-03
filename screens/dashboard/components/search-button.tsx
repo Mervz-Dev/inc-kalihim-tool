@@ -95,7 +95,7 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
           contentContainerStyle={{ padding: 20, paddingBottom: bottom + 24 }}
         >
           {/* Title */}
-          <Text className="text-2xl font-bold text-gray-900 mb-4">
+          <Text className="text-2xl font-jakarta-bold text-gray-900 mb-4">
             Search Kapatid
           </Text>
 
@@ -145,21 +145,25 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
                           user.firstSession ? "bg-rose-500" : "bg-emerald-500"
                         }`}
                       >
-                        <Text className="text-white text-xs font-bold">S1</Text>
+                        <Text className="text-white text-xs font-jakarta-bold">
+                          S1
+                        </Text>
                       </View>
                       <View
                         className={`px-3 py-1 rounded-full ${
                           user.secondSession ? "bg-rose-500" : "bg-emerald-500"
                         }`}
                       >
-                        <Text className="text-white text-xs font-bold">S2</Text>
+                        <Text className="text-white text-xs font-jakarta-bold">
+                          S2
+                        </Text>
                       </View>
                     </View>
                   </View>
 
                   {/* Name + Gender */}
                   <View className="flex-row items-center justify-between">
-                    <Text className="text-gray-900 font-semibold text-lg">
+                    <Text className="text-gray-900 font-jakarta-semibold text-lg">
                       {user.fullname}
                     </Text>
                     <Ionicons

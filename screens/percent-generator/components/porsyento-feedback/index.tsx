@@ -56,7 +56,7 @@ export function PorsyentoFeedback({
       }}
     >
       <View className="flex-row justify-between items-center mb-3">
-        <Text className="text-indigo-700 font-bold text-base">
+        <Text className="text-indigo-700 font-jakarta-bold text-base">
           📊 Porsyento (Kabuuang Resulta)
         </Text>
 
@@ -71,7 +71,7 @@ export function PorsyentoFeedback({
             }`}
           >
             <Text
-              className={`text-xs font-semibold ${
+              className={`text-xs font-jakarta-semibold ${
                 diff > 0
                   ? "text-green-800"
                   : diff < 0
@@ -93,7 +93,7 @@ export function PorsyentoFeedback({
         {/* Previous */}
         <View>
           <Text className="text-indigo-500 text-xs">Nakaraan</Text>
-          <Text className="text-indigo-800 font-semibold text-base">
+          <Text className="text-indigo-800 font-jakarta-semibold text-base">
             {prevValue !== null ? `${prevValue.toFixed(2)}%` : "—"}
           </Text>
         </View>
@@ -109,7 +109,7 @@ export function PorsyentoFeedback({
         {/* Current */}
         <View className="items-end">
           <Text className="text-indigo-500 text-xs">Kasalukuyan</Text>
-          <Text className="text-indigo-800 font-semibold text-base">
+          <Text className="text-indigo-800 font-jakarta-semibold text-base">
             {currentValue?.toFixed(2)}%
           </Text>
         </View>

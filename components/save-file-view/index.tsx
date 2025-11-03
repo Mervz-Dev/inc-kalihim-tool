@@ -164,7 +164,9 @@ export const SaveFileView = ({
     <View className="flex-1 px-4 pt-2" style={{ marginBottom: bottom + 10 }}>
       {/* Header */}
       <View className="flex-row justify-between items-center mb-2">
-        <Text className="text-gray-900 text-xl font-bold">{headerTitle}</Text>
+        <Text className="text-gray-900 text-xl font-jakarta-bold">
+          {headerTitle}
+        </Text>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={onClose}
@@ -179,14 +181,19 @@ export const SaveFileView = ({
           {description}
         </Text>
       ) : (
-        <Text className="text-gray-600 text-sm mb-4 leading-5">
+        <Text className="text-gray-600 font-jakarta-regular text-sm mb-4 leading-5">
           Choose how to store or share generated data:
-          <Text className="font-semibold text-amber-600"> Cache</Text> for prev
-          data reference,{" "}
-          <Text className="font-semibold text-blue-600">Share</Text> safely
-          within your kalihim mates, or{" "}
-          <Text className="font-semibold text-green-600">Save</Text> securely to
-          your device.
+          <Text className="font-jakarta-semibold text-amber-600">
+            {" "}
+            Cache
+          </Text>{" "}
+          for prev data reference,{" "}
+          <Text className="font-jakarta-semibold text-blue-600">
+            Share
+          </Text>{" "}
+          safely within your kalihim mates, or{" "}
+          <Text className="font-jakarta-semibold text-green-600">Save</Text>{" "}
+          securely to your device.
         </Text>
       )}
 
@@ -221,15 +228,11 @@ export const SaveFileView = ({
         <View style={{ flex: 1 }}>
           <Text
             numberOfLines={1}
-            style={{
-              color: "#111827",
-              fontWeight: "600",
-              fontSize: 14,
-            }}
+            className="text-neutral-900 text-sm font-jakarta-semibold"
           >
             {fileName}
           </Text>
-          <Text style={{ color: "#6b7280", fontSize: 12 }}>
+          <Text className="text-gray-400 text-sm font-jakarta-regular">
             Zipped Excel file (Password-Protected)
           </Text>
         </View>
@@ -259,24 +262,15 @@ export const SaveFileView = ({
         >
           <Ionicons name="lock-closed-outline" size={18} color="#b91c1c" />
         </View>
-        <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              color: "#991b1b",
-              fontWeight: "600",
-              fontSize: 13,
-              marginBottom: 4,
-            }}
-          >
+        <View className="flex-1">
+          <Text className="text-red-900 jakarta-semibold text-[13px] mb-1">
             Confidentiality Notice
           </Text>
-          <Text style={{ color: "#b91c1c", fontSize: 12, lineHeight: 18 }}>
+          <Text className="text-red-700 text-[12px] leading-4 jakarta-regular">
             This file contains{" "}
-            <Text style={{ fontWeight: "600" }}>
-              confidential internal data
-            </Text>
+            <Text className="jakarta-semibold">confidential internal data</Text>
             . To access it, check the password using the{" "}
-            <Text style={{ fontWeight: "600" }}>File Password Getter</Text> in
+            <Text className="jakarta-semibold">File Password Getter</Text> in
             this app. Do not share, upload, or transfer this file to
             unauthorized parties.
           </Text>
@@ -328,7 +322,7 @@ const ActionButton = ({
       className="py-3 flex-col items-center justify-center"
     >
       {icon}
-      <Text className="text-white text-sm mt-1 font-semibold text-center">
+      <Text className="text-white text-sm mt-1 font-jakarta-semibold text-center">
         {label}
       </Text>
     </LinearGradient>

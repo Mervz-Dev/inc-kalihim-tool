@@ -19,7 +19,7 @@ export const Header = ({
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
 
-      <Text className="text-black text-2xl font-bold">
+      <Text className="text-black text-2xl font-jakarta-bold">
         Percent Generator - Purok {purok}
       </Text>
     </View>

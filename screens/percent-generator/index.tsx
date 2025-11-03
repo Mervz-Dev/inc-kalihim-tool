@@ -41,11 +41,11 @@ export default function PercentGenerator() {
     prevComputedResult,
     setDateRange,
     dateRange,
-    handleResetCache,
     weekNumber,
     STORAGE_KEY,
     plottedExcelUri,
     generateLastData,
+    isNoPrev,
   } = usePercentGenerator(purok, groupCount, saveFileBottomSheet);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -60,12 +60,12 @@ export default function PercentGenerator() {
           {/* Header */}
           <View className="flex-row justify-between items-center mb-2">
             <View>
-              <Text className="text-xl font-bold text-gray-900">
+              <Text className="text-xl font-jakarta-bold text-gray-900">
                 Grupo {item.group}
               </Text>
               <View className="flex-row items-center mt-1">
                 <Ionicons name="person-circle" size={20} color="#2563eb" />
-                <Text className="ml-1 text-base font-medium text-gray-600">
+                <Text className="ml-1 text-base font-jakarta-medium text-gray-600">
                   {sNumber?.[index]?.count || 0} members
                 </Text>
               </View>
@@ -78,7 +78,7 @@ export default function PercentGenerator() {
               className="flex-row items-center px-4 py-2 rounded-2xl bg-yellow-100 border border-yellow-300"
             >
               <Ionicons name="refresh" size={18} color="#854d0e" />
-              <Text className="ml-2 text-yellow-900 text-sm font-semibold">
+              <Text className="ml-2 text-yellow-900 text-sm font-jakarta-semibold">
                 Reset
               </Text>
             </TouchableOpacity>
@@ -139,7 +139,7 @@ export default function PercentGenerator() {
         />
       </View>
 
-      <View className="flex-1 justify-center">
+      <View className="flex-grow-1 justify-center">
         <Carousel
           ref={carouselRef}
           width={width}
@@ -170,6 +170,7 @@ export default function PercentGenerator() {
         sNumber={sNumber}
         handleChange={handleChange}
         handleSave={handleSave}
+        isNoPrevious={isNoPrev}
       />
 
       <BottomSheetModal

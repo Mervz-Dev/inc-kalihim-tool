@@ -44,14 +44,14 @@ export const InfoModal = ({
           <View className="bg-white/95 rounded-3xl w-full max-w-md p-6 border border-gray-100">
             {/* Header */}
             <View className="flex-row items-center justify-between mb-5">
-              <Text className="text-xl font-bold text-gray-900">
+              <Text className="text-xl font-jakarta-bold text-gray-900">
                 Info Details
               </Text>
             </View>
 
             {/* Date Range Field */}
             <View className="mb-5">
-              <Text className="text-gray-600 font-medium mb-2 text-sm">
+              <Text className="text-gray-600 font-jakarta-medium mb-2 text-sm">
                 Date Range
               </Text>
               <TouchableOpacity
@@ -67,7 +67,7 @@ export const InfoModal = ({
                 }}
               >
                 <Text
-                  className={`text-gray-800 font-medium ${
+                  className={`text-gray-800 font-jakarta-medium ${
                     !dateRange.startDate ? "text-gray-400" : ""
                   }`}
                 >
@@ -79,7 +79,7 @@ export const InfoModal = ({
 
             {/* Notes Input */}
             <View className="mb-6">
-              <Text className="text-gray-600 font-medium mb-2 text-sm">
+              <Text className="text-gray-600 font-jakarta-medium mb-2 text-sm">
                 Notes
               </Text>
               <TextInput
@@ -88,7 +88,8 @@ export const InfoModal = ({
                 multiline
                 placeholder="Enter your notes here..."
                 placeholderTextColor="#9CA3AF"
-                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900 bg-gray-50 min-h-[100px] text-base"
+                placeholderClassName="font-jakarta-regular"
+                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-jakarta-regular bg-gray-50 min-h-[100px] text-base"
               />
             </View>
 
@@ -104,7 +105,9 @@ export const InfoModal = ({
                 end={{ x: 1, y: 1 }}
                 className="py-3.5 rounded-full items-center"
               >
-                <Text className="text-white font-semibold text-base">Save</Text>
+                <Text className="text-white font-jakarta-semibold text-base">
+                  Save
+                </Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -120,7 +123,7 @@ export const InfoModal = ({
       >
         <View className="flex-1 justify-center items-center bg-black/50 px-5">
           <View className="bg-white rounded-3xl p-6 w-full max-w-md">
-            <Text className="text-lg font-semibold text-gray-800 mb-3">
+            <Text className="text-lg font-jakarta-semibold text-gray-800 mb-3">
               Select Date Range
             </Text>
 
@@ -148,7 +151,7 @@ export const InfoModal = ({
               onPress={() => setDateModalVisible(false)}
               className="mt-4 bg-gray-100 py-3 rounded-full items-center border border-gray-200"
             >
-              <Text className="text-gray-700 font-semibold">Done</Text>
+              <Text className="text-gray-700 font-jakarta-semibold">Done</Text>
             </TouchableOpacity>
           </View>
         </View>
