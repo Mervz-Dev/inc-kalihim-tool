@@ -1,17 +1,19 @@
+import { delay } from "@/utils/delay";
 import { useAuth } from "@/utils/hooks/useAuth";
+import { useLoading } from "@/utils/hooks/useLoading";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  KeyboardAvoidingView,
+  Keyboard,
   Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 
 export default function PasswordScreen() {
@@ -23,6 +25,8 @@ export default function PasswordScreen() {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const loader = useLoading();
 
   useEffect(() => {
     const checkStoredPassword = async () => {
@@ -77,7 +81,11 @@ export default function PasswordScreen() {
     }
 
     try {
+      Keyboard.dismiss();
+      loader.show("Please wait...");
+
       await setPassword(newPassword);
+      await delay(1000);
       Toast.show({
         type: "success",
         text1: "Success",
@@ -86,7 +94,6 @@ export default function PasswordScreen() {
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setHasPassword(true);
       router.replace("/auth-screen");
     } catch (err) {
       console.error(err);
@@ -95,17 +102,21 @@ export default function PasswordScreen() {
         text1: "Error",
         text2: "Failed to save password",
       });
+    } finally {
+      loader.hide();
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-gray-100"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
-      <ScrollView
-        contentContainerClassName="flex-grow justify-center p-5"
+    <View style={{ flex: 1, backgroundColor: "#f3f4f6" }}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          padding: 20,
+        }}
+        enableOnAndroid={true}
+        extraScrollHeight={Platform.OS === "ios" ? 20 : 60}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
@@ -135,7 +146,6 @@ export default function PasswordScreen() {
                 onChangeText={setOldPassword}
                 className="border border-gray-200 rounded-2xl p-4 text-neutral-900 font-jakarta-regular"
                 placeholderTextColor="#9ca3af"
-                placeholderClassName="font-jakarta-regular"
               />
               <TouchableOpacity
                 onPress={() => setShowOld((prev) => !prev)}
@@ -159,7 +169,6 @@ export default function PasswordScreen() {
               onChangeText={setNewPassword}
               className="border border-gray-200 rounded-2xl p-4 text-neutral-900 font-jakarta-regular"
               placeholderTextColor="#9ca3af"
-              placeholderClassName="font-jakarta-regular"
             />
             <TouchableOpacity
               onPress={() => setShowNew((prev) => !prev)}
@@ -182,7 +191,6 @@ export default function PasswordScreen() {
               onChangeText={setConfirmPassword}
               className="border border-gray-200 rounded-2xl p-4 text-neutral-900 font-jakarta-regular"
               placeholderTextColor="#9ca3af"
-              placeholderClassName="font-jakarta-regular"
             />
             <TouchableOpacity
               onPress={() => setShowConfirm((prev) => !prev)}
@@ -220,7 +228,7 @@ export default function PasswordScreen() {
           Your password is stored securely on this device and never shared
           online.
         </Text>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }

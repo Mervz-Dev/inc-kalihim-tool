@@ -147,7 +147,7 @@ export const GrupoList = ({
 
   return (
     <ScrollView
-      className="flex-1 mt-4"
+      className="flex-1 pt-2 mt-1.5"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
     >

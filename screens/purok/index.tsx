@@ -86,7 +86,7 @@ export default function Purok() {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-4 bg-white">
+    <SafeAreaView className="flex-1 p-4 pb-0 bg-white">
       <Header
         title={`Purok ${purok}`}
         showBack

@@ -32,6 +32,7 @@ export const PassGetterButton = () => {
 
   const handleGetPassword = async () => {
     Keyboard.dismiss();
+    bottomSheetRef?.current?.snapToIndex(0);
     if (!timestamp) {
       Toast.show({
         type: "error",
@@ -110,12 +111,11 @@ export const PassGetterButton = () => {
 
       <BottomSheetModal
         ref={bottomSheetRef}
-        index={0}
-        snapPoints={["85%"]}
-        enableContentPanningGesture
-        enableHandlePanningGesture={false}
+        index={1}
+        snapPoints={["75%"]}
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
         enablePanDownToClose
-        keyboardBehavior="interactive" // allows sheet to move with keyboard
         onDismiss={handleSheetDismiss}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -141,10 +141,10 @@ export const PassGetterButton = () => {
 
                 <TouchableOpacity
                   onPress={() => bottomSheetRef?.current?.close()}
-                  className="p-1 rounded-full bg-gray-100"
+                  className="p-2 rounded-full bg-gray-100"
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="close-outline" size={20} color="#6b7280" />
+                  <Ionicons name="close" size={20} color="#374151" />
                 </TouchableOpacity>
               </View>
 
@@ -170,6 +170,7 @@ export const PassGetterButton = () => {
               </Text>
               <BottomSheetTextInput
                 value={timestamp}
+                onBlur={() => bottomSheetRef?.current?.snapToIndex(0)}
                 onChangeText={setTimestamp}
                 placeholder="e.g. 1762046434524"
                 placeholderTextColor="#9CA3AF"

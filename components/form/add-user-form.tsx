@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import { useForm } from "react-hook-form";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -44,6 +44,8 @@ export const AddUserForm = ({
 
   const onSubmit = async (values: User.UserFormData) => {
     if (!formState.isValid) return;
+
+    Keyboard.dismiss();
 
     try {
       if (userId) await updateUserById(userId, values, db);

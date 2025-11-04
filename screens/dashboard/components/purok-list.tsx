@@ -1,6 +1,7 @@
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
 import {
   FlatList,
   ListRenderItem,
@@ -12,6 +13,7 @@ import {
 interface PurokListProps {
   data: User.PurokCount[];
   onItemPress: (item: User.PurokCount) => void;
+  onLongItemPress: (item: User.PurokCount) => void;
   onAddPress: () => void;
   onAddDummyList: () => void;
 }
@@ -21,12 +23,15 @@ export const PurokList = ({
   onItemPress,
   onAddPress,
   onAddDummyList,
+  onLongItemPress,
 }: PurokListProps) => {
   const renderItem: ListRenderItem<User.PurokCount> = ({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => onItemPress(item)}
+        onLongPress={() => onLongItemPress(item)}
+        delayLongPress={300}
         className="mt-3 rounded-2xl shadow-md overflow-hidden"
       >
         <LinearGradient
@@ -78,7 +83,7 @@ export const PurokList = ({
 
   if (data.length <= 0) {
     return (
-      <View className="flex-1 justify-center items-center px-6 bg-white">
+      <View className="flex-1 justify-center items-center px-6">
         <Ionicons
           name="people-outline"
           size={64}

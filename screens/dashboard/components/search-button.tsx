@@ -24,7 +24,7 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
   const searchBottomSheetRef = useRef<BottomSheetModal>(null);
   const { bottom } = useSafeAreaInsets();
   const { height } = useSafeAreaFrame();
-  const searchSheetPoints = useMemo(() => ["70%"], []);
+  const searchSheetPoints = useMemo(() => ["65%"], []);
   const db = useSQLiteContext();
 
   const [query, setQuery] = useState("");
@@ -78,6 +78,8 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
         ref={searchBottomSheetRef}
         index={1}
         snapPoints={searchSheetPoints}
+        keyboardBlurBehavior="restore"
+        keyboardBehavior="interactive"
         onDismiss={() => {
           setQuery("");
           setResults([]);
@@ -95,9 +97,19 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
           contentContainerStyle={{ padding: 20, paddingBottom: bottom + 24 }}
         >
           {/* Title */}
-          <Text className="text-2xl font-jakarta-bold text-gray-900 mb-4">
-            Search Kapatid
-          </Text>
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-2xl font-jakarta-bold text-gray-900">
+              Search Kapatid
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => searchBottomSheetRef.current?.close()}
+              activeOpacity={0.8}
+              className="bg-gray-100 p-2 rounded-full"
+            >
+              <Ionicons name="close" size={20} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
           {/* Search Input */}
           <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3 mb-5 shadow-sm">
@@ -108,6 +120,7 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
               placeholderTextColor="#9CA3AF"
               value={query}
               onChangeText={handleSearch}
+              onBlur={() => searchBottomSheetRef.current?.snapToIndex(0)}
             />
           </View>
 
@@ -115,7 +128,7 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
           {loading ? (
             <ActivityIndicator size="small" color="gray" />
           ) : query.trim().length === 0 ? (
-            <View className="flex-1 justify-center items-center mt-20">
+            <View className="flex-1 h-[250px] justify-center items-center ">
               <Ionicons name="people-outline" size={50} color="#9CA3AF" />
               <Text className="text-gray-500 text-base mt-3">
                 Start typing to search kapatid

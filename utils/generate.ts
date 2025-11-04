@@ -1,4 +1,5 @@
 import { FILE_PASSWORD_PREFIX } from "@/constants/encryption";
+import { FEMALE_NAMES, LAST_NAMES, MALE_NAMES } from "@/constants/names";
 import { Percent } from "@/types/percent";
 import { User } from "@/types/user";
 import CryptoJS from "crypto-js";
@@ -253,4 +254,11 @@ export const generatePasswordFromKey = (key: string) => {
 
   const finalPassword = FILE_PASSWORD_PREFIX + generatedChars;
   return finalPassword;
+};
+
+export const getRandomName = (gender: "male" | "female") => {
+  const firstNames = gender === "male" ? MALE_NAMES : FEMALE_NAMES;
+  const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const last = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+  return `${first} ${last}`;
 };

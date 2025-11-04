@@ -3,6 +3,7 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { TABLE_USER } from "@/constants/database";
 import { User } from "@/types/user";
 import { normaliseUser } from "@/utils/dataMaps/user";
+import { getRandomName } from "@/utils/generate";
 
 export const initializeDB = async (db: SQLiteDatabase) => {
   // await db.execAsync(`
@@ -34,6 +35,19 @@ export const clearDatabase = async (db: SQLiteDatabase) => {
     console.error("❌ Error clearing database:", error);
     throw error;
   }
+};
+
+export const deleteUsersByPurok = async (
+  db: SQLiteDatabase,
+  purok: string
+): Promise<void> => {
+  if (!purok || purok.trim() === "") {
+    throw new Error("Purok name is required to delete users.");
+  }
+
+  await db.runAsync(`DELETE FROM ${TABLE_USER} WHERE purok = ?;`, [
+    purok.trim(),
+  ]);
 };
 
 export const addNewUser = async (
@@ -299,17 +313,30 @@ interface DummyUserOptions {
 
 export const addDummyUsers = async (
   db: SQLiteDatabase,
-  options: DummyUserOptions
+  options: {
+    purok: string;
+    numGroups: number;
+    usersPerGroup: number;
+    isUniqueNames?: boolean;
+  }
 ) => {
-  const { purok, numGroups } = options;
+  const { purok, numGroups, usersPerGroup, isUniqueNames } = options;
 
   for (let i = 1; i <= numGroups; i++) {
     const grupo = i.toString();
+    const users: { fullname: string; gender: string }[] = [];
 
-    const users = [
-      { fullname: `User ${i} (M)`, gender: "male" },
-      { fullname: `User ${i} (F)`, gender: "female" },
-    ];
+    for (let j = 0; j < usersPerGroup; j++) {
+      if (isUniqueNames) {
+        const maleName = getRandomName("male");
+        const femaleName = getRandomName("female");
+        users.push({ fullname: maleName, gender: "male" });
+        users.push({ fullname: femaleName, gender: "female" });
+      } else {
+        users.push({ fullname: `User ${j + 1} (M)`, gender: "male" });
+        users.push({ fullname: `User ${j + 1} (F)`, gender: "female" });
+      }
+    }
 
     for (const user of users) {
       await db.execAsync(`

@@ -1,4 +1,8 @@
-import { getPurokList, getUserAndSessionCounts } from "@/services/sql-lite/db";
+import {
+  deleteUsersByPurok,
+  getPurokList,
+  getUserAndSessionCounts,
+} from "@/services/sql-lite/db";
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -19,25 +23,33 @@ import { PassGetterButton } from "./components/pass-getter-button";
 import { PurokList } from "./components/purok-list";
 import { SearchButton } from "./components/search-button";
 
+import { InfoCarousel } from "./components/info-carousel";
+
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 
+import { AnimatedModal } from "@/components/animated-modal";
+import { delay } from "@/utils/delay";
+import { useLoading } from "@/utils/hooks/useLoading";
 import { AddDummyUsersSheet } from "./components/add-dummy-users-sheet";
 
 export default function Dashboard() {
   const [purokList, setPurokList] = useState<User.PurokCount[]>([]);
+  const [selectedPurok, setSelectedPurok] = useState<string | null>(null);
   const [attendanceHealth, setAttendanceHealth] =
     useState<User.SessionAttendanceHealth>({
       totalMarkedSessions: 0,
       userTotalSessions: 0,
     });
   const db = useSQLiteContext();
+  const loader = useLoading();
 
   const addUserSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["50%"], []);
 
   const dummySheetRef = useRef<BottomSheetModal | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const initFetch = async () => {
     try {
@@ -77,6 +89,27 @@ export default function Dashboard() {
         purok: item.purok,
       },
     });
+  };
+
+  const onLongItemPress = (item: User.PurokCount) => {
+    setSelectedPurok(item.purok);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeletePurok = async () => {
+    try {
+      setShowDeleteModal(false);
+      loader.show("Deleting...");
+      if (selectedPurok) {
+        await delay(650);
+        await deleteUsersByPurok(db, selectedPurok);
+      }
+      await initFetch();
+    } catch (error) {
+      console.log("handleDeletePurok error: ", error);
+    } finally {
+      loader.hide();
+    }
   };
 
   return (
@@ -172,9 +205,12 @@ export default function Dashboard() {
         onItemPress={onItemPress}
         onAddPress={() => addUserSheetRef.current?.present()}
         onAddDummyList={() => dummySheetRef.current?.present()}
+        onLongItemPress={onLongItemPress}
       />
 
-      <View
+      <InfoCarousel />
+
+      {/* <View
         className="mt-4 mb-5 p-2.5 border-l-4 border-blue-500 rounded-md flex-row items-start"
         style={{ backgroundColor: "rgba(219, 234, 254, 0.9)" }}
       >
@@ -200,13 +236,14 @@ export default function Dashboard() {
           </Text>
           .
         </Text>
-      </View>
+      </View> */}
 
       <BottomSheetModal
         index={1}
         ref={addUserSheetRef}
         snapPoints={snapPoints}
         keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
         enablePanDownToClose
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -244,6 +281,52 @@ export default function Dashboard() {
           initFetch();
         }}
       />
+
+      <AnimatedModal
+        visible={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+      >
+        <View className="items-center px-6">
+          {/* Icon Section */}
+          <View className="bg-red-100 p-4 rounded-full mb-4">
+            <Ionicons name="trash-bin" size={36} color="#ef4444" />
+          </View>
+
+          {/* Title */}
+          <Text className="text-lg font-jakarta-bold text-gray-900 mb-1 text-center">
+            Delete Purok {selectedPurok}
+          </Text>
+
+          {/* Description */}
+          <Text className="text-gray-500 font-jakarta-regular text-center text-sm mb-6 leading-relaxed">
+            This will permanently remove all users associated with this purok.
+            This action cannot be undone.
+          </Text>
+
+          {/* Buttons */}
+          <View className="flex-row gap-3 w-full mt-1">
+            <TouchableOpacity
+              onPress={() => setShowDeleteModal(false)}
+              activeOpacity={0.9}
+              className="flex-1 bg-gray-100 rounded-full py-3 items-center justify-center"
+            >
+              <Text className="text-gray-700 font-jakarta-semibold text-base">
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleDeletePurok}
+              activeOpacity={0.9}
+              className="flex-1 bg-red-500 rounded-full py-3 items-center justify-center shadow-sm"
+            >
+              <Text className="text-white font-jakarta-semibold text-base">
+                Delete
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AnimatedModal>
 
       {/* Background image at bottom 25% */}
       <Image

@@ -55,7 +55,7 @@ export const SNumberModal = ({
         <AnimatedModal visible={visible} onClose={onClose}>
           <View
             className="bg-white/95 rounded-3xl w-full max-w-md"
-            style={{ flexGrow: 0, maxHeight: 550 }}
+            style={{ flexGrow: 0, maxHeight: 480 }}
           >
             {/* Header */}
             <View className="mb-5">
@@ -103,7 +103,6 @@ export const SNumberModal = ({
               </View>
             </View>
 
-            {/* Scrollable List */}
             <ScrollView className="mt-2 mb-4" style={{ maxHeight: 300 }}>
               {sNumber.map((group, index) => (
                 <View
@@ -124,8 +123,12 @@ export const SNumberModal = ({
                 </View>
               ))}
             </ScrollView>
+            {sNumber.length > 4 && (
+              <Text className="text-gray-500 font-jakarta-semibold text-xs text-center mt-1">
+                (Scroll to show more)
+              </Text>
+            )}
             <View className="gap-4 mt-3">
-              {/* Save Button */}
               <TouchableOpacity
                 onPress={onClose}
                 activeOpacity={0.9}
@@ -144,33 +147,39 @@ export const SNumberModal = ({
               </TouchableOpacity>
 
               {/* Divider */}
-              <View className="flex-row items-center justify-center my-1">
-                <View className="h-[1px] bg-gray-200 w-1/4" />
-                <Text className="mx-2 text-xs text-gray-400">or</Text>
-                <View className="h-[1px] bg-gray-200 w-1/4" />
-              </View>
 
-              <View className="items-center">
-                <TouchableOpacity
-                  onPress={handleGeneratePrev}
-                  activeOpacity={0.9}
-                  className="flex-row items-center justify-center px-4 py-2.5 rounded-full bg-green-50 border border-green-200 shadow-sm"
-                >
-                  <Ionicons
-                    name="document-text-outline"
-                    size={16}
-                    color="#15803d"
-                    className="mr-2"
-                  />
-                  <Text className="text-sm font-jakarta-semibold text-green-700">
-                    Generate From Previous Data
-                  </Text>
-                </TouchableOpacity>
+              {!isNoPrevious && (
+                <>
+                  <View className="flex-row items-center justify-center my-1">
+                    <View className="h-[1px] bg-gray-200 w-1/4" />
+                    <Text className="mx-2 text-xs text-gray-400">or</Text>
+                    <View className="h-[1px] bg-gray-200 w-1/4" />
+                  </View>
 
-                <Text className="text-xs text-gray-500 text-center mt-2 max-w-xs leading-snug">
-                  Quickly create form with data from your last saved session.
-                </Text>
-              </View>
+                  <View className="items-center">
+                    <TouchableOpacity
+                      onPress={handleGeneratePrev}
+                      activeOpacity={0.9}
+                      className="flex-row items-center justify-center px-4 py-2.5 rounded-full bg-green-50 border border-green-200 shadow-sm"
+                    >
+                      <Ionicons
+                        name="document-text-outline"
+                        size={16}
+                        color="#15803d"
+                        className="mr-2"
+                      />
+                      <Text className="text-sm font-jakarta-semibold text-green-700">
+                        Generate From Previous Data
+                      </Text>
+                    </TouchableOpacity>
+
+                    <Text className="text-xs text-gray-500 text-center mt-2 max-w-xs leading-snug">
+                      Quickly create form with data from your last saved
+                      session.
+                    </Text>
+                  </View>
+                </>
+              )}
             </View>
           </View>
         </AnimatedModal>
