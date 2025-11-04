@@ -23,6 +23,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 
+import { AddDummyUsersSheet } from "./components/add-dummy-users-sheet";
+
 export default function Dashboard() {
   const [purokList, setPurokList] = useState<User.PurokCount[]>([]);
   const [attendanceHealth, setAttendanceHealth] =
@@ -34,6 +36,8 @@ export default function Dashboard() {
 
   const addUserSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["50%"], []);
+
+  const dummySheetRef = useRef<BottomSheetModal | null>(null);
 
   const initFetch = async () => {
     try {
@@ -167,6 +171,7 @@ export default function Dashboard() {
         data={purokList}
         onItemPress={onItemPress}
         onAddPress={() => addUserSheetRef.current?.present()}
+        onAddDummyList={() => dummySheetRef.current?.present()}
       />
 
       <View
@@ -179,7 +184,7 @@ export default function Dashboard() {
           color="#2563eb"
           style={{ marginTop: 2 }}
         />
-        <Text className="ml-2 text-blue-800 text-[12px] leading-snug flex-1">
+        <Text className="ml-2 text-blue-800  text-[12px] font-jakarta-regular leading-snug flex-1">
           For{" "}
           <Text className="font-jakarta-semibold">
             personal kalihim use only
@@ -232,6 +237,13 @@ export default function Dashboard() {
           </BottomSheetView>
         )}
       </BottomSheetModal>
+
+      <AddDummyUsersSheet
+        bottomSheetRef={dummySheetRef}
+        onClose={() => {
+          initFetch();
+        }}
+      />
 
       {/* Background image at bottom 25% */}
       <Image

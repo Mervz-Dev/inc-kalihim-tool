@@ -1,9 +1,7 @@
 import { Header } from "@/components/header";
 import { SaveFileView } from "@/components/save-file-view";
-import { CODES } from "@/constants/percent";
 import { RootStackParamList } from "@/types/navigation";
 import { Percent } from "@/types/percent";
-import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -11,13 +9,13 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CarouselControls } from "./components/carousel-controls";
+import { GroupCard } from "./components/group-card";
 import { PorsyentoFeedback } from "./components/porsyento-feedback";
 import { SNumberModal } from "./components/s-number-modal";
-import { SessionCard } from "./components/session-card";
 import { usePercentGenerator } from "./usePercentGenerator";
 
 export default function PercentGenerator() {
@@ -54,62 +52,17 @@ export default function PercentGenerator() {
 
   const renderItem = useCallback(
     ({ item, index }: { item: Percent.GroupValues; index: number }) => (
-      <View style={{ width }} className="p-4 pt-2">
-        {/* Card Container */}
-        <View className="bg-white rounded-3xl shadow-md p-5 border border-gray-100">
-          {/* Header */}
-          <View className="flex-row justify-between items-center mb-2">
-            <View>
-              <Text className="text-xl font-jakarta-bold text-gray-900">
-                Grupo {item.group}
-              </Text>
-              <View className="flex-row items-center mt-1">
-                <Ionicons name="person-circle" size={20} color="#2563eb" />
-                <Text className="ml-1 text-base font-jakarta-medium text-gray-600">
-                  {sNumber?.[index]?.count || 0} members
-                </Text>
-              </View>
-            </View>
-
-            {/* Reset Button */}
-            <TouchableOpacity
-              onPress={() => handleReset(index)}
-              activeOpacity={0.85}
-              className="flex-row items-center px-4 py-2 rounded-2xl bg-yellow-100 border border-yellow-300"
-            >
-              <Ionicons name="refresh" size={18} color="#854d0e" />
-              <Text className="ml-2 text-yellow-900 text-sm font-jakarta-semibold">
-                Reset
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Divider */}
-          <View className="h-[1px] bg-gray-100 mb-3" />
-
-          {/* Sessions */}
-          <View className="space-y-4 gap-3">
-            <SessionCard
-              title="First Session (Wed/Thu)"
-              session={item.firstSession}
-              letters={CODES}
-              index={index}
-              handleButtonPress={handleButtonPress}
-            />
-
-            <SessionCard
-              title="Second Session (Sat/Sun)"
-              session={item.secondSession}
-              letters={CODES}
-              index={index}
-              handleButtonPress={handleButtonPress}
-            />
-          </View>
-        </View>
-      </View>
+      <GroupCard
+        item={item}
+        index={index}
+        width={width}
+        sNumber={sNumber}
+        handleButtonPress={handleButtonPress}
+        handleReset={handleReset}
+        // handleUndo={handleUndo} // optional
+      />
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handleButtonPress]
+    [handleButtonPress, handleReset, width, sNumber]
   );
 
   return (

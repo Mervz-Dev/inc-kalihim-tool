@@ -1,13 +1,22 @@
 import { Percent } from "@/types/percent";
-import React, { memo, useCallback, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { Animated, Text, TouchableWithoutFeedback, View } from "react-native";
 
 interface LetterButtonProps {
   codeKey: keyof Percent.Codes;
   value: number;
   isActive: boolean;
-  onPress: (key: keyof Percent.Codes) => void;
+  onPress: (key: keyof Percent.Codes, undo?: boolean) => void;
 }
+
+interface FloatItem {
+  id: number;
+  diff: number;
+  color: string;
+  anim: Animated.Value;
+}
+
+let floatIdCounter = 0;
 
 const LetterButtonComponent = ({
   codeKey,
@@ -16,6 +25,36 @@ const LetterButtonComponent = ({
   onPress,
 }: LetterButtonProps) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const prevValueRef = useRef(value);
+  const [floatItems, setFloatItems] = useState<FloatItem[]>([]);
+
+  // Animate whenever value changes (increase or decrease)
+  useEffect(() => {
+    const diff = value - prevValueRef.current;
+    if (diff !== 0) {
+      const anim = new Animated.Value(0);
+      const id = floatIdCounter++;
+
+      const newItem: FloatItem = {
+        id,
+        diff,
+        color: diff > 0 ? "#EF4444" : "#3B82F6", // red for increase, blue for decrease
+        anim,
+      };
+
+      setFloatItems((prev) => [...prev, newItem]);
+
+      Animated.timing(anim, {
+        toValue: -20,
+        duration: 600,
+        useNativeDriver: true,
+      }).start(() =>
+        setFloatItems((prev) => prev.filter((item) => item.id !== id))
+      );
+    }
+
+    prevValueRef.current = value;
+  }, [value]);
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -35,9 +74,9 @@ const LetterButtonComponent = ({
     }).start();
   };
 
-  const handlePress = useCallback(() => {
+  const handlePress = () => {
     onPress(codeKey);
-  }, [onPress, codeKey]);
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -64,6 +103,7 @@ const LetterButtonComponent = ({
         >
           {codeKey.toUpperCase()}
         </Text>
+
         {value > 0 && (
           <View
             className={`absolute -top-2 -right-2 h-5 min-w-[20px] px-1.5 rounded-full items-center justify-center shadow-md ${
@@ -75,6 +115,27 @@ const LetterButtonComponent = ({
             </Text>
           </View>
         )}
+
+        {/* stacked floating texts */}
+        {floatItems.map((item) => (
+          <Animated.Text
+            key={item.id}
+            style={{
+              position: "absolute",
+              top: -10,
+              fontSize: 12,
+              fontWeight: "600",
+              color: item.color,
+              transform: [{ translateY: item.anim }],
+              opacity: item.anim.interpolate({
+                inputRange: [-20, 0],
+                outputRange: [0, 1],
+              }),
+            }}
+          >
+            {item.diff > 0 ? `+${item.diff}` : item.diff}
+          </Animated.Text>
+        ))}
       </Animated.View>
     </TouchableWithoutFeedback>
   );

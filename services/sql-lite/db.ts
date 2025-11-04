@@ -291,3 +291,31 @@ export const getUserAndSessionCounts = async (
   const result = await db.getFirstAsync<User.SessionAttendanceHealth>(query);
   return result;
 };
+
+interface DummyUserOptions {
+  purok: string;
+  numGroups: number;
+}
+
+export const addDummyUsers = async (
+  db: SQLiteDatabase,
+  options: DummyUserOptions
+) => {
+  const { purok, numGroups } = options;
+
+  for (let i = 1; i <= numGroups; i++) {
+    const grupo = i.toString();
+
+    const users = [
+      { fullname: `User ${i} (M)`, gender: "male" },
+      { fullname: `User ${i} (F)`, gender: "female" },
+    ];
+
+    for (const user of users) {
+      await db.execAsync(`
+        INSERT INTO ${TABLE_USER} (fullname, gender, purok, grupo)
+        VALUES ('${user.fullname}', '${user.gender}', '${purok}', '${grupo}');
+      `);
+    }
+  }
+};

@@ -92,7 +92,9 @@ export function PorsyentoFeedback({
       <View className="flex-row justify-between items-center">
         {/* Previous */}
         <View>
-          <Text className="text-indigo-500 text-xs">Nakaraan</Text>
+          <Text className="text-indigo-500 text-xs font-jakarta-semibold">
+            Nakaraan
+          </Text>
           <Text className="text-indigo-800 font-jakarta-semibold text-base">
             {prevValue !== null ? `${prevValue.toFixed(2)}%` : "—"}
           </Text>
@@ -108,7 +110,9 @@ export function PorsyentoFeedback({
 
         {/* Current */}
         <View className="items-end">
-          <Text className="text-indigo-500 text-xs">Kasalukuyan</Text>
+          <Text className="text-indigo-500 text-xs font-jakarta-semibold">
+            Kasalukuyan
+          </Text>
           <Text className="text-indigo-800 font-jakarta-semibold text-base">
             {currentValue?.toFixed(2)}%
           </Text>
@@ -116,7 +120,7 @@ export function PorsyentoFeedback({
       </View>
 
       {/* Message */}
-      <Text className="text-sm text-gray-700 text-center mt-3 leading-5">
+      <Text className="text-sm text-gray-700 text-center font-jakarta-regular mt-3 leading-5">
         {getMessage()}
       </Text>
     </LinearGradient>

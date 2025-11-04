@@ -9,6 +9,7 @@ import {
   getWeekdayBetween,
   getWeekWedToSun,
 } from "@/utils/date";
+import { delay } from "@/utils/delay";
 import { plotAbsenteeToExcel } from "@/utils/excelPlotter";
 import { zipExcelFileWithPassword } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
@@ -49,10 +50,11 @@ export const useAbsentViewer = (
 
   const initFetch = async () => {
     try {
-      loader.show();
+      loader.show("Please wait...");
+      await delay(650);
       const sessionResult = await getSessionAbsentees(purok, db);
-      console.log(sessionResult, "session", purok);
       setSessionData(sessionResult);
+      setInfoModalVisible(true);
     } catch (error) {
       console.log(error);
     } finally {
@@ -109,7 +111,6 @@ export const useAbsentViewer = (
 
   useEffect(() => {
     initFetch();
-    setInfoModalVisible(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

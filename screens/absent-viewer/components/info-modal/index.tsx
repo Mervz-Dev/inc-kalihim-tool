@@ -88,7 +88,6 @@ export const InfoModal = ({
                 multiline
                 placeholder="Enter your notes here..."
                 placeholderTextColor="#9CA3AF"
-                placeholderClassName="font-jakarta-regular"
                 className="border border-gray-200 rounded-xl px-4 py-3 text-gray-900 font-jakarta-regular bg-gray-50 min-h-[100px] text-base"
               />
             </View>
@@ -136,14 +135,21 @@ export const InfoModal = ({
               }
               styles={{
                 ...defaultStyles,
+                day_label: { color: "#1F2937" },
                 selected: { backgroundColor: "#3B82F6" },
                 selected_label: { color: "white", fontWeight: "600" },
                 today: { backgroundColor: "#FBBF24", borderRadius: 8 },
                 today_label: { color: "white", fontWeight: "600" },
+                range_fill: { backgroundColor: "#E5E7EB" },
+                month_label: { color: "#111827", fontWeight: "600" },
+                month_selector_label: { color: "#1F2937" },
+                year_selector_label: { color: "#1F2937" },
                 button_prev: { backgroundColor: "#F3F4F6", borderRadius: 20 },
                 button_next: { backgroundColor: "#F3F4F6", borderRadius: 20 },
                 button_prev_image: { tintColor: "#3B82F6" },
                 button_next_image: { tintColor: "#3B82F6" },
+                range_end_label: { color: "#FFF" },
+                range_start_label: { color: "#FFF" },
               }}
             />
 

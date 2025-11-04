@@ -4,7 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import {
   FlatList,
   ListRenderItem,
-  Pressable,
   Text,
   TouchableOpacity,
   View,
@@ -14,12 +13,14 @@ interface PurokListProps {
   data: User.PurokCount[];
   onItemPress: (item: User.PurokCount) => void;
   onAddPress: () => void;
+  onAddDummyList: () => void;
 }
 
 export const PurokList = ({
   data,
   onItemPress,
   onAddPress,
+  onAddDummyList,
 }: PurokListProps) => {
   const renderItem: ListRenderItem<User.PurokCount> = ({ item }) => {
     return (
@@ -78,27 +79,60 @@ export const PurokList = ({
   if (data.length <= 0) {
     return (
       <View className="flex-1 justify-center items-center px-6 bg-white">
-        <View className="mb-6">
-          <Ionicons name="people-outline" size={56} color="#9ca3af" />
-        </View>
+        <Ionicons
+          name="people-outline"
+          size={64}
+          color="#cbd5e1"
+          className="mb-6"
+        />
 
         <Text className="text-center text-2xl font-jakarta-bold text-gray-800 mb-2">
           Walang Purok pa
         </Text>
 
-        <Text className="text-center text-gray-600 text-base mb-6">
-          Tap the button below to add a new kapatid under your assigned purok.
+        <Text className="text-center font-jakarta-regular text-gray-500 text-base mb-8">
+          Tap a button below to add a new kapatid or generate a dummy list.
         </Text>
 
-        <Pressable
-          onPress={onAddPress}
-          className="flex-row items-center bg-blue-600 px-6 py-3 rounded-full shadow-lg"
-        >
-          <Ionicons name="add" size={22} color="white" />
-          <Text className="text-white font-jakarta-semibold text-lg ml-2">
-            Add Kapatid
-          </Text>
-        </Pressable>
+        <View className="w-full space-y-4 gap-3">
+          {/* Add Kapatid */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={onAddPress}
+            className="overflow-hidden rounded-full shadow-lg"
+          >
+            <LinearGradient
+              colors={["#3B82F6", "#2563EB"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="flex-row items-center justify-center px-6 py-4 rounded-full"
+            >
+              <Ionicons name="person-add" size={22} color="white" />
+              <Text className="ml-3 text-white font-jakarta-semibold text-lg">
+                Add Kapatid
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          {/* Add Dummy List */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={onAddDummyList}
+            className="overflow-hidden rounded-full shadow-lg"
+          >
+            <LinearGradient
+              colors={["#10B981", "#059669"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="flex-row items-center justify-center px-6 py-4 rounded-full"
+            >
+              <Ionicons name="list" size={22} color="white" />
+              <Text className="ml-3 text-white font-jakarta-semibold text-lg">
+                Add Dummies
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -110,13 +144,23 @@ export const PurokList = ({
           📋 List of Purok
         </Text>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => onAddPress()}
-          className="bg-blue-100 p-0.5 rounded-full shadow-sm"
-        >
-          <Ionicons name="add-circle" size={30} color={"#2563eb"} />
-        </TouchableOpacity>
+        <View className="flex-row items-center space-x-2 gap-2">
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => onAddDummyList?.()}
+            className="bg-green-100 p-0.5 rounded-full shadow-sm"
+          >
+            <Ionicons name="list-circle" size={32} color="#059669" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => onAddPress()}
+            className="bg-blue-100 p-0.5 rounded-full shadow-sm"
+          >
+            <Ionicons name="add-circle" size={30} color="#2563eb" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList

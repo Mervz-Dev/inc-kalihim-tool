@@ -67,7 +67,8 @@ export const usePercentGenerator = (
   // --- Load Previous Data ---
   const loadPrevData = async () => {
     try {
-      loader.show();
+      loader.show("Please wait...");
+      await delay(650);
       const savedData = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedData) {
         const parsed = JSON.parse(savedData);
@@ -110,20 +111,24 @@ export const usePercentGenerator = (
   const handleButtonPress = (
     groupIndex: number,
     codeKey: keyof Percent.Session | "in" | "out",
-    sessionKey: Percent.SessionKey
+    sessionKey: Percent.SessionKey,
+    undo = false
   ) => {
-    player.seekTo(0);
-    player.play();
+    if (!undo) {
+      player.seekTo(0);
+      player.play();
+    }
 
     setGroupValues((prev) =>
       prev.map((group, i) => {
         if (i !== groupIndex) return group;
 
+        const currentValue =
+          (group[sessionKey][codeKey as keyof Percent.Session] as number) || 0;
+
         const updatedSession = {
           ...group[sessionKey],
-          [codeKey]:
-            ((group[sessionKey][codeKey as keyof Percent.Session] as number) ||
-              0) + 1,
+          [codeKey]: undo ? Math.max(currentValue - 1, 0) : currentValue + 1,
         };
 
         return { ...group, [sessionKey]: updatedSession };
