@@ -156,7 +156,7 @@ export const PassGetterButton = () => {
                   color="#3B82F6"
                   className="mr-3 mt-1"
                 />
-                <Text className="text-gray-700 text-sm leading-relaxed flex-1">
+                <Text className="text-gray-700 font-jakarta-regular  text-sm leading-relaxed flex-1">
                   You can only retrieve the password for files generated within
                   this app.
                 </Text>
@@ -243,7 +243,7 @@ export const PassGetterButton = () => {
                   Warning
                 </Text>
               </View>
-              <Text className="text-yellow-900 text-sm">
+              <Text className="text-yellow-900 font-jakarta-regular text-sm">
                 Do not share this password with anyone. Keep it secure to
                 protect your files.
               </Text>

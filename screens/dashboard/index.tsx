@@ -210,34 +210,6 @@ export default function Dashboard() {
 
       <InfoCarousel />
 
-      {/* <View
-        className="mt-4 mb-5 p-2.5 border-l-4 border-blue-500 rounded-md flex-row items-start"
-        style={{ backgroundColor: "rgba(219, 234, 254, 0.9)" }}
-      >
-        <Ionicons
-          name="information-circle-outline"
-          size={20}
-          color="#2563eb"
-          style={{ marginTop: 2 }}
-        />
-        <Text className="ml-2 text-blue-800  text-[12px] font-jakarta-regular leading-snug flex-1">
-          For{" "}
-          <Text className="font-jakarta-semibold">
-            personal kalihim use only
-          </Text>
-          . Data is{" "}
-          <Text className="font-jakarta-semibold">stored locally</Text>,{" "}
-          <Text className="font-jakarta-semibold">not shared online</Text>, and{" "}
-          <Text className="font-jakarta-semibold">cleared weekly</Text>. Use the{" "}
-          <Text className="font-jakarta-semibold">same forms</Text> for
-          consistency, and{" "}
-          <Text className="font-jakarta-semibold text-red-600">
-            please do not share data publicly
-          </Text>
-          .
-        </Text>
-      </View> */}
-
       <BottomSheetModal
         index={1}
         ref={addUserSheetRef}

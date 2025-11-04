@@ -103,7 +103,6 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
       index={1}
       onDismiss={onClose}
       snapPoints={snapPoints}
-      keyboardBlurBehavior="restore"
       keyboardBehavior="interactive"
       enablePanDownToClose
       backdropComponent={(props) => (
@@ -165,7 +164,6 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
               </Text>
               <BottomSheetTextInput
                 value={purok}
-                onBlur={() => bottomSheetRef.current?.snapToIndex(0)}
                 onChangeText={setPurok}
                 placeholder="Enter Purok"
                 keyboardType="number-pad"
@@ -178,7 +176,6 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
                   paddingVertical: 12,
                   backgroundColor: "#F9FAFB",
                   fontSize: 16,
-                  // color: "#111827",
                 }}
               />
             </View>
@@ -191,7 +188,6 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
                   No. of Groups
                 </Text>
                 <BottomSheetTextInput
-                  onBlur={() => bottomSheetRef.current?.snapToIndex(0)}
                   value={numGroups}
                   onChangeText={setNumGroups}
                   placeholder="e.g. 3"
@@ -214,7 +210,6 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
                   Users by Gender
                 </Text>
                 <BottomSheetTextInput
-                  onBlur={() => bottomSheetRef.current?.snapToIndex(0)}
                   value={usersPerGroup}
                   onChangeText={setUsersPerGroup}
                   placeholder="e.g. 2"
