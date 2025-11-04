@@ -110,9 +110,19 @@ export const CodesButton = () => {
         <BottomSheetScrollView
           contentContainerStyle={{ padding: 20, paddingBottom: bottom + 24 }}
         >
-          <Text className="text-2xl font-jakarta-bold text-gray-900 mb-5">
-            Codes
-          </Text>
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-2xl font-jakarta-bold text-gray-900">
+              Codes
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => bottomSheetRef.current?.close()}
+              activeOpacity={0.8}
+              className="bg-gray-100 p-2 rounded-full"
+            >
+              <Ionicons name="close" size={20} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
           {CODE_DATA.map((item) => (
             <View

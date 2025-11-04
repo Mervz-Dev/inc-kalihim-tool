@@ -79,6 +79,8 @@ export const AddUserForm = ({
         visibilityTime: 1500,
         topOffset: 70,
       });
+
+      onClose();
     } catch (error) {
       console.log("onDeletePress error: ", error);
     }

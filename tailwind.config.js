@@ -16,6 +16,7 @@ module.exports = {
         "jakarta-bold": ["PlusJakartaSans-Bold"],
         "jakarta-extrabold": ["PlusJakartaSans-ExtraBold"],
         "jakarta-black": ["PlusJakartaSans-Black"],
+        "jetbrains-regular": ["JetBrainsMono-Regular"],
       },
     },
   },
@@ -29,6 +30,7 @@ module.exports = {
         ".jakarta-bold": { fontFamily: "PlusJakartaSans-Bold" },
         ".jakarta-extrabold": { fontFamily: "PlusJakartaSans-ExtraBold" },
         ".jakarta-black": { fontFamily: "PlusJakartaSans-Black" },
+        ".jetbrains-regular": { fontFamily: "JetBrainsMono-Regular" },
       });
     },
   ],

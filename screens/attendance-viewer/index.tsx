@@ -11,13 +11,16 @@ export default function AbsentViewer() {
   const { purok } = useLocalSearchParams<RootStackParamList["purok"]>();
   const { attendanceData } = useAttendanceViewer(purok);
 
-  const renderRow = (user: User.User, index: number) => {
+  const renderRow = (user: User.User, index: number, users: User.User[]) => {
     const attendedOnce = user.firstSession || user.secondSession;
+    const isLast = index === users.length - 1;
 
     return (
       <View
         key={user.id || index}
-        className="flex-row border-b border-gray-200 px-3 py-2 items-center"
+        className={`flex-row px-3 py-2 items-center overflow-hidden ${
+          !isLast ? "border-b border-gray-200" : ""
+        }`}
       >
         <Text
           className={`flex-1 text-base ${
@@ -47,30 +50,14 @@ export default function AbsentViewer() {
   };
 
   return (
-    <SafeAreaView className="flex-1 px-4 pt-4  bg-white">
-      {/* <View className="flex-row items-center justify-between mb-1">
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.back()}
-            className="p-1 rounded-full bg-gray-100"
-          >
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-
-          <Text className="text-black text-2xl font-jakarta-bold">
-            Attendance Viewer
-          </Text>
-        </View>
-      </View> */}
-
+    <SafeAreaView className="flex-1 px-4 pt-4 bg-white">
       <Header title="R1-05" subtitle={`Purok ${purok}`} />
 
       <ScrollView showsVerticalScrollIndicator={false} className="mt-2">
         {attendanceData.map((group, groupIndex) => (
           <View
             key={`${group.purok}-${group.grupo}-${groupIndex}`}
-            className="mb-6 rounded-2xl border border-gray-300 bg-white shadow"
+            className="mb-6 rounded-2xl border border-gray-300 bg-white shadow overflow-hidden"
           >
             <View className="bg-gray-100 px-4 py-3 rounded-t-2xl">
               <Text className="font-jakarta-semibold text-lg">
@@ -90,13 +77,17 @@ export default function AbsentViewer() {
                 Lalaki
               </Text>
             </View>
-            {group.maleUsers.map(renderRow)}
+            {group.maleUsers.map((user, index) =>
+              renderRow(user, index, group.maleUsers)
+            )}
 
             {/* Female Section */}
             <View className="bg-gray-200 px-3 py-2">
               <Text className="font-jakarta-semibold text-pink-500">Babae</Text>
             </View>
-            {group.femaleUsers.map(renderRow)}
+            {group.femaleUsers.map((user, index) =>
+              renderRow(user, index, group.femaleUsers)
+            )}
           </View>
         ))}
       </ScrollView>

@@ -208,8 +208,8 @@ export const PassGetterButton = () => {
                     value={password}
                     editable={false}
                     secureTextEntry={!showPassword}
-                    className="flex-1 text-gray-900 font-jakarta-semibold text-base"
-                    placeholderClassName="font-jakarta-regular"
+                    className="flex-1 text-gray-900 font-jetbrains-regular text-base"
+                    placeholderClassName="font-jetbrains-regular"
                   />
                   <TouchableOpacity
                     onPress={() => setShowPassword(!showPassword)}
