@@ -7,14 +7,17 @@ import { Stack } from "expo-router";
 import { usePreventScreenCapture } from "expo-screen-capture";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
-import { Text as RNText } from "react-native";
+import { Platform, Text as RNText } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import "../global.css";
 
 const RootLayout = () => {
-  usePreventScreenCapture();
+  if (Platform.OS === "android") {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    usePreventScreenCapture();
+  }
 
   const [fontsLoaded] = useFonts({
     "PlusJakartaSans-Light": require("@/assets/fonts/PlusJakartaSans-Light.ttf"),

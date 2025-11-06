@@ -49,7 +49,7 @@ export const SessionCard = ({
           <TouchableOpacity
             className="rounded-xl overflow-hidden shadow-sm"
             activeOpacity={0.7}
-            style={{ minWidth: 54 }}
+            style={{ minWidth: 58 }}
             onPress={() => handleButtonPress(index, "in", sessionType)}
           >
             <LinearGradient
@@ -58,7 +58,14 @@ export const SessionCard = ({
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              className="flex-row items-center px-3 py-1.5 rounded-xl"
+              style={{
+                height: 34,
+                borderRadius: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingHorizontal: 12,
+              }}
             >
               <Ionicons name="arrow-down-circle" size={18} color="#166534" />
               <Text className="ml-1 text-sm font-jakarta-semibold text-green-900">
@@ -70,7 +77,7 @@ export const SessionCard = ({
           {/* OUT Button */}
           <TouchableOpacity
             className="rounded-xl overflow-hidden shadow-sm"
-            style={{ minWidth: 54 }}
+            style={{ minWidth: 58 }}
             activeOpacity={0.7}
             onPress={() => handleButtonPress(index, "out", sessionType)}
           >
@@ -82,7 +89,14 @@ export const SessionCard = ({
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              className="flex-row items-center px-3 py-1.5 rounded-xl"
+              style={{
+                height: 34,
+                borderRadius: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingHorizontal: 12,
+              }}
             >
               <Ionicons name="arrow-up-circle" size={18} color="#7f1d1d" />
               <Text className="ml-1 text-sm font-jakarta-semibold text-red-900">

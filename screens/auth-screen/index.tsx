@@ -1,7 +1,7 @@
+import { ActionButton } from "@/components/action-button";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -107,26 +107,18 @@ export default function SecureScreen() {
         </View>
 
         {/* Unlock Button */}
-        <TouchableOpacity
-          activeOpacity={0.85}
+        <ActionButton
+          colors={["#2563eb", "#3b82f6"]}
+          label={type === "action" ? "Confirm Action" : "Unlock"}
           onPress={handleUnlock}
-          className="w-full mb-4"
-        >
-          <LinearGradient
-            colors={["#2563eb", "#3b82f6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={{
-              borderRadius: 16,
-              paddingVertical: 16,
-              alignItems: "center",
-            }}
-          >
-            <Text className="jakarta-semibold text-[18px] text-white">
-              {type === "action" ? "Confirm Action" : "Unlock"}
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          textClassName="jakarta-semibold text-[18px] text-white"
+          style={{
+            borderRadius: 999,
+            flex: undefined,
+            minHeight: 54,
+            width: "100%",
+          }}
+        />
 
         {/* Biometric Unlock */}
         {biometricsEnabled && (

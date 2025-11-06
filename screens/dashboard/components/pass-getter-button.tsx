@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { APP_PASSWORD_KEY } from "@/constants/encryption";
 import { generatePasswordFromKey } from "@/utils/generate";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,7 +8,6 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { LinearGradient } from "expo-linear-gradient";
 import * as SecureStore from "expo-secure-store";
 import React, { useRef, useState } from "react";
 import {
@@ -86,28 +86,20 @@ export const PassGetterButton = () => {
 
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.85}
+      <ActionButton
+        colors={["#EF4444", "#DC2626"]}
+        icon="key-outline"
+        iconPosition="left"
+        label="File Pass"
         onPress={handlePress}
-        className="flex-1 rounded-full shadow-lg overflow-hidden"
-      >
-        <LinearGradient
-          colors={["#EF4444", "#DC2626"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="flex-row items-center justify-center px-6 py-3 rounded-full"
-        >
-          <Ionicons
-            name="key-outline"
-            size={20}
-            color="white"
-            style={{ marginRight: 6 }}
-          />
-          <Text className="text-white font-jakarta-semibold text-sm">
-            File Pass
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+        textColor="white"
+        textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        style={{
+          flex: 1,
+          borderRadius: 9999, // fully rounded
+          minHeight: 45, // adjust as needed
+        }}
+      />
 
       <BottomSheetModal
         ref={bottomSheetRef}
@@ -175,26 +167,22 @@ export const PassGetterButton = () => {
                 placeholder="e.g. 1762046434524"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="numeric"
-                className="border border-gray-200 rounded-2xl px-4 py-3 text-gray-900 bg-gray-50 shadow-sm"
+                className="border border-gray-200 rounded-2xl px-4 py-3.5 text-gray-900 bg-gray-50 shadow-sm"
               />
 
-              <TouchableOpacity
+              <ActionButton
+                colors={["#EF4444", "#F87171"]}
+                label="Get Password"
                 onPress={handleGetPassword}
-                activeOpacity={0.85}
-                className="rounded-2xl shadow-md overflow-hidden mt-5"
-              >
-                <LinearGradient
-                  colors={["#EF4444", "#F87171"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  className="flex-row items-center justify-center px-6 py-3"
-                >
-                  <Ionicons name="key-outline" size={20} color="white" />
-                  <Text className="text-white font-jakarta-semibold text-base ml-2">
-                    Get Password
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
+                icon="key-outline"
+                iconPosition="left"
+                textColor="white"
+                textClassName="text-white font-jakarta-semibold text-base"
+                className="mt-5 shadow-md"
+                style={{
+                  borderRadius: 999,
+                }}
+              />
             </View>
 
             {/* Password Output */}

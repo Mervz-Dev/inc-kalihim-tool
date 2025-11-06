@@ -60,13 +60,19 @@ export const SearchButton = ({ onClickUser }: SearchButtonProps) => {
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={handlePress}
-        className="w-10 h-10 rounded-full overflow-hidden shadow-lg"
+        className="rounded-full shadow-lg"
       >
         <LinearGradient
           colors={["#9CA3AF", "#6B7280"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="flex-1 items-center justify-center"
+          style={{
+            width: 35,
+            height: 35,
+            borderRadius: 20,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           <Ionicons name="search-outline" size={20} color="white" />
         </LinearGradient>

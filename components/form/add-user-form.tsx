@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { DropdownField } from "@/components/fields/dropdown-field";
 import { InputField } from "@/components/fields/input-field";
 import schema from "@/schemas/user-form-schema";
@@ -177,26 +178,18 @@ export const AddUserForm = ({
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={handleSubmit(onSubmit)}
-          className="flex-1 overflow-hidden rounded-full shadow"
-        >
-          <LinearGradient
-            colors={
-              formState.isValid
-                ? ["#3B82F6", "#2563EB"]
-                : ["#9CA3AF", "#6B7280"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="px-6 py-4 rounded-full"
-          >
-            <Text className="text-white font-jakarta-semibold text-center">
-              {isEdit ? "Update" : "Add"} Now
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <ActionButton
+          colors={
+            formState.isValid ? ["#3B82F6", "#2563EB"] : ["#9CA3AF", "#6B7280"]
+          }
+          label={isEdit ? "Update Now" : "Add Now"}
+          onPress={handleSubmit(onSubmit)} // your submit handler
+          textColor="white"
+          textClassName="text-white font-jakarta-semibold text-center"
+          style={{
+            borderRadius: 9999,
+          }}
+        />
       </View>
     </View>
   );

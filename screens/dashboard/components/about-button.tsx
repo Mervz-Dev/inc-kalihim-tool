@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -26,28 +27,19 @@ export const AboutButton = () => {
   return (
     <>
       {/* About Button */}
-      <TouchableOpacity
-        activeOpacity={0.9}
+      <ActionButton
+        colors={["#6366F1", "#3B82F6"]}
+        icon="information-circle-outline"
+        iconPosition="left"
+        label="About"
         onPress={handlePress}
-        className="flex-1 rounded-full shadow-lg overflow-hidden"
-      >
-        <LinearGradient
-          colors={["#6366F1", "#3B82F6"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="flex-row items-center justify-center px-6 py-3 rounded-full"
-        >
-          <Ionicons
-            name="information-circle-outline"
-            size={20}
-            color="white"
-            style={{ marginRight: 6 }}
-          />
-          <Text className="text-white font-jakarta-semibold text-sm">
-            About
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+        // textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        style={{
+          borderRadius: 9999,
+          minHeight: 45,
+          flex: 1,
+        }}
+      />
 
       {/* About Modal */}
       <BottomSheetModal

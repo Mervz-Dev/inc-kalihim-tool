@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { addDummyUsers } from "@/services/sql-lite/db";
 import { delay } from "@/utils/delay";
 import { useLoading } from "@/utils/hooks/useLoading";
@@ -8,7 +9,6 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useMemo, useState } from "react";
 import { Keyboard, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -100,7 +100,7 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
   return (
     <BottomSheetModal
       ref={bottomSheetRef}
-      index={1}
+      index={0}
       onDismiss={onClose}
       snapPoints={snapPoints}
       keyboardBehavior="interactive"
@@ -242,21 +242,17 @@ export const AddDummyUsersSheet: React.FC<AddDummyUsersSheetProps> = ({
           </View>
 
           {/* Add Button */}
-          <TouchableOpacity
+          <ActionButton
+            colors={["#10B981", "#059669"]}
+            label="Add Dummy List"
             onPress={handleAddDummy}
-            className="mt-8 rounded-full shadow-lg overflow-hidden"
-          >
-            <LinearGradient
-              colors={["#10B981", "#059669"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="py-4 rounded-full"
-            >
-              <Text className="text-white font-jakarta-semibold text-center text-lg">
-                Add Dummy List
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+            textColor="white"
+            textClassName="text-white font-jakarta-semibold text-lg text-center"
+            style={{
+              borderRadius: 9999,
+            }}
+            className="mt-8 shadow-lg overflow-hidden"
+          />
         </View>
       </BottomSheetView>
     </BottomSheetModal>

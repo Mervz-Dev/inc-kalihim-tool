@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -34,49 +35,78 @@ export const PurokList = ({
         delayLongPress={300}
         className="mt-3 rounded-2xl shadow-md overflow-hidden"
       >
-        <LinearGradient
-          colors={["#2563eb", "#1e40af"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="p-5 flex-row justify-between items-center"
-        >
-          {/* Left side */}
-          <View className="flex-1">
-            <Text className="text-white text-2xl font-jakarta-extrabold">
-              Purok {item.purok}
-            </Text>
-            <Text className="text-gray-200 text-sm mt-1">
-              {item.grupoCount} Grupo{item.grupoCount > 1 ? "s" : ""}
-            </Text>
-          </View>
-
-          {/* Right side */}
-          <View className="flex-col items-end gap-3">
-            {/* Total Users */}
-            <View className="flex-row items-center bg-white/20 px-3 py-1 rounded-full">
-              <Ionicons name="people" size={18} color="white" />
-              <Text className="text-white font-jakarta-semibold ml-1">
-                {item.userCount}
-              </Text>
-            </View>
-
-            {/* Male/Female counts */}
-            <View className="flex-row items-center gap-2">
-              <View className="flex-row items-center bg-white/20 px-2 py-1 rounded-full">
-                <Ionicons name="woman" size={16} color="#f472b6" />
-                <Text className="text-white text-sm font-jakarta-semibold ml-1">
-                  {item.femaleCount}
+        {/* Wrap LinearGradient in a View to fix iOS alignment */}
+        <View className="overflow-hidden rounded-2xl">
+          <LinearGradient
+            colors={["#2563eb", "#1e40af"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ padding: 20 }}
+          >
+            <View className="flex-row justify-between items-center">
+              {/* Left side */}
+              <View className="flex-1 justify-center">
+                <Text
+                  className="text-white text-2xl font-jakarta-extrabold"
+                  style={{ lineHeight: 28 }}
+                >
+                  Purok {item.purok}
+                </Text>
+                <Text
+                  className="text-gray-200 text-sm mt-1"
+                  style={{ lineHeight: 18 }}
+                >
+                  {item.grupoCount} Grupo{item.grupoCount > 1 ? "s" : ""}
                 </Text>
               </View>
-              <View className="flex-row items-center bg-white/20 px-2 py-1 rounded-full">
-                <Ionicons name="man" size={16} color="#60a5fa" />
-                <Text className="text-white text-sm font-jakarta-semibold ml-1">
-                  {item.maleCount}
-                </Text>
+
+              {/* Right side */}
+              <View className="flex-col justify-center items-end">
+                {/* Total Users */}
+                <View
+                  className="flex-row items-center rounded-full px-3 py-1"
+                  style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                >
+                  <Ionicons name="people" size={18} color="white" />
+                  <Text
+                    className="text-white font-jakarta-semibold ml-1"
+                    style={{ lineHeight: 18 }}
+                  >
+                    {item.userCount}
+                  </Text>
+                </View>
+
+                {/* Male/Female counts */}
+                <View className="flex-row mt-2">
+                  <View
+                    className="flex-row items-center rounded-full px-2 py-1 mr-2"
+                    style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                  >
+                    <Ionicons name="woman" size={16} color="#f472b6" />
+                    <Text
+                      className="text-white text-sm font-jakarta-semibold ml-1"
+                      style={{ lineHeight: 16 }}
+                    >
+                      {item.femaleCount}
+                    </Text>
+                  </View>
+                  <View
+                    className="flex-row items-center rounded-full px-2 py-1"
+                    style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                  >
+                    <Ionicons name="man" size={16} color="#60a5fa" />
+                    <Text
+                      className="text-white text-sm font-jakarta-semibold ml-1"
+                      style={{ lineHeight: 16 }}
+                    >
+                      {item.maleCount}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-        </LinearGradient>
+          </LinearGradient>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -101,42 +131,34 @@ export const PurokList = ({
 
         <View className="w-full space-y-4 gap-3">
           {/* Add Kapatid */}
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <ActionButton
+            colors={["#3B82F6", "#2563EB"]}
+            label="Add Kapatid"
             onPress={onAddPress}
-            className="overflow-hidden rounded-full shadow-lg"
-          >
-            <LinearGradient
-              colors={["#3B82F6", "#2563EB"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="flex-row items-center justify-center px-6 py-4 rounded-full"
-            >
-              <Ionicons name="person-add" size={22} color="white" />
-              <Text className="ml-3 text-white font-jakarta-semibold text-lg">
-                Add Kapatid
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+            textColor="white"
+            iconPosition="left"
+            icon="person-add"
+            textClassName="ml-3 text-white font-jakarta-semibold text-lg"
+            style={{
+              borderRadius: 9999,
+              minHeight: 50,
+            }}
+          />
 
           {/* Add Dummy List */}
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <ActionButton
+            colors={["#10B981", "#059669"]}
+            label="Add Dummies"
             onPress={onAddDummyList}
-            className="overflow-hidden rounded-full shadow-lg"
-          >
-            <LinearGradient
-              colors={["#10B981", "#059669"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="flex-row items-center justify-center px-6 py-4 rounded-full"
-            >
-              <Ionicons name="list" size={22} color="white" />
-              <Text className="ml-3 text-white font-jakarta-semibold text-lg">
-                Add Dummies
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+            textColor="white"
+            iconPosition="left"
+            icon="list"
+            textClassName="ml-3 text-white font-jakarta-semibold text-lg"
+            style={{
+              borderRadius: 9999,
+              minHeight: 50,
+            }}
+          />
         </View>
       </View>
     );

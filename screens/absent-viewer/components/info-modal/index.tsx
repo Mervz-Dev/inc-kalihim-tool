@@ -1,6 +1,6 @@
+import { ActionButton } from "@/components/action-button";
 import { getNumberOfWeeks, getRangeTextFormat } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DateTimePicker, {
@@ -93,22 +93,18 @@ export const InfoModal = ({
             </View>
 
             {/* Save Button */}
-            <TouchableOpacity
+            <ActionButton
+              colors={["#3B82F6", "#2563EB"]}
+              label="Save"
               onPress={onClose}
-              activeOpacity={0.9}
-              className="rounded-full overflow-hidden shadow-sm"
-            >
-              <LinearGradient
-                colors={["#3B82F6", "#2563EB"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                className="py-3.5 rounded-full items-center"
-              >
-                <Text className="text-white font-jakarta-semibold text-base">
-                  Save
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+              textColor="white"
+              textClassName="text-white font-jakarta-semibold text-base tracking-wide text-center"
+              style={{
+                borderRadius: 9999,
+                minHeight: 42,
+                flex: undefined,
+              }}
+            />
           </View>
         </View>
       </Modal>

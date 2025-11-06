@@ -29,6 +29,8 @@ export const plotPercentToExcel = async (
     to: fileUri,
   });
 
+  console.log(fileUri, "file uri");
+
   const base64 = await FileSystem.readAsStringAsync(fileUri, {
     encoding: FileSystem.EncodingType.Base64,
   });

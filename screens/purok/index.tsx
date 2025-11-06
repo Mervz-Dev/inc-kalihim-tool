@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { Dropdown, DropdownOption } from "@/components/dropdown";
 import { AddUserForm } from "@/components/form/add-user-form";
 import { Header } from "@/components/header";
@@ -5,18 +6,16 @@ import { SESSION_KEY } from "@/constants/session";
 import { getGrupoByPurok } from "@/services/sql-lite/db";
 import { RootStackParamList } from "@/types/navigation";
 import { User } from "@/types/user";
-import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context";
 import { GrupoList } from "./components/grupo-list";
 import { GrupoView } from "./components/grupo-view";
@@ -115,82 +114,44 @@ export default function Purok() {
         ]}
       />
 
-      <View className="flex-row gap-2 mt-3 mb-4">
-        {/* Attendance Viewer */}
-        <TouchableOpacity
-          activeOpacity={0.9}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 12,
+          marginBottom: 16,
+          gap: 8,
+        }}
+      >
+        <ActionButton
+          colors={["#60A5FA", "#2563EB"]}
+          icon="checkmark-done-circle-outline"
+          label="R1-05"
           onPress={() =>
-            router.push({
-              pathname: "/attendance-viewer",
-              params: { purok },
-            })
+            router.push({ pathname: "/attendance-viewer", params: { purok } })
           }
-          className="flex-1 rounded-xl shadow-sm overflow-hidden"
-        >
-          <LinearGradient
-            colors={["#60A5FA", "#2563EB"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
-          >
-            <Ionicons
-              name="checkmark-done-circle-outline"
-              size={20}
-              color="white"
-            />
-            <Text className="text-white font-jakarta-semibold text-xs mt-1">
-              R1-05
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        />
 
-        {/* Percent Generator */}
-        <TouchableOpacity
-          activeOpacity={0.9}
+        <ActionButton
+          colors={["#FACC15", "#CA8A04"]}
+          icon="stats-chart-outline"
+          label="R1-04"
           onPress={() =>
             router.push({
               pathname: "/percent-generator",
               params: { purok, groupCount: maleGrupo.length.toString() },
             })
           }
-          className="flex-1 rounded-xl shadow-sm overflow-hidden"
-        >
-          <LinearGradient
-            colors={["#FACC15", "#CA8A04"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
-          >
-            <Ionicons name="stats-chart-outline" size={20} color="white" />
-            <Text className="text-white font-jakarta-semibold text-xs mt-1">
-              R1-04
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        />
 
-        {/* Absent Viewer */}
-        <TouchableOpacity
-          activeOpacity={0.9}
+        <ActionButton
+          colors={["#FB7185", "#B91C1C"]}
+          icon="person-remove-outline"
+          label="R1-02-03"
           onPress={() =>
-            router.push({
-              pathname: "/absent-viewer",
-              params: { purok },
-            })
+            router.push({ pathname: "/absent-viewer", params: { purok } })
           }
-          className="flex-1 rounded-xl shadow-sm overflow-hidden"
-        >
-          <LinearGradient
-            colors={["#FB7185", "#B91C1C"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className="flex-col items-center justify-center px-2.5 py-3 rounded-xl"
-          >
-            <Ionicons name="person-remove-outline" size={20} color="white" />
-            <Text className="text-white font-jakarta-semibold text-xs mt-1">
-              R1-02-03
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        />
       </View>
 
       <Dropdown

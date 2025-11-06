@@ -199,6 +199,8 @@ export const usePercentGenerator = (
 
       const zippedUri = await zipExcelFileWithPassword(excelUri);
 
+      console.log("zipped uri", zippedUri);
+
       setPlottedExcelUri(zippedUri);
 
       saveBottomRef?.current?.present();

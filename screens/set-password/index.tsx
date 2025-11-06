@@ -1,8 +1,8 @@
+import { ActionButton } from "@/components/action-button";
 import { delay } from "@/utils/delay";
 import { useAuth } from "@/utils/hooks/useAuth";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -206,22 +206,18 @@ export default function PasswordScreen() {
         </View>
 
         {/* Save Button */}
-        <TouchableOpacity
-          activeOpacity={0.85}
+        <ActionButton
+          colors={["#2563eb", "#3b82f6"]}
+          label={hasPassword ? "Update Password" : "Set Password"}
           onPress={handleSave}
-          className="mt-6 rounded-2xl overflow-hidden"
-        >
-          <LinearGradient
-            colors={["#2563eb", "#3b82f6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="py-4 items-center"
-          >
-            <Text className="text-white text-[18px] jakarta-semibold">
-              {hasPassword ? "Update Password" : "Set Password"}
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          textClassName="text-white text-[18px] font-jakarta-semibold"
+          style={{
+            borderRadius: 999,
+            minHeight: 54,
+            flex: undefined,
+          }}
+          className="mt-6"
+        />
 
         {/* Footer */}
         <Text className="text-center text-gray-400 text-[12px] mt-5 jakarta-regular">

@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo, useRef } from "react";
 import {
   ScrollView,
@@ -17,6 +16,7 @@ import { ExportPromptModal } from "./components/export-prompt-modal";
 import { ImportPromptModal } from "./components/import-prompt-modal";
 import { useSettingsScreen } from "./useSettings";
 
+import { ActionButton } from "@/components/action-button";
 import { SaveFileView } from "@/components/save-file-view";
 import { useAuthAction } from "@/utils/hooks/useAuthAction";
 import {
@@ -155,48 +155,33 @@ export default function SettingsScreen() {
           Maintenance
         </Text>
         <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <TouchableOpacity
-            activeOpacity={0.85}
+          <ActionButton
+            colors={["#F87171", "#DC2626"]}
+            label="Reset Settings"
             onPress={handleReset}
-            className="rounded-xl overflow-hidden mb-3 shadow-md"
-          >
-            <LinearGradient
-              colors={["#F87171", "#DC2626"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="py-3 px-4 flex-row items-center justify-center"
-            >
-              <Ionicons name="refresh-outline" size={20} color="white" />
-              <Text className="text-white font-jakarta-semibold text-base ml-2">
-                Reset Settings
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() => {
+            icon="refresh-outline"
+            iconPosition="left"
+            textColor="white"
+            textClassName="text-white font-jakarta-semibold text-base"
+            className="mb-3 shadow-md"
+          />
+          <ActionButton
+            colors={["#FBBF24", "#D97706"]}
+            label="Clear All Data"
+            onPress={() =>
               requireAuth({
                 description:
                   "For security, please enter your password before deleting all data.",
                 type: "action",
                 onConfirm: handleClearAllData,
-              });
-            }}
-            className="rounded-xl overflow-hidden shadow-md"
-          >
-            <LinearGradient
-              colors={["#FBBF24", "#D97706"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              className="py-3 px-4 flex-row items-center justify-center"
-            >
-              <Ionicons name="trash-outline" size={20} color="white" />
-              <Text className="text-white font-jakarta-semibold text-base ml-2">
-                Clear All Data
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              })
+            }
+            icon="trash-outline"
+            iconPosition="left"
+            textColor="white"
+            textClassName="text-white font-jakarta-semibold text-base"
+            className="shadow-md"
+          />
         </View>
 
         {/* Footer */}

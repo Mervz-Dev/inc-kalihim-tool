@@ -1,13 +1,20 @@
+import { ActionButton } from "@/components/action-button";
 import { delay } from "@/utils/delay";
 import { copyFileToDownloads, getFileNameWithoutExtension } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as Sharing from "expo-sharing";
 import React from "react";
-import { ColorValue, Text, TouchableOpacity, View } from "react-native";
+import {
+  ColorValue,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -65,10 +72,9 @@ export const SaveFileView = ({
     try {
       if ((await Sharing.isAvailableAsync()) && fileUri) {
         await Sharing.shareAsync(fileUri, {
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          dialogTitle: "Share Excel File",
-          UTI: "com.microsoft.excel.xlsx",
+          mimeType: "application/zip",
+          dialogTitle: "Share Encrypted ZIP File",
+          UTI: "com.pkware.zip-archive",
         });
 
         Toast.show({
@@ -137,19 +143,19 @@ export const SaveFileView = ({
   const actions = [
     (storageKey || onSaveToCache) && {
       label: "Cache",
-      icon: <Feather name="clock" size={18} color="white" />,
+      icon: "time-outline",
       colors: ["#FBBF24", "#D97706"] as [ColorValue, ColorValue],
       onPress: onSaveToCache || handleSaveOnCache,
     },
     {
-      label: "Share",
-      icon: <Ionicons name="share-outline" size={18} color="white" />,
+      label: Platform.OS === "android" ? "Share" : "Save / Share",
+      icon: "share-outline",
       colors: ["#60A5FA", "#2563EB"] as [ColorValue, ColorValue],
       onPress: onShareFile || handleShare,
     },
-    {
+    Platform.OS === "android" && {
       label: "Save",
-      icon: <Feather name="download" size={18} color="white" />,
+      icon: "download",
       colors: ["#34D399", "#059669"] as [ColorValue, ColorValue],
       onPress: onSaveToDevice || handleLocalSave,
     },
@@ -289,42 +295,15 @@ export const SaveFileView = ({
           <ActionButton
             key={action.label}
             label={action.label}
-            icon={action.icon}
-            colors={action.colors}
+            icon={action.icon as any}
+            colors={action.colors as any}
             onPress={action.onPress}
+            style={{
+              minHeight: 65,
+            }}
           />
         ))}
       </View>
     </View>
   );
 };
-
-const ActionButton = ({
-  label,
-  icon,
-  colors,
-  onPress,
-}: {
-  label: string;
-  icon: React.ReactNode;
-  colors: [ColorValue, ColorValue];
-  onPress: () => void;
-}) => (
-  <TouchableOpacity
-    activeOpacity={0.8}
-    onPress={onPress}
-    className="flex-1 rounded-xl overflow-hidden shadow"
-  >
-    <LinearGradient
-      colors={colors}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      className="py-3 flex-col items-center justify-center"
-    >
-      {icon}
-      <Text className="text-white text-sm mt-1 font-jakarta-semibold text-center">
-        {label}
-      </Text>
-    </LinearGradient>
-  </TouchableOpacity>
-);

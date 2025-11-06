@@ -1,7 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { ActionButton } from "@/components/action-button";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface CarouselControlsProps {
   currentIndex: number;
@@ -42,34 +41,24 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
   return (
     <View className="w-full flex-row justify-between items-center px-6 mt-4 mb-2">
       {/* Prev Button */}
-      <TouchableOpacity
-        disabled={isFirst}
+      <ActionButton
+        colors={isFirst ? ["#e5e7eb", "#e5e7eb"] : ["#60a5fa", "#2563eb"]}
+        label="Prev"
         onPress={handlePrev}
-        activeOpacity={0.9}
-        className={`rounded-2xl overflow-hidden shadow-sm ${
-          isFirst ? "opacity-60" : "opacity-100"
+        icon="chevron-back-outline"
+        iconPosition="left"
+        disabled={isFirst}
+        textColor={isFirst ? "#6b7280" : "#fff"}
+        textClassName={`font-jakarta-semibold ${
+          isFirst ? "text-gray-600" : "text-white"
         }`}
-      >
-        <LinearGradient
-          colors={isFirst ? ["#e5e7eb", "#e5e7eb"] : ["#60a5fa", "#2563eb"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="w-28 py-3 rounded-2xl items-center justify-center flex-row gap-1"
-        >
-          <Ionicons
-            name="chevron-back-outline"
-            size={18}
-            color={isFirst ? "#6b7280" : "#fff"}
-          />
-          <Text
-            className={`font-jakarta-semibold ${
-              isFirst ? "text-gray-600" : "text-white"
-            }`}
-          >
-            Prev
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+        style={{
+          borderRadius: 999,
+          width: 100,
+          opacity: isFirst ? 0.6 : 1,
+          flex: undefined,
+        }}
+      />
 
       {/* Progress Indicator */}
       <View className="px-4 py-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-sm items-center justify-center">
@@ -79,29 +68,20 @@ export const CarouselControls: React.FC<CarouselControlsProps> = ({
       </View>
 
       {/* Next / Generate Button */}
-      <TouchableOpacity
+      <ActionButton
+        colors={isLast ? ["#22c55e", "#15803d"] : ["#60a5fa", "#2563eb"]}
+        label={isLast ? "Generate" : "Next"}
         onPress={handleNext}
-        activeOpacity={0.9}
-        className="rounded-2xl overflow-hidden shadow-sm"
-      >
-        <LinearGradient
-          colors={isLast ? ["#22c55e", "#15803d"] : ["#60a5fa", "#2563eb"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="w-28 py-3 rounded-2xl items-center justify-center flex-row gap-1"
-        >
-          <Text className="font-jakarta-semibold text-white">
-            {isLast ? "Generate" : "Next"}
-          </Text>
-          <Ionicons
-            name={
-              isLast ? "checkmark-circle-outline" : "chevron-forward-outline"
-            }
-            size={18}
-            color="#fff"
-          />
-        </LinearGradient>
-      </TouchableOpacity>
+        icon={isLast ? "checkmark-circle-outline" : "chevron-forward-outline"}
+        iconPosition="right"
+        textColor="white"
+        textClassName="font-jakarta-semibold text-white"
+        style={{
+          borderRadius: 999,
+          width: 100,
+          flex: undefined,
+        }}
+      />
     </View>
   );
 };

@@ -1,3 +1,4 @@
+import { ActionButton } from "@/components/action-button";
 import { CodeReason } from "@/types/code";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -5,7 +6,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -70,28 +70,20 @@ export const CodesButton = () => {
 
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.85}
+      <ActionButton
+        colors={["#FACC15", "#FDE047"]}
+        icon="code-slash-outline"
+        iconPosition="left"
+        label="Codes"
         onPress={handlePress}
-        className="flex-1 rounded-full shadow-lg overflow-hidden"
-      >
-        <LinearGradient
-          colors={["#FACC15", "#FDE047"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="py-3 px-6 flex-row items-center justify-center rounded-full"
-        >
-          <Ionicons
-            name="code-slash-outline"
-            size={20}
-            color="black"
-            style={{ marginRight: 8 }}
-          />
-          <Text className="text-black font-jakarta-semibold text-sm">
-            Codes
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+        textColor="black"
+        textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        style={{
+          flex: 1,
+          borderRadius: 9999,
+          minHeight: 45,
+        }}
+      />
 
       <BottomSheetModal
         ref={bottomSheetRef}

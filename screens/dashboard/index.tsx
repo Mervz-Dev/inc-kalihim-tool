@@ -17,7 +17,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AddUserForm } from "@/components/form/add-user-form";
 import { router } from "expo-router";
-import { AboutButton } from "./components/about-button";
 import { CodesButton } from "./components/codes-button";
 import { PassGetterButton } from "./components/pass-getter-button";
 import { PurokList } from "./components/purok-list";
@@ -32,6 +31,7 @@ import Toast from "react-native-toast-message";
 import { AnimatedModal } from "@/components/animated-modal";
 import { delay } from "@/utils/delay";
 import { useLoading } from "@/utils/hooks/useLoading";
+import { AboutButton } from "./components/about-button";
 import { AddDummyUsersSheet } from "./components/add-dummy-users-sheet";
 
 export default function Dashboard() {

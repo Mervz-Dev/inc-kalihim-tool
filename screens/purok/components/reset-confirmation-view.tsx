@@ -1,7 +1,7 @@
+import { ActionButton } from "@/components/action-button";
 import { resetSessions } from "@/services/sql-lite/db";
-import { LinearGradient } from "expo-linear-gradient";
 import { useSQLiteContext } from "expo-sqlite";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -63,37 +63,29 @@ export const ResetConfirmationView = ({
       </Text>
 
       <View className="flex-row items-center justify-between gap-3">
-        <TouchableOpacity
-          activeOpacity={0.8}
-          className="flex-1 rounded-full overflow-hidden shadow-md"
+        <ActionButton
+          colors={["#E5E7EB", "#D1D5DB"]}
+          label="Cancel"
           onPress={onClose}
-        >
-          <LinearGradient
-            colors={["#E5E7EB", "#D1D5DB"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="py-3 items-center justify-center rounded-full"
-          >
-            <Text className="text-gray-800 font-jakarta-semibold">Cancel</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          textClassName="text-gray-800 font-jakarta-semibold"
+          style={{
+            borderRadius: 9999,
+            minHeight: 42,
+          }}
+          className="flex-1 shadow-md"
+        />
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          className="flex-1 rounded-full overflow-hidden shadow-md"
+        <ActionButton
+          colors={["#F87171", "#B91C1C"]}
+          label="Confirm Reset"
           onPress={onResetSessions}
-        >
-          <LinearGradient
-            colors={["#F87171", "#B91C1C"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="py-3 items-center justify-center rounded-full"
-          >
-            <Text className="text-white font-jakarta-semibold">
-              Confirm Reset
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
+          textClassName="text-white font-jakarta-semibold"
+          style={{
+            borderRadius: 9999,
+            minHeight: 42,
+          }}
+          className="flex-1 shadow-md"
+        />
       </View>
     </View>
   );

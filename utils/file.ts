@@ -3,6 +3,7 @@ import * as Clipboard from "expo-clipboard"; // ✅ correct import
 import * as FileSystem from "expo-file-system";
 import * as SecureStore from "expo-secure-store";
 import mime from "mime";
+import { Platform } from "react-native";
 import { zipWithPassword } from "react-native-zip-archive";
 import { generatePasswordFromKey } from "./generate";
 
@@ -59,7 +60,7 @@ export const getFileNameWithoutExtension = (uri: string): string => {
   return fileName.replace(/\.[^/.]+$/, "");
 };
 
-export const zipExcelFileWithPassword = async (sourceUri: string) => {
+export const zipExcelFileWithPasswordAndroid = async (sourceUri: string) => {
   try {
     const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
     const timestamp = getTimestampFromFileName(sourceUri);
@@ -75,6 +76,53 @@ export const zipExcelFileWithPassword = async (sourceUri: string) => {
     return targetPath;
   } catch (error) {
     console.log("zipExcelFileWithPassword error: ", error);
+  }
+};
+
+export const zipExcelFileWithPasswordIOS = async (sourceUri: string) => {
+  try {
+    const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
+    const timestamp = getTimestampFromFileName(sourceUri);
+    const password = generatePasswordFromKey(`${stored || "inc"}${timestamp}`);
+
+    await Clipboard.setStringAsync(timestamp.toString());
+
+    const fileName = getFileNameWithoutExtension(sourceUri);
+    const targetPath = `${FileSystem.documentDirectory}${fileName}.zip`.replace(
+      "file://",
+      ""
+    );
+
+    // ✅ Create temporary folder for zipping (zipWithPassword needs a folder)
+    const tempDir = `${FileSystem.documentDirectory}zip-source`;
+    await FileSystem.makeDirectoryAsync(tempDir, { intermediates: true });
+
+    // ✅ Copy Excel file into that folder
+    const tempFilePath = `${tempDir}/${fileName}.xlsx`;
+    await FileSystem.copyAsync({ from: sourceUri, to: tempFilePath });
+
+    // ✅ Zip the folder, not the file
+    const zippedPath = await zipWithPassword(
+      tempDir.replace("file://", ""),
+      targetPath,
+      password
+    );
+
+    // ✅ Clean up temporary folder
+    await FileSystem.deleteAsync(tempDir, { idempotent: true });
+
+    return zippedPath;
+  } catch (error) {
+    console.log("zipExcelFileWithPassword error:", error);
+    throw error;
+  }
+};
+
+export const zipExcelFileWithPassword = async (uri: string) => {
+  if (Platform.OS === "android") {
+    return await zipExcelFileWithPasswordAndroid(uri);
+  } else {
+    return await zipExcelFileWithPasswordIOS(uri);
   }
 };
 

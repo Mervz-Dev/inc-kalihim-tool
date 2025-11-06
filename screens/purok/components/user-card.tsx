@@ -41,31 +41,39 @@ export const UserCard = ({
       }}
     >
       <Animated.View style={animatedStyle} className="mb-0.5">
-        <LinearGradient
-          colors={
-            isMarkedAbsent ? ["#EF4444", "#B91C1C"] : ["#10B981", "#059669"]
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="rounded-2xl overflow-hidden p-5 relative shadow-lg"
-        >
-          <View className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-md">
-            <Ionicons
-              name={isMarkedAbsent ? "sad-outline" : "happy-outline"}
-              size={24}
-              color={isMarkedAbsent ? "#EF4444" : "#10B981"}
-            />
-          </View>
+        <View className="rounded-2xl shadow-lg overflow-hidden">
+          <View
+            className="rounded-2xl shadow-lg overflow-hidden"
+            style={{ minHeight: 84 }}
+          >
+            <LinearGradient
+              colors={
+                isMarkedAbsent ? ["#EF4444", "#B91C1C"] : ["#10B981", "#059669"]
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="p-5 relative"
+              style={{ minHeight: 84 }}
+            >
+              <View className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-md">
+                <Ionicons
+                  name={isMarkedAbsent ? "sad-outline" : "happy-outline"}
+                  size={24}
+                  color={isMarkedAbsent ? "#EF4444" : "#10B981"}
+                />
+              </View>
 
-          <View className="flex-1 items-center">
-            <Text className="text-white font-jakarta-semibold text-sm opacity-90">
-              {user.purok} - {user.grupo}
-            </Text>
-            <Text className="text-white text-xl font-jakarta-bold text-center mt-1">
-              {user.fullname}
-            </Text>
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-white font-jakarta-semibold text-sm">
+                  {user.purok} - {user.grupo}
+                </Text>
+                <Text className="text-white text-xl font-jakarta-bold text-center mt-1">
+                  {user.fullname}
+                </Text>
+              </View>
+            </LinearGradient>
           </View>
-        </LinearGradient>
+        </View>
       </Animated.View>
     </Pressable>
   );

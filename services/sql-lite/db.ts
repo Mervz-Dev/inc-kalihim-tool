@@ -19,7 +19,8 @@ export const initializeDB = async (db: SQLiteDatabase) => {
         grupo TEXT NOT NULL,
         firstSession INTEGER NOT NULL DEFAULT 0,
         secondSession INTEGER NOT NULL DEFAULT 0,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        detailed_fullname TEXT
         );
         `);
 };
