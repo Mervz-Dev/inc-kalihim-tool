@@ -16,6 +16,8 @@ type SettingsState = {
     value: string
   ) => void;
   setBiometrics: (enabled: boolean) => void;
+  toggleShowDetailedFullName: () => void;
+  showDetailedFullName: boolean;
   reset: () => void;
 };
 
@@ -27,6 +29,14 @@ export const useSettingsStore = create<SettingsState>()(
       lokalCode: "",
       distritoCode: "",
       biometricsEnabled: false, // default value
+      showDetailedFullName: false,
+      toggleShowDetailedFullName: () => {
+        set((v) => {
+          return {
+            showDetailedFullName: !v.showDetailedFullName,
+          };
+        });
+      },
       setField: (key, value) => set({ [key]: value }),
       setBiometrics: (enabled) => set({ biometricsEnabled: enabled }),
       reset: () =>

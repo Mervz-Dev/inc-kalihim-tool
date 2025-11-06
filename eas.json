@@ -13,7 +13,8 @@
     "staging": {
       "android": {
         "serviceAccountKeyPath": "./inc-kalihim-tool-c4a5fb2c97ee.json",
-        "track": "internal"
+        "track": "internal",
+        "releaseStatus": "draft"
       }
     },
     "production": {

@@ -77,7 +77,7 @@ export const CodesButton = () => {
         label="Codes"
         onPress={handlePress}
         textColor="black"
-        textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        textClassName="text-black font-jakarta-semibold text-base text-center"
         style={{
           flex: 1,
           borderRadius: 9999,

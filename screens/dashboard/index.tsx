@@ -239,6 +239,7 @@ export default function Dashboard() {
                       purok: data?.purok || "",
                       grupo: data?.grupo || "",
                       gender: data?.gender || "male",
+                      detailed_fullname: data?.detailed_fullname,
                     }
                   : undefined
               }

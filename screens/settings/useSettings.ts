@@ -36,6 +36,8 @@ export function useSettingsScreen(
     reset,
     setBiometrics,
     biometricsEnabled,
+    toggleShowDetailedFullName,
+    showDetailedFullName,
   } = useSettingsStore();
 
   const [showImportModal, setShowImportModal] = useState(false);
@@ -264,6 +266,8 @@ export function useSettingsScreen(
     showExportModal,
     setShowExportModal,
     exportFileUri,
+    showDetailedFullName,
+    toggleShowDetailedFullName,
 
     // actions
     setField,

@@ -159,6 +159,7 @@ export const GrupoView = ({
                 grupo: data.grupo,
                 fullname: data.fullname,
                 gender: data.gender,
+                detailed_fullname: data?.detailed_fullname,
               }}
               userId={data.id}
             />

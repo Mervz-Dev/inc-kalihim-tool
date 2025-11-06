@@ -55,12 +55,15 @@ export const addNewUser = async (
   params: User.UserFormData,
   db: SQLiteDatabase
 ) => {
-  await db.runAsync(`
-        INSERT INTO ${TABLE_USER} (fullname, purok, grupo, gender) 
-        VALUES ('${params.fullname}', '${params.purok}', '${params.grupo}', '${params.gender}');
-    `);
-};
+  const detailedFullname = params.detailed_fullname
+    ? `'${params.detailed_fullname}'`
+    : "NULL";
 
+  await db.runAsync(`
+    INSERT INTO ${TABLE_USER} (fullname, purok, grupo, gender, detailed_fullname) 
+    VALUES ('${params.fullname}', '${params.purok}', '${params.grupo}', '${params.gender}', ${detailedFullname});
+  `);
+};
 export const addBulkUsers = async (
   users: User.UserFormData[],
   db: SQLiteDatabase
@@ -176,9 +179,16 @@ export const updateUserById = async (
 ) => {
   await db.runAsync(
     `UPDATE ${TABLE_USER}
-     SET fullname = ?, gender = ?, purok = ?, grupo = ?
+     SET fullname = ?, gender = ?, purok = ?, grupo = ?, detailed_fullname = ?
      WHERE id = ?`,
-    [updates.fullname, updates.gender, updates.purok, updates.grupo, id]
+    [
+      updates.fullname,
+      updates.gender,
+      updates.purok,
+      updates.grupo,
+      updates.detailed_fullname?.trim() || null,
+      id,
+    ]
   );
 };
 

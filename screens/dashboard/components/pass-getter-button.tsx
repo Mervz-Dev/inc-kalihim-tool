@@ -93,11 +93,11 @@ export const PassGetterButton = () => {
         label="File Pass"
         onPress={handlePress}
         textColor="white"
-        textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        textClassName="text-white font-jakarta-semibold text-base text-center"
         style={{
           flex: 1,
-          borderRadius: 9999, // fully rounded
-          minHeight: 45, // adjust as needed
+          borderRadius: 9999,
+          minHeight: 45,
         }}
       />
 

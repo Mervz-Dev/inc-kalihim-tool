@@ -33,7 +33,7 @@ export const AboutButton = () => {
         iconPosition="left"
         label="About"
         onPress={handlePress}
-        // textStyle={{ fontSize: 14, fontFamily: "Jakarta-SemiBold" }}
+        textClassName="text-white font-jakarta-semibold text-base text-center"
         style={{
           borderRadius: 9999,
           minHeight: 45,

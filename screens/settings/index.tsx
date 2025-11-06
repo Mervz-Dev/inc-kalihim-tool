@@ -47,6 +47,8 @@ export default function SettingsScreen() {
     setShowExportModal,
     goToPassword,
     exportFileUri,
+    showDetailedFullName,
+    toggleShowDetailedFullName,
   } = useSettingsScreen(saveFileBottomSheet);
   const { requireAuth } = useAuthAction();
 
@@ -109,6 +111,26 @@ export default function SettingsScreen() {
               />
             </View>
           ))}
+        </View>
+
+        <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2 mt-6">
+          Forms
+        </Text>
+        <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+          <View className="flex-row items-center justify-between py-4 px-3">
+            <View className="flex-row items-center gap-2">
+              <Ionicons name="id-card-outline" size={20} color="#2563eb" />
+              <Text className="text-gray-900 font-jakarta-medium text-base">
+                Show Detailed Full Name
+              </Text>
+            </View>
+            <Switch
+              value={showDetailedFullName}
+              onValueChange={toggleShowDetailedFullName}
+              trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
+              thumbColor={showDetailedFullName ? "#2563eb" : "#f3f4f6"}
+            />
+          </View>
         </View>
 
         {/* Security Section */}

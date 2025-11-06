@@ -7,6 +7,7 @@ import {
   deleteUserById,
   updateUserById,
 } from "@/services/sql-lite/db";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { User } from "@/types/user";
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +31,7 @@ export const AddUserForm = ({
 }: AddUserFormProps) => {
   const db = useSQLiteContext();
   const { bottom } = useSafeAreaInsets();
+  const { showDetailedFullName } = useSettingsStore();
   const isEdit = userId !== undefined;
 
   const { control, handleSubmit, formState } = useForm<User.UserFormData>({
@@ -38,6 +40,7 @@ export const AddUserForm = ({
       purok: defaultValues?.purok ?? "",
       grupo: defaultValues?.grupo ?? "",
       gender: defaultValues?.gender ?? "male",
+      detailed_fullname: defaultValues?.detailed_fullname ?? "",
     },
     resolver: zodResolver(schema),
     mode: "onChange",
@@ -105,6 +108,24 @@ export const AddUserForm = ({
             bottomSheetInput
           />
         </View>
+
+        {showDetailedFullName && (
+          <View className="space-y-1">
+            <Text className="text-gray-800 font-jakarta-medium text-base mb-1">
+              Detailed Full Name{" "}
+              <Text className="text-gray-400 font-jakarta-regular">
+                (Optional)
+              </Text>
+            </Text>
+            <InputField
+              control={control}
+              name="detailed_fullname"
+              placeholder="Last, First, Middle, Husband’s Last"
+              bottomSheetInput
+              autoCapitalize="characters"
+            />
+          </View>
+        )}
 
         <View className="flex-row gap-4">
           <View className="flex-1 space-y-1">
