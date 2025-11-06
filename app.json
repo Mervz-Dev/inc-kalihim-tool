@@ -16,6 +16,7 @@
       }
     },
     "android": {
+      "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/app-icon.png",
         "backgroundColor": "#ffffff"
@@ -48,7 +49,8 @@
       ],
       "expo-asset",
       "expo-secure-store",
-      "expo-audio"
+      "expo-audio",
+      "./plugins/with-ios-deployment-target"
     ],
     "experiments": {
       "typedRoutes": true
