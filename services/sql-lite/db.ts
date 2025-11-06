@@ -69,8 +69,8 @@ export const addBulkUsers = async (
     await db.execAsync("BEGIN TRANSACTION;");
 
     const insertQuery = `
-      INSERT INTO ${TABLE_USER} (fullname, purok, grupo, gender)
-      VALUES (?, ?, ?, ?);
+      INSERT INTO ${TABLE_USER} (fullname, purok, grupo, gender, detailed_fullname)
+      VALUES (?, ?, ?, ?, ?);
     `;
 
     for (const user of users) {
@@ -79,6 +79,7 @@ export const addBulkUsers = async (
         user.purok.toString(),
         user.grupo.toString(),
         user.gender.toString(),
+        user.detailed_fullname ? user.detailed_fullname.toString() : null,
       ]);
     }
 
@@ -89,6 +90,7 @@ export const addBulkUsers = async (
     console.error("Failed to insert users:", error);
   }
 };
+
 export const getAllUsers = async (db: SQLiteDatabase): Promise<User.User[]> => {
   const data = await db.getAllAsync<User.ServerUser>(
     `SELECT * FROM ${TABLE_USER}`

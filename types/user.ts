@@ -6,6 +6,7 @@ export declare namespace User {
     purok: string;
     grupo: string;
     gender: Gender;
+    detailed_fullname?: string;
   }
 
   interface ServerUser extends UserFormData {
