@@ -1,9 +1,6 @@
-name: Build Android
+name: Build and Submit Android
 
 on:
-  # push:
-  #   # branches:
-  #   #   # - main
   workflow_dispatch:
 
 jobs:
@@ -14,17 +11,20 @@ jobs:
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
-      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
+      ANDROID_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
 
     steps:
+      # 1️⃣ Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # 3️⃣ Cache Yarn dependencies
       - name: Cache Yarn dependencies
         uses: actions/cache@v3
         with:
@@ -35,22 +35,53 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: yarn install
 
+      # 5️⃣ Install EAS CLI
       - name: Install EAS CLI
         run: yarn global add eas-cli
 
+      # 6️⃣ Configure Google Play credentials
       - name: Configure Google Play credentials
         run: |
           mkdir -p ./credentials
-          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > ./credentials/service-account.json
+          cat <<EOF > ./credentials/service-account.json ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }} EOF
+          echo "Service account JSON copied successfully."
 
+      # 7️⃣ Validate service account JSON
+      - name: Validate Google Service Account JSON
+        run: |
+          echo "Validating Google Service Account JSON..."
+          jq '.' ./credentials/service-account.json
+          # Check required keys exist
+          jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
+          echo "Google Service Account JSON is valid."
+
+      # 8️⃣ Determine EAS profile
       - name: Determine EAS profile
         id: profile
         run: echo "profile=staging" >> $GITHUB_OUTPUT
 
+      # 9️⃣ Restore cached/build artifact
+      - name: Restore previous build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release
+          path: ./builds
+        continue-on-error: true
+
+      - name: Cache builds folder
+        uses: actions/cache@v3
+        with:
+          path: ./builds
+          key: builds-${{ hashFiles('app.json') }}
+          restore-keys: builds-
+
+      # 🔟 Build Android (Local) only if .aab not exists
       - name: Build Android (Local)
+        if: ${{ !hashFiles('app.json') || !exists('./builds/app-release.aab') }}
         run: |
           mkdir -p ./builds
           export NODE_OPTIONS="--max-old-space-size=4096"
@@ -59,9 +90,18 @@ jobs:
             --local --output ./builds/app-release.aab \
             --non-interactive
 
+      # 1️⃣1️⃣ Upload build artifact (even if previous steps failed)
+      - name: Upload AAB artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: ./builds/app-release.aab
+
+      # 1️⃣2️⃣ Submit to Google Play
       - name: Submit to Google Play
         run: |
           eas submit --platform android \
             --path ./builds/app-release.aab \
             --profile staging \
-            --non-interactive \
+            --non-interactive
