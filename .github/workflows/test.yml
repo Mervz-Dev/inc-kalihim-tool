@@ -1,6 +1,10 @@
 name: Test Google Service Account
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:
