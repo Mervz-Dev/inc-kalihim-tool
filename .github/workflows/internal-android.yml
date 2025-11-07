@@ -47,16 +47,18 @@ jobs:
       - name: Configure Google Play credentials
         run: |
           mkdir -p ./credentials
-          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > ./credentials/service-account.json
+          printf "%s" "${ANDROID_SERVICE_ACCOUNT_JSON}" > ./credentials/service-account.json
           echo "Service account JSON copied successfully."
 
       # 7️⃣ Validate service account JSON
       - name: Validate Google Service Account JSON
         run: |
-          echo "Validating Google Service Account JSON..."
+          # Validate JSON
           jq '.' ./credentials/service-account.json
+
+          # Verify essential keys exist
           jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
-          echo "Google Service Account JSON is valid."
+          echo "Service account JSON structure is valid."
 
       # 8️⃣ Determine EAS profile
       - name: Determine EAS profile
