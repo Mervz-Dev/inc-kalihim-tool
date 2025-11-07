@@ -64,4 +64,3 @@ jobs:
             --path ./builds/app-release.aab \
             --profile staging \
             --non-interactive \
-            --service-account ./credentials/service-account.json
