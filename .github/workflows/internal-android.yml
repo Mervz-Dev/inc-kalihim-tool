@@ -47,7 +47,7 @@ jobs:
       - name: Configure Google Play credentials
         run: |
           mkdir -p ./credentials
-          cat <<EOF > ./credentials/service-account.json ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }} EOF
+          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > ./credentials/service-account.json
           echo "Service account JSON copied successfully."
 
       # 7️⃣ Validate service account JSON
@@ -55,7 +55,6 @@ jobs:
         run: |
           echo "Validating Google Service Account JSON..."
           jq '.' ./credentials/service-account.json
-          # Check required keys exist
           jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
           echo "Google Service Account JSON is valid."
 
@@ -81,16 +80,20 @@ jobs:
 
       # 🔟 Build Android (Local) only if .aab not exists
       - name: Build Android (Local)
-        if: ${{ !hashFiles('app.json') || !exists('./builds/app-release.aab') }}
         run: |
           mkdir -p ./builds
-          export NODE_OPTIONS="--max-old-space-size=4096"
-          eas build --platform android \
-            --profile ${{ steps.profile.outputs.profile }} \
-            --local --output ./builds/app-release.aab \
-            --non-interactive
+          if [ ! -f ./builds/app-release.aab ]; then
+            echo "No previous build found. Building..."
+            export NODE_OPTIONS="--max-old-space-size=4096"
+            eas build --platform android \
+              --profile ${{ steps.profile.outputs.profile }} \
+              --local --output ./builds/app-release.aab \
+              --non-interactive
+          else
+            echo "Build already exists. Skipping local build."
+          fi
 
-      # 1️⃣1️⃣ Upload build artifact (even if previous steps failed)
+      # 1️⃣1️⃣ Upload AAB artifact
       - name: Upload AAB artifact
         if: always()
         uses: actions/upload-artifact@v3
