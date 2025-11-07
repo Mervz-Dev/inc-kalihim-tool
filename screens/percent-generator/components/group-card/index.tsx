@@ -98,10 +98,8 @@ export const GroupCard: React.FC<GroupCardProps> = ({
           </View>
         </View>
 
-        {/* Divider */}
         <View className="h-[1px] bg-gray-100 mb-3" />
 
-        {/* Sessions */}
         <View className="space-y-4 gap-3">
           <SessionCard
             title="Huwebes Session (Wed/Thu)"
