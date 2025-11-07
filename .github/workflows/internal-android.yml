@@ -53,10 +53,7 @@ jobs:
       # 7️⃣ Validate service account JSON
       - name: Validate Google Service Account JSON
         run: |
-          # Validate JSON
           jq '.' ./credentials/service-account.json
-
-          # Verify essential keys exist
           jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
           echo "Service account JSON structure is valid."
 
@@ -65,42 +62,45 @@ jobs:
         id: profile
         run: echo "profile=staging" >> $GITHUB_OUTPUT
 
-      # 9️⃣ Restore cached/build artifact
-      # Restore previous build artifact
-      - uses: actions/download-artifact@v4
+      # 9️⃣ Try to restore existing artifact
+      - name: Restore previous build artifact
+        id: restore-artifact
+        uses: actions/download-artifact@v4
         with:
           name: app-release
           path: ./builds
+        continue-on-error: true
 
-      - name: Cache builds folder
-        uses: actions/cache@v3
-        with:
-          path: ./builds
-          key: builds-${{ hashFiles('app.json') }}
-          restore-keys: builds-
-
-      # 🔟 Build Android (Local) only if .aab not exists
-      - name: Build Android (Local)
+      # 🔟 Check if artifact exists
+      - name: Check if AAB exists
+        id: check-artifact
         run: |
-          mkdir -p ./builds
-          if [ ! -f ./builds/app-release.aab ]; then
-            echo "No previous build found. Building..."
-            export NODE_OPTIONS="--max-old-space-size=4096"
-            eas build --platform android \
-              --profile ${{ steps.profile.outputs.profile }} \
-              --local --output ./builds/app-release.aab \
-              --non-interactive
+          if [ -f ./builds/app-release.aab ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
           else
-            echo "Build already exists. Skipping local build."
+            echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      # 1️⃣1️⃣ Upload AAB artifact
-      - uses: actions/upload-artifact@v4
+      # 1️⃣1️⃣ Build Android only if artifact does not exist
+      - name: Build Android (Local)
+        if: steps.check-artifact.outputs.exists == 'false'
+        run: |
+          mkdir -p ./builds
+          export NODE_OPTIONS="--max-old-space-size=4096"
+          eas build --platform android \
+            --profile ${{ steps.profile.outputs.profile }} \
+            --local --output ./builds/app-release.aab \
+            --non-interactive
+
+      # 1️⃣2️⃣ Upload AAB artifact
+      - name: Upload AAB artifact
+        if: steps.check-artifact.outputs.exists == 'false'
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: ./builds/app-release.aab
 
-      # 1️⃣2️⃣ Submit to Google Play
+      # 1️⃣3️⃣ Submit to Google Play
       - name: Submit to Google Play
         run: |
           eas submit --platform android \
