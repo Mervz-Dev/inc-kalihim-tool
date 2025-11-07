@@ -1,17 +1,19 @@
-name: Test Google Service Account
+name: Build Android
 
 on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
-  test-service-account:
+  build:
+    name: Build and Submit Android
     runs-on: ubuntu-latest
 
     env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
       ANDROID_SERVICE_ACCOUNT_JSON: ${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}
 
     steps:
@@ -24,6 +26,11 @@ jobs:
           printf "%s" "${ANDROID_SERVICE_ACCOUNT_JSON}" > ./credentials/service-account.json
           echo "Service account JSON copied successfully."
 
-      - name: Print full service account JSON
+      - name: Verify JSON structure and required keys
         run: |
-          cat ./credentials/service-account.json
+          # Validate JSON
+          jq '.' ./credentials/service-account.json
+
+          # Verify essential keys exist
+          jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
+          echo "Service account JSON structure is valid."
