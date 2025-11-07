@@ -12,7 +12,7 @@
   "submit": {
     "staging": {
       "android": {
-        "serviceAccountKeyPath": "./credentials/service-account.jsonn",
+        "serviceAccountKeyPath": "./credentials/service-account.json",
         "track": "internal",
         "releaseStatus": "draft"
       }
