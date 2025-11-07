@@ -24,13 +24,23 @@ jobs:
         with:
           node-version: 20
 
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/yarn
+            node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: yarn global add eas-cli
 
-      - name: Configure Expo and Google Play credentials
+      - name: Configure Google Play credentials
         run: |
           mkdir -p ./credentials
           echo "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > ./credentials/service-account.json
@@ -42,10 +52,11 @@ jobs:
       - name: Build Android (Local)
         run: |
           mkdir -p ./builds
+          export NODE_OPTIONS="--max-old-space-size=4096"
           eas build --platform android \
             --profile ${{ steps.profile.outputs.profile }} \
             --local --output ./builds/app-release.aab \
-            --non-interactive \
+            --non-interactive
 
       - name: Submit to Google Play
         run: |
@@ -53,4 +64,4 @@ jobs:
             --path ./builds/app-release.aab \
             --profile staging \
             --non-interactive \
-            --service-account ./credentials/service-account.json \
+            --service-account ./credentials/service-account.json
