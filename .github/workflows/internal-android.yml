@@ -64,8 +64,9 @@ jobs:
         run: echo "profile=staging" >> $GITHUB_OUTPUT
 
       # 9️⃣ Restore cached/build artifact
+      # Restore previous build artifact
       - name: Restore previous build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.2
         with:
           name: app-release
           path: ./builds
@@ -96,7 +97,7 @@ jobs:
       # 1️⃣1️⃣ Upload AAB artifact
       - name: Upload AAB artifact
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: app-release
           path: ./builds/app-release.aab
