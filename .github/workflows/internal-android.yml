@@ -31,7 +31,6 @@ jobs:
 
       - name: Configure Expo and Google Play credentials
         run: |
-          eas login --token ${{ secrets.EXPO_TOKEN }}
           mkdir -p ./credentials
           echo "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > ./credentials/service-account.json
 
@@ -45,7 +44,8 @@ jobs:
           eas build --platform android \
             --profile ${{ steps.profile.outputs.profile }} \
             --local --output ./builds/app-release.aab \
-            --non-interactive
+            --non-interactive \
+            --token ${{ secrets.EXPO_TOKEN }}
 
       - name: Submit to Google Play
         run: |
@@ -53,3 +53,5 @@ jobs:
             --path ./builds/app-release.aab \
             --profile staging \
             --non-interactive \
+            --service-account ./credentials/service-account.json \
+            --token ${{ secrets.EXPO_TOKEN }}
