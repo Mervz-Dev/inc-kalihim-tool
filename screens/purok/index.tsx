@@ -1,5 +1,4 @@
 import { ActionButton } from "@/components/action-button";
-import { Dropdown, DropdownOption } from "@/components/dropdown";
 import { AddUserForm } from "@/components/form/add-user-form";
 import { Header } from "@/components/header";
 import { SESSION_KEY } from "@/constants/session";
@@ -20,17 +19,7 @@ import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context";
 import { GrupoList } from "./components/grupo-list";
 import { GrupoView } from "./components/grupo-view";
 import { ResetConfirmationView } from "./components/reset-confirmation-view";
-
-const SESSION_OPTIONS: DropdownOption[] = [
-  {
-    value: "first",
-    label: "First Session (Wed/Thu)",
-  },
-  {
-    value: "second",
-    label: "Second Session (Sat/Sun)",
-  },
-];
+import { SessionDropDown } from "./components/session-drop-down";
 
 type Session = "first" | "second";
 
@@ -119,7 +108,7 @@ export default function Purok() {
           flexDirection: "row",
           justifyContent: "space-between",
           marginTop: 12,
-          marginBottom: 16,
+          marginBottom: 10,
           gap: 8,
         }}
       >
@@ -154,8 +143,7 @@ export default function Purok() {
         />
       </View>
 
-      <Dropdown
-        options={SESSION_OPTIONS}
+      <SessionDropDown
         value={sessionSelected}
         onChange={(value) => handleSessionUpdate(value as Session)}
       />

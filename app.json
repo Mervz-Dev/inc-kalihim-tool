@@ -2,9 +2,9 @@
   "expo": {
     "name": "INC Kalihim Tool",
     "slug": "inc-kalihim-tool",
-    "version": "1.0.5",
+    "version": "1.0.7",
     "orientation": "portrait",
-    "icon": "./assets/icons/app-icon.png",
+    "icon": "./assets/icons/main-app-icon.png",
     "scheme": "inckalihimtool",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,12 +13,13 @@
       "bundleIdentifier": "com.mervzs.inckalihimtool",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "icon": "./assets/icons/ios-app-icon.png"
     },
     "android": {
-      "versionCode": 3,
+      "versionCode": 5,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/app-icon.png",
+        "foregroundImage": "./assets/icons/main-app-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -34,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/icons/app-icon.png",
+          "image": "./assets/icons/main-app-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

@@ -104,17 +104,19 @@ export const GroupCard: React.FC<GroupCardProps> = ({
         {/* Sessions */}
         <View className="space-y-4 gap-3">
           <SessionCard
-            title="First Session (Wed/Thu)"
+            title="Huwebes Session (Wed/Thu)"
             session={item.firstSession}
             letters={CODES}
+            sessionKey="firstSession"
             index={index}
             handleButtonPress={(i, k, s) => onSessionPress(i, s, k)}
           />
           <SessionCard
-            title="Second Session (Sat/Sun)"
+            title="Linggo Session (Sat/Sun)"
             session={item.secondSession}
             letters={CODES}
             index={index}
+            sessionKey="secondSession"
             handleButtonPress={(i, k, s) => onSessionPress(i, s, k)}
           />
         </View>

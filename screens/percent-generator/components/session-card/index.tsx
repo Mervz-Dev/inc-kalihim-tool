@@ -9,6 +9,7 @@ interface SessionCardProps {
   title: string;
   session: Percent.Session;
   letters: (keyof Percent.Codes)[];
+  sessionKey: Percent.SessionKey;
   index: number;
   handleButtonPress: (
     index: number,
@@ -22,17 +23,14 @@ export const SessionCard = ({
   session,
   letters,
   index,
+  sessionKey,
   handleButtonPress,
 }: SessionCardProps) => {
-  const sessionType = title.includes("First")
-    ? "firstSession"
-    : "secondSession";
-
   const handleLetterPress = useCallback(
     (code: keyof Percent.Codes) => {
-      handleButtonPress(index, code, sessionType);
+      handleButtonPress(index, code, sessionKey);
     },
-    [index, sessionType, handleButtonPress]
+    [index, sessionKey, handleButtonPress]
   );
 
   return (
@@ -50,7 +48,7 @@ export const SessionCard = ({
             className="rounded-xl overflow-hidden shadow-sm"
             activeOpacity={0.7}
             style={{ minWidth: 58 }}
-            onPress={() => handleButtonPress(index, "in", sessionType)}
+            onPress={() => handleButtonPress(index, "in", sessionKey)}
           >
             <LinearGradient
               colors={
@@ -79,7 +77,7 @@ export const SessionCard = ({
             className="rounded-xl overflow-hidden shadow-sm"
             style={{ minWidth: 58 }}
             activeOpacity={0.7}
-            onPress={() => handleButtonPress(index, "out", sessionType)}
+            onPress={() => handleButtonPress(index, "out", sessionKey)}
           >
             <LinearGradient
               colors={

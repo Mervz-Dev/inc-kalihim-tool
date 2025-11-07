@@ -118,13 +118,10 @@ export default function Dashboard() {
         <View className="flex-row items-center mb-3">
           <Image
             source={require("@/assets/icons/app-icon.png")}
-            className="w-10 h-10 rounded-lg"
+            className="w-10 h-10 rounded-lg mr-1.5 mt-1"
             resizeMode="cover"
           />
-          <Text
-            // style={{ fontFamily: "Poppins-Bold" }}
-            className="text-3xl font-jakarta-bold text-gray-900 tracking-tight mt-1"
-          >
+          <Text className="text-3xl font-jakarta-bold text-gray-900 tracking-tight mt-1">
             Kalihim Board
           </Text>
         </View>
@@ -135,13 +132,6 @@ export default function Dashboard() {
               addUserSheetRef.current?.present(user);
             }}
           />
-          {/* <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={initFetch}
-            className="bg-yellow-100 p-2 rounded-full shadow-sm"
-          >
-            <Ionicons name="refresh-outline" size={24} color={"#f59e0b"} />
-          </TouchableOpacity> */}
 
           <TouchableOpacity
             activeOpacity={0.8}
@@ -155,7 +145,7 @@ export default function Dashboard() {
         </View>
       </View>
 
-      <View className="flex-row items-center gap-2 mt-4">
+      <View className="flex-row items-center gap-2 mt-1.5">
         <AboutButton />
         <CodesButton />
         <PassGetterButton />

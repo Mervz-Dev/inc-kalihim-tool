@@ -12,14 +12,14 @@
   "submit": {
     "staging": {
       "android": {
-        "serviceAccountKeyPath": "./inc-kalihim-tool-c4a5fb2c97ee.json",
+        "serviceAccountKeyPath": "./credentials/service-account.jsonn",
         "track": "internal",
         "releaseStatus": "draft"
       }
     },
     "production": {
       "android": {
-        "serviceAccountKeyPath": "./inc-kalihim-tool-c4a5fb2c97ee.json",
+        "serviceAccountKeyPath": "./credentials/service-account.json",
         "track": "internal"
       }
     }
