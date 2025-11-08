@@ -16,6 +16,7 @@ jobs:
 
     env:
       EXPO_NO_DOCTOR: 1
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -72,10 +73,10 @@ jobs:
           echo "Running expo prebuild --clean..."
           npx expo prebuild --clean --non-interactive
 
-      - uses: actions/checkout@v3
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+      - name: Commit & push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add .
-          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.version.outputs.version }} and prebuild"
           git push
