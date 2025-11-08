@@ -13,9 +13,9 @@ It automates common record-keeping tasks — from attendance tracking to percent
 
 ## 📸 Screenshots
 
-| Home                                                                                  | Attendance                                                                                  | Percent Form                                                                                  |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| ![Home](https://drive.google.com/uc?export=view&id=1BJVuIQ-bc_il6dKQwzDwQtpKGE86RHso) | ![Attendance](https://drive.google.com/uc?export=view&id=1RUWW-UL-pmILsE9RF4eciyFwSji2E22l) | ![Percent Form](https://drive.google.com/uc?export=view&id=1JxtJ_4QvVRBc2B5vQKVMJ8d_yVlatcii) |
+| Home                                                                                                  | Attendance                                                                                            | Percent Form                                                                                          |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| <img src="https://drive.google.com/uc?export=view&id=1BJVuIQ-bc_il6dKQwzDwQtpKGE86RHso" width="250"/> | <img src="https://drive.google.com/uc?export=view&id=1RUWW-UL-pmILsE9RF4eciyFwSji2E22l" width="250"/> | <img src="https://drive.google.com/uc?export=view&id=1JxtJ_4QvVRBc2B5vQKVMJ8d_yVlatcii" width="250"/> |
 
 ---
 
@@ -58,18 +58,11 @@ _Coding & Design_
 
 ---
 
-## 🚫 Personal Use Only
+## 📥 How to Get the App
 
-This app is designed for **individual and local record management** — it is **not intended for public distribution, organizational deployment, or multi-user systems**.
+This app is **for personal use only**. If you are interested in using it, please **email me directly** and I can provide you access:
 
-Think of it as a **calculator tool for a Kalihim** — a personal assistant to help you  
-**work faster, stay organized, and reduce manual errors** when handling assignments, records, and forms.
+📧 Primary: [mervinnarvaez.im@gmail.com](mailto:mervinnarvaez.im@gmail.com)  
+📧 Optional: [mervinnarvaez.dev@gmail.com](mailto:mervin.narvaez.dev@gmail.com)
 
----
-
-## ❤️ Thank You
-
-Thank you for using the **INCKalihim Tool.**  
-Every feature was made with care to support your service and productivity.
-
----
+> Please note: The app is not publicly distributed and is intended only for individual local record management.
