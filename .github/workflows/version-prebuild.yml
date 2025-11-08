@@ -79,4 +79,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add .
           git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.version.outputs.version }} and prebuild"
-          git push
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${GITHUB_REF##*/}
