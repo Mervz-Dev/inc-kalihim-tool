@@ -16,11 +16,11 @@ jobs:
     steps:
       # 1️⃣ Checkout
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -62,48 +62,64 @@ jobs:
         id: profile
         run: echo "profile=staging" >> $GITHUB_OUTPUT
 
-      # 9️⃣ Try to restore existing artifact
+      # 9️⃣ Read version from app.json
+      - name: Read app version
+        id: version
+        run: |
+          version=$(jq -r '.expo.version' app.json)
+          echo "Detected version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # 🔟 Try to restore existing artifact
       - name: Restore previous build artifact
         id: restore-artifact
         uses: actions/download-artifact@v4
         with:
-          name: app-release
+          name: ikt-release-${{ steps.version.outputs.version }}
           path: ./builds
         continue-on-error: true
 
-      # 🔟 Check if artifact exists
+      # 1️⃣1️⃣ Check if artifact exists
       - name: Check if AAB exists
         id: check-artifact
         run: |
-          if [ -f ./builds/app-release.aab ]; then
+          version=${{ steps.version.outputs.version }}
+          file="./builds/ikt-release-${version}.aab"
+          if [ -f "$file" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      # 1️⃣1️⃣ Build Android only if artifact does not exist
+      # 1️⃣2️⃣ Build Android only if artifact does not exist
       - name: Build Android (Local)
         if: steps.check-artifact.outputs.exists == 'false'
         run: |
           mkdir -p ./builds
           export NODE_OPTIONS="--max-old-space-size=4096"
+          version=${{ steps.version.outputs.version }}
+          output_file="./builds/ikt-release-${version}.aab"
+          echo "Building and saving to $output_file"
           eas build --platform android \
             --profile ${{ steps.profile.outputs.profile }} \
-            --local --output ./builds/app-release.aab \
+            --local --output "$output_file" \
             --non-interactive
 
-      # 1️⃣2️⃣ Upload AAB artifact
+      # 1️⃣3️⃣ Upload AAB artifact
       - name: Upload AAB artifact
         if: steps.check-artifact.outputs.exists == 'false'
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: ./builds/app-release.aab
+          name: ikt-release-${{ steps.version.outputs.version }}
+          path: ./builds/ikt-release-${{ steps.version.outputs.version }}.aab
 
-      # 1️⃣3️⃣ Submit to Google Play
+      # 1️⃣4️⃣ Submit to Google Play
       - name: Submit to Google Play
         run: |
+          version=${{ steps.version.outputs.version }}
+          file="./builds/ikt-release-${version}.aab"
+          echo "Submitting $file to Google Play..."
           eas submit --platform android \
-            --path ./builds/app-release.aab \
-            --profile staging \
+            --path "$file" \
+            --profile ${{ steps.profile.outputs.profile }} \
             --non-interactive
