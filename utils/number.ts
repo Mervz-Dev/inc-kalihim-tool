@@ -1,7 +1,7 @@
 export function roundDecimal(value: number, decimals: number = 2): number {
   if (isNaN(value) || value === null) return 0;
   const factor = Math.pow(10, decimals);
-  return Math.round(value * factor) / factor;
+  return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
 export function roundPercentDecimal(
@@ -12,5 +12,5 @@ export function roundPercentDecimal(
   const factor = Math.pow(10, decimals);
 
   const scaledValue = value * 100;
-  return Math.round(scaledValue * factor) / factor;
+  return Math.round((scaledValue + Number.EPSILON) * factor) / factor;
 }
