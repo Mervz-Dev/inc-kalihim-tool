@@ -1,0 +1,71 @@
+name: Update App Version and Prebuild
+
+on:
+  create:
+    branches:
+      - "release/*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number to set (e.g. 1.0.8)"
+        required: true
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    env:
+      EXPO_NO_DOCTOR: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo CLI
+        run: npm install -g expo-cli
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ github.event.inputs.version }}"
+            echo "Manual version input: $version"
+          else
+            branch="${GITHUB_REF##*/}"
+            version="${branch#release/}"
+            echo "Extracted from branch: $version"
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Update app.json version and build numbers
+        run: |
+          version=${{ steps.version.outputs.version }}
+          echo "Updating app.json to version $version"
+
+          code=$(jq '.expo.android.versionCode' app.json)
+          if [ "$code" = "null" ]; then code=0; fi
+          new_code=$((code + 1))
+
+          jq ".expo.version = \"$version\" | .expo.android.versionCode = $new_code | .expo.ios.buildNumber = \"$new_code\"" app.json > tmp.json && mv tmp.json app.json
+
+      - name: Run Expo prebuild with clean
+        run: |
+          echo "Running expo prebuild --clean..."
+          npx expo prebuild --clean --non-interactive
+
+      - name: Commit and push updated app.json and native changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add app.json android ios || true
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }} and run prebuild" || echo "No changes to commit"
+          git push
