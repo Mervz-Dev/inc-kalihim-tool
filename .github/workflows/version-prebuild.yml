@@ -72,15 +72,10 @@ jobs:
           echo "Running expo prebuild --clean..."
           npx expo prebuild --clean --non-interactive
 
-      - name: Commit and push updated app.json and native changes
-        env:
-          PAT_PUSH_TOKEN: ${{ secrets.PAT_PUSH_TOKEN }}
-        run: |
-          git config user.name "Mervzs-Dev"
-          git config user.email "mervinnarvaez.dev@gmail.com"
-
-          git add app.json android ios || true
-          git commit -m "chore: bump version to ${{ steps.version.outputs.version }} and run prebuild" || echo "No changes to commit"
-
-          # Push using your PAT
-          git push https://x-access-token:${PAT_PUSH_TOKEN}@github.com/${{ github.repository }} HEAD:${GITHUB_REF##*/}
+      - uses: actions/checkout@v3
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          git push
