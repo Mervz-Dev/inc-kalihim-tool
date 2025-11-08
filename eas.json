@@ -2,11 +2,23 @@
   "build": {
     "staging": {
       "android": { "buildType": "app-bundle" },
+      "ios": {
+        "distribution": "internal",
+        "simulator": true
+      },
       "distribution": "internal"
     },
     "production": {
       "android": { "buildType": "app-bundle" },
+      "ios": {
+        "distribution": "store"
+      },
       "distribution": "store"
+    },
+    "local": {
+      "ios": {
+        "distribution": "internal"
+      }
     }
   },
   "submit": {
