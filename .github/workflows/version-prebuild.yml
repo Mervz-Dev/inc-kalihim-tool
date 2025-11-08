@@ -70,8 +70,8 @@ jobs:
 
       - name: Run Expo prebuild with clean
         run: |
-          echo "Running expo prebuild --clean..."
-          npx expo prebuild --clean --non-interactive
+          echo "Running expo prebuild"
+          npx expo prebuild --non-interactive
 
       - name: Commit & push changes
         run: |
