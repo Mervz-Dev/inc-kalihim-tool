@@ -15,10 +15,10 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "icon": "./assets/icons/ios-app-icon.png",
-      "buildNumber": "7"
+      "buildNumber": "8"
     },
     "android": {
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/main-app-icon.png",
         "backgroundColor": "#ffffff"
