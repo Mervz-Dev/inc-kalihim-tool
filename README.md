@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# 🌸 INCKalihim Tool
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+_A simple automated productivity tool that helps Kalihim organize records and generate forms quickly._
 
-## Get started
+---
 
-1. Install dependencies
+## ✨ Overview
 
-   ```bash
-   npm install
-   ```
+The **INCKalihim Tool** is designed to make a Kalihim’s work faster, more accurate, and easier to manage.  
+It automates common record-keeping tasks — from attendance tracking to percent form generation — so you can focus on your real duties instead of spending time on repetitive manual work.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## 📸 Screenshots
 
-In the output, you'll find options to open the app in a
+| Home                                                                                                  | Attendance                                                                                            | Percent Form                                                                                          |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| <img src="https://drive.google.com/uc?export=view&id=1BJVuIQ-bc_il6dKQwzDwQtpKGE86RHso" width="250"/> | <img src="https://drive.google.com/uc?export=view&id=1RUWW-UL-pmILsE9RF4eciyFwSji2E22l" width="250"/> | <img src="https://drive.google.com/uc?export=view&id=1JxtJ_4QvVRBc2B5vQKVMJ8d_yVlatcii" width="250"/> |
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 💼 Key Features
 
-## Get a fresh project
+- 🧾 **Automated Forms** — Instantly generate Attendance and Percent Sheets.
+- 👥 **Record Management** — Add and manage kapatid within your assigned purok.
+- 🔍 **Data Transparency** — View and verify local records easily.
+- 📊 **Offline Ready** — Works even without internet; all data stays on your device.
+- 💾 **Local Storage** — Your records are saved securely and privately.
 
-When you're ready, run:
+---
 
-```bash
-npm run reset-project
-```
+## 🧩 Purpose
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Manual input and tracking of kapatid assignments can be time-consuming, prone to mistakes, and difficult to organize.  
+This tool helps streamline that process by **automating data entry, tracking, and form generation** — helping Kalihim work efficiently and confidently.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🔒 Security
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Built-in **access password** for added protection.
+- **Password-protected ZIP exports** for sensitive files.
+- **Screenshots and screen recordings** are blocked while the app is active.
+- Prevents use on **rooted or jailbroken devices** for extra security.
+- **No hidden background uploads** — all data stays local on your device.
 
-## Join the community
+> 🛡️ _Your privacy and data safety always come first._
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🙋 Developer
+
+**👤 Mervin Narvaez**  
+_Coding & Design_
+
+📧 [mervinnarvaez.im@gmail.com](mailto:mervinnarvaez.im@gmail.com)  
+🔗 [linkedin.com/in/mervin-narvaez-85b183188](https://linkedin.com/in/mervin-narvaez-85b183188)
+
+---
+
+## 📥 How to Get the App
+
+This app is **for personal use only**. If you are interested in using it, please **email me directly** and I can provide you access:
+
+📧 Primary: [mervinnarvaez.im@gmail.com](mailto:mervinnarvaez.im@gmail.com)  
+📧 Optional: [mervinnarvaez.dev@gmail.com](mailto:mervin.narvaez.dev@gmail.com)
+
+> Please note: The app is not publicly distributed and is intended only for individual local record management.
