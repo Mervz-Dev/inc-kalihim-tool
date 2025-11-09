@@ -408,7 +408,7 @@ export const plotAbsenteeToExcel = async (
     });
 
     // --- SECOND SESSION ---
-    let startingRowB = 10;
+    let startingRowB = 12;
 
     // 1️⃣ Males (if any)
     if (sessionData.secondSession.maleUsers.length > 0) {
