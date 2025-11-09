@@ -2,7 +2,14 @@ import { ActionButton } from "@/components/action-button";
 import { getNumberOfWeeks, getRangeTextFormat } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import DateTimePicker, {
   DateType,
   useDefaultStyles,
@@ -17,6 +24,8 @@ interface InfoModalProps {
   >;
   notes: string;
   setNotes: React.Dispatch<React.SetStateAction<string>>;
+  isCapitalizeNames: boolean;
+  setIsCapitalizeNames: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const InfoModal = ({
@@ -26,6 +35,8 @@ export const InfoModal = ({
   setDateRange,
   notes,
   setNotes,
+  isCapitalizeNames,
+  setIsCapitalizeNames,
 }: InfoModalProps) => {
   const defaultStyles = useDefaultStyles();
   const [dateModalVisible, setDateModalVisible] = useState(false);
@@ -50,7 +61,7 @@ export const InfoModal = ({
             </View>
 
             {/* Date Range Field */}
-            <View className="mb-5">
+            <View className="mb-4">
               <Text className="text-gray-600 font-jakarta-medium mb-2 text-sm">
                 Date Range
               </Text>
@@ -75,6 +86,19 @@ export const InfoModal = ({
                 </Text>
                 <Ionicons name="calendar-outline" size={20} color="#9ca3af" />
               </TouchableOpacity>
+            </View>
+
+            {/* Toggle Unique Names */}
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-gray-600 font-jakarta-medium mb-2 text-sm">
+                Capitalized Names
+              </Text>
+              <Switch
+                value={isCapitalizeNames}
+                onValueChange={setIsCapitalizeNames}
+                trackColor={{ false: "#E5E7EB", true: "#A7F3D0" }}
+                thumbColor={isCapitalizeNames ? "#10B981" : "#9CA3AF"}
+              />
             </View>
 
             {/* Notes Input */}

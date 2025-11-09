@@ -29,6 +29,8 @@ export const useAbsentViewer = (
     endDate?: DateType;
   }>(getWeekWedToSun());
 
+  const [isCapitalizeNames, setIsCapitalizeNames] = useState(false);
+
   const weekNumber = getNumberOfWeeks(dateRange.startDate);
   const firstSessionDay = getWeekdayBetween(
     dateRange.startDate,
@@ -89,7 +91,9 @@ export const useAbsentViewer = (
         note: notes,
       };
 
-      const plottedExcelUri = await plotAbsenteeToExcel(sessionData, info);
+      const plottedExcelUri = await plotAbsenteeToExcel(sessionData, info, {
+        isCapitalizeNames,
+      });
 
       if (!plottedExcelUri) return;
 
@@ -109,6 +113,10 @@ export const useAbsentViewer = (
     }
   };
 
+  const toggleCapitalizeName = () => {
+    setIsCapitalizeNames((v) => !v);
+  };
+
   useEffect(() => {
     initFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,5 +133,8 @@ export const useAbsentViewer = (
     setInfoModalVisible,
     weekNumber,
     plottedExcelUri,
+    setIsCapitalizeNames,
+    isCapitalizeNames,
+    toggleCapitalizeName,
   };
 };

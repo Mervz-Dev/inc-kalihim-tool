@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { SaveFileView } from "@/components/save-file-view";
 import { RootStackParamList } from "@/types/navigation";
+import { capitalizeName } from "@/utils/string";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -30,6 +31,8 @@ export default function AbsentViewer() {
     setNotes,
     weekNumber,
     plottedExcelUri,
+    isCapitalizeNames,
+    setIsCapitalizeNames,
   } = useAbsentViewer(purok, saveFileBottomSheet);
 
   return (
@@ -97,7 +100,9 @@ export default function AbsentViewer() {
                     {index + 1}.
                   </Text>
                   <Text className="text-blue-700 text-[15px] font-jakarta-medium">
-                    {user.fullname}
+                    {isCapitalizeNames
+                      ? capitalizeName(user.fullname)
+                      : user.fullname}
                   </Text>
                 </View>
               ))}
@@ -118,7 +123,9 @@ export default function AbsentViewer() {
                     {index + 1}.
                   </Text>
                   <Text className="text-pink-700 text-[15px] font-jakarta-medium">
-                    {user.fullname}
+                    {isCapitalizeNames
+                      ? capitalizeName(user.fullname)
+                      : user.fullname}
                   </Text>
                 </View>
               ))}
@@ -181,7 +188,9 @@ export default function AbsentViewer() {
                     {index + 1}.
                   </Text>
                   <Text className="text-blue-700 text-[15px] font-jakarta-medium">
-                    {user.fullname}
+                    {isCapitalizeNames
+                      ? capitalizeName(user.fullname)
+                      : user.fullname}
                   </Text>
                 </View>
               ))}
@@ -202,7 +211,9 @@ export default function AbsentViewer() {
                     {index + 1}.
                   </Text>
                   <Text className="text-pink-700 text-[15px] font-jakarta-medium">
-                    {user.fullname}
+                    {isCapitalizeNames
+                      ? capitalizeName(user.fullname)
+                      : user.fullname}
                   </Text>
                 </View>
               ))}
@@ -234,6 +245,8 @@ export default function AbsentViewer() {
         dateRange={dateRange}
         notes={notes}
         setNotes={setNotes}
+        isCapitalizeNames={isCapitalizeNames}
+        setIsCapitalizeNames={setIsCapitalizeNames}
       />
 
       <BottomSheetModal
