@@ -6,11 +6,16 @@ import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import { generateAbsenteeFileName, generatePercentFileName } from "./generate";
 import { roundDecimal } from "./number";
+import { capitalizeName } from "./string";
 
 // --- Helper ---
 const setCell = (ws: any, address: string, value: any) => {
   const cell = ws.getCell(address);
   cell.value = value ?? 0;
+};
+
+type Options = {
+  isCapitalizeNames: boolean;
 };
 
 export const plotPercentToExcel = async (
@@ -327,7 +332,8 @@ export const plotPercentToExcel = async (
 
 export const plotAbsenteeToExcel = async (
   data: User.SessionData[],
-  info: User.Info
+  info: User.Info,
+  options?: Options
 ) => {
   const ExcelJS = await import("exceljs");
   const asset = Asset.fromModule(require("@/assets/forms/R1-02-03-Form.xlsx"));
@@ -391,7 +397,11 @@ export const plotAbsenteeToExcel = async (
       sessionData.firstSession.maleUsers.forEach((m, i) => {
         const row = startingRowF + i * 2; // one blank after each
         setCell(ws, `X${row}`, i + 1);
-        setCell(ws, `Y${row}`, m.fullname);
+        setCell(
+          ws,
+          `Y${row}`,
+          options?.isCapitalizeNames ? capitalizeName(m.fullname) : m.fullname
+        );
       });
 
       // move down: add only +1 extra blank row between last male and first female
@@ -404,7 +414,11 @@ export const plotAbsenteeToExcel = async (
     sessionData.firstSession.femaleUsers.forEach((m, i) => {
       const row = startingRowF + i * 2;
       setCell(ws, `X${row}`, i + 1);
-      setCell(ws, `Y${row}`, m.fullname);
+      setCell(
+        ws,
+        `Y${row}`,
+        options?.isCapitalizeNames ? capitalizeName(m.fullname) : m.fullname
+      );
     });
 
     // --- SECOND SESSION ---
@@ -415,7 +429,11 @@ export const plotAbsenteeToExcel = async (
       sessionData.secondSession.maleUsers.forEach((m, i) => {
         const row = startingRowB + i * 2;
         setCell(bws, `A${row}`, i + 1);
-        setCell(bws, `B${row}`, m.fullname);
+        setCell(
+          bws,
+          `B${row}`,
+          options?.isCapitalizeNames ? capitalizeName(m.fullname) : m.fullname
+        );
       });
 
       startingRowB =
@@ -426,7 +444,11 @@ export const plotAbsenteeToExcel = async (
     sessionData.secondSession.femaleUsers.forEach((m, i) => {
       const row = startingRowB + i * 2;
       setCell(bws, `A${row}`, i + 1);
-      setCell(bws, `B${row}`, m.fullname);
+      setCell(
+        bws,
+        `B${row}`,
+        options?.isCapitalizeNames ? capitalizeName(m.fullname) : m.fullname
+      );
     });
   });
 
