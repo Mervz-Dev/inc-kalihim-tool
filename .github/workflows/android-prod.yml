@@ -1,0 +1,39 @@
+name: Android Prod CI
+
+on:
+  workflow_dispatch: # allow manual trigger
+  pull_request:
+    branches:
+      - main # only trigger on PRs targeting main
+
+jobs:
+  versioning:
+    uses: ./.github/workflows/versioning.yml
+
+  commit-version:
+    needs: versioning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Commit updated version
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add app.json
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ needs.versioning.outputs.version }} and build ${{ needs.versioning.outputs.build_number }}"
+
+          # Only push if this is a workflow_dispatch, not a PR from fork
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            git push
+          fi
+
+  build:
+    needs: [versioning, commit-version]
+    uses: ./.github/workflows/android-build.yml
+    with:
+      version: ${{ needs.versioning.outputs.version }}
+      build_number: ${{ needs.versioning.outputs.build_number }}
+      profile: staging
+    secrets: inherit

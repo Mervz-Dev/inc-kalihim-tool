@@ -1,0 +1,64 @@
+name: Android Build
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      build_number:
+        type: string
+        required: true
+      profile:
+        type: string
+        default: staging
+    secrets:
+      EXPO_TOKEN:
+        required: true
+      EAS_PROJECT_ID:
+        required: true
+      ANDROID_SERVICE_ACCOUNT_JSON:
+        required: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          yarn install
+          yarn global add eas-cli
+          npm install -g expo-cli
+
+      - name: Configure credentials
+        run: |
+          mkdir -p credentials
+          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > credentials/service-account.json
+
+      - name: Prebuild
+        run: npx expo prebuild --non-interactive
+
+      - name: Build AAB
+        run: |
+          mkdir -p builds
+
+          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.aab"
+
+          eas build \
+            --platform android \
+            --profile ${{ inputs.profile }} \
+            --local \
+            --output "$outfile" \
+            --non-interactive
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ inputs.version }}-${{ inputs.build_number }}
+          path: builds
