@@ -11,16 +11,16 @@ on:
         required: true
       profile:
         type: string
-        default: staging # can be "staging" or "production"
+        default: staging
     secrets:
       EXPO_TOKEN:
         required: true
       EAS_PROJECT_ID:
         required: true
       APPLE_APP_SPECIFIC_PASSWORD:
-        required: true # needed if you want to submit to TestFlight/App Store
+        required: true
       APPLE_ID:
-        required: false # optional if submitting automatically
+        required: false
 
 jobs:
   ios:
