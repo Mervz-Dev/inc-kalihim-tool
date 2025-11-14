@@ -1,10 +1,7 @@
 name: Android Prod CI
 
 on:
-  workflow_dispatch: # allow manual trigger
-  pull_request:
-    branches:
-      - main # only trigger on PRs targeting main
+  workflow_dispatch:
 
 jobs:
   versioning:
@@ -17,6 +14,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Commit updated version
+        id: commit
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -24,16 +22,46 @@ jobs:
           git add app.json
           git diff --cached --quiet || git commit -m "chore: bump version to ${{ needs.versioning.outputs.version }} and build ${{ needs.versioning.outputs.build_number }}"
 
-          # Only push if this is a workflow_dispatch, not a PR from fork
-          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+          # Push only for workflow_dispatch or branch in repo
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] || [ "${GITHUB_EVENT_NAME}" = "create" ]; then
             git push
           fi
 
+      - name: Create tag
+        id: tag
+        run: |
+          TAG="v${{ needs.versioning.outputs.version }}"
+          git tag $TAG
+          git push origin $TAG
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            BODY=$(git log --pretty=format:"- %s")
+          else
+            BODY=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          fi
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: "Release ${{ needs.versioning.outputs.version }}"
+          body: ${{ steps.changelog.outputs.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
-    needs: [versioning, commit-version]
+    needs: commit-version
     uses: ./.github/workflows/android-build.yml
     with:
       version: ${{ needs.versioning.outputs.version }}
       build_number: ${{ needs.versioning.outputs.build_number }}
-      profile: staging
+      profile: production
     secrets: inherit
