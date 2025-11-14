@@ -6,12 +6,12 @@ on:
       build_android:
         description: "Build Android?"
         required: false
-        default: true
+        default: false
         type: boolean
       build_ios:
         description: "Build iOS?"
         required: false
-        default: true
+        default: false
         type: boolean
 
 jobs:
