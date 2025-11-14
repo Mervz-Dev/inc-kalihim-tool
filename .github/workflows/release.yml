@@ -1,9 +1,10 @@
 name: Release CI
 
 on:
-  push:
+  create:
     branches:
       - "release/**"
+
   workflow_dispatch:
     inputs:
       build_android:
