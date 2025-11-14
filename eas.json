@@ -3,10 +3,9 @@
     "staging": {
       "android": { "buildType": "app-bundle" },
       "ios": {
-        "distribution": "internal",
-        "simulator": true
+        "distribution": "store"
       },
-      "distribution": "internal"
+      "distribution": "store"
     },
     "production": {
       "android": { "buildType": "app-bundle" },

@@ -1,7 +1,18 @@
-name: Android Prod CI
+name: Production CI
 
 on:
   workflow_dispatch:
+    inputs:
+      build_android:
+        description: "Build Android?"
+        required: false
+        default: true
+        type: boolean
+      build_ios:
+        description: "Build iOS?"
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   versioning:
@@ -57,9 +68,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
+  build-android:
+    if: ${{ github.event.inputs.build_android == 'true' }}
     needs: commit-version
     uses: ./.github/workflows/android-build.yml
+    with:
+      version: ${{ needs.versioning.outputs.version }}
+      build_number: ${{ needs.versioning.outputs.build_number }}
+      profile: production
+    secrets: inherit
+
+  build-ios:
+    if: ${{ github.event.inputs.build_ios == 'true' }}
+    needs: commit-version
+    uses: ./.github/workflows/ios-build.yml
     with:
       version: ${{ needs.versioning.outputs.version }}
       build_number: ${{ needs.versioning.outputs.build_number }}
