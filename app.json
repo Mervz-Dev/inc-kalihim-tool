@@ -2,7 +2,7 @@
   "expo": {
     "name": "INC Kalihim Tool",
     "slug": "inc-kalihim-tool",
-    "version": "1.0.11",
+    "version": "main",
     "orientation": "portrait",
     "icon": "./assets/icons/main-app-icon.png",
     "scheme": "inckalihimtool",
@@ -15,10 +15,10 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "icon": "./assets/icons/ios-app-icon.png",
-      "buildNumber": "9"
+      "buildNumber": "2025111401251"
     },
     "android": {
-      "versionCode": 9,
+      "versionCode": 2025111401251,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/main-app-icon.png",
         "backgroundColor": "#ffffff"
