@@ -39,6 +39,12 @@ jobs:
           yarn global add eas-cli
           npm install -g expo-cli
 
+      - name: Update app.json with version/build
+        run: |
+          jq ".expo.version = \"${{ inputs.version }}\" |
+              .expo.ios.buildNumber = \"${{ inputs.build_number }}\"" \
+            app.json > t.json && mv t.json app.json
+
       - name: Prebuild
         run: npx expo prebuild --non-interactive
 

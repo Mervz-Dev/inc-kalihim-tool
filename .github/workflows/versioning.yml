@@ -43,10 +43,3 @@ jobs:
           new="${base}0${time}"     # 0 = separator
 
           echo "build_number=$new" >> $GITHUB_OUTPUT
-
-      - name: Update app.json
-        run: |
-          jq ".expo.version = \"${{ steps.ver.outputs.version }}\" |
-              .expo.android.versionCode = (${{ steps.build.outputs.build_number }} | tonumber) |
-              .expo.ios.buildNumber = \"${{ steps.build.outputs.build_number }}\"" \
-            app.json > t.json && mv t.json app.json

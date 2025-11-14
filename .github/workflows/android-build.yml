@@ -42,6 +42,12 @@ jobs:
           mkdir -p credentials
           printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > credentials/service-account.json
 
+      - name: Update app.json with version & build number
+        run: |
+          jq ".expo.version = \"${{ inputs.version }}\" |
+              .expo.android.versionCode = (${{ inputs.build_number }} | tonumber)" \
+              app.json > tmp.json && mv tmp.json app.json
+
       - name: Prebuild
         run: npx expo prebuild --non-interactive
 
