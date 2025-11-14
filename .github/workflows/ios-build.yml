@@ -65,6 +65,9 @@ jobs:
         if: ${{ inputs.profile != 'local' }} # skip local profile
         run: |
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
+          export EXPO_APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
+          export EXPO_APPLE_ID="${{ secrets.APPLE_ID }}"
+
           outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.ipa"
           echo "Submitting $outfile to App Store..."
           eas submit --platform ios \

@@ -32,6 +32,9 @@
       "android": {
         "serviceAccountKeyPath": "./credentials/service-account.json",
         "track": "internal"
+      },
+      "ios": {
+        "ascAppId": "6755294369"
       }
     }
   }
