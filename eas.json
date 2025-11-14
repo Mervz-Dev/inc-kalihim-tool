@@ -3,10 +3,9 @@
     "staging": {
       "android": { "buildType": "app-bundle" },
       "ios": {
-        "distribution": "internal",
-        "simulator": true
+        "distribution": "store"
       },
-      "distribution": "internal"
+      "distribution": "store"
     },
     "production": {
       "android": { "buildType": "app-bundle" },
@@ -33,6 +32,9 @@
       "android": {
         "serviceAccountKeyPath": "./credentials/service-account.json",
         "track": "internal"
+      },
+      "ios": {
+        "ascAppId": "6755294369"
       }
     }
   }
