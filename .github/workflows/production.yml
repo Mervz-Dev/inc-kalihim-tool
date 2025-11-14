@@ -24,6 +24,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          yarn install
+          yarn global add eas-cli
+          npm install -g expo-cli
+
+      - name: Update app.json with version/build
+        run: |
+          jq ".expo.version = \"${{ needs.versioning.outputs.version }}\" |
+              .expo.ios.buildNumber = \"${{ needs.versioning.outputs.build_number }}\" |
+              .expo.android.versionCode = (${{ needs.versioning.outputs.build_number }} | tonumber)" \
+            app.json > t.json && mv t.json app.json
+
+      - name: Prebuild
+        run: npx expo prebuild --non-interactive
+
       - name: Commit updated version
         id: commit
         run: |
