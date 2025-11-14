@@ -63,3 +63,12 @@ jobs:
         with:
           name: android-${{ inputs.version }}-${{ inputs.build_number }}
           path: builds
+
+      - name: Submit to Google Play
+        run: |
+          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.aab"
+          echo "Submitting $outfile to Google Play..."
+          eas submit --platform android \
+            --path "$outfile" \
+            --profile ${{ inputs.profile }} \
+            --non-interactive
