@@ -1,11 +1,15 @@
 name: iOS Submit
 
 on:
+  push:
+    branches:
+      - "release/**"
   workflow_dispatch:
     inputs:
       file_name:
         description: "iOS build artifact file name (e.g., ikt-1.0.12-2025111401011.ipa)"
         required: true
+        default: "ikt-1.0.12-2025111401011.ipa"
         type: string
 
 jobs:
@@ -18,7 +22,7 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
     steps:
-      # 1️⃣ Checkout (needed for EAS CLI)
+      # 1️⃣ Checkout
       - uses: actions/checkout@v3
 
       # 2️⃣ Setup Node.js
@@ -32,7 +36,7 @@ jobs:
           npm install -g eas-cli
           npm install -g expo-cli
 
-      # 4️⃣ Download artifact (from previous workflow run)
+      # 4️⃣ Download artifact
       - name: Download iOS artifact
         uses: actions/download-artifact@v4
         with:
