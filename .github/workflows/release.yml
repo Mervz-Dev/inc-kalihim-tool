@@ -9,7 +9,7 @@ on:
       build_android:
         description: "Build Android?"
         required: false
-        default: false
+        default: true
         type: boolean
       build_ios:
         description: "Build iOS?"
@@ -32,7 +32,7 @@ jobs:
     secrets: inherit
 
   build-ios:
-    if: ${{ github.event.inputs.build_ios == 'true' || github.event_name == 'create' }}
+    # if: ${{ github.event.inputs.build_ios == 'true' || github.event_name == 'create' }}
     needs: versioning
     uses: ./.github/workflows/ios-build.yml
     with:
