@@ -49,6 +49,7 @@ jobs:
         run: |
           mkdir -p builds
 
+          export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
           outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.aab"
 
           eas build \
