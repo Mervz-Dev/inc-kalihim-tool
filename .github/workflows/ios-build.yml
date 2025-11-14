@@ -68,7 +68,7 @@ jobs:
           path: builds
 
       - name: Submit to TestFlight / App Store
-        if: ${{ inputs.profile != 'local' }} # skip local profile
+        if: ${{ inputs.profile != 'local' }}
         run: |
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
           export EXPO_APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
@@ -79,6 +79,4 @@ jobs:
           eas submit --platform ios \
             --path "$outfile" \
             --profile ${{ inputs.profile }} \
-            --apple-id "${{ secrets.APPLE_ID }}" \
-            --apple-app-specific-password "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" \
             --non-interactive
