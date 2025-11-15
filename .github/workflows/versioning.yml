@@ -16,11 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create build number
+      - name: Create build number (10-digit)
         id: build
         run: |
-          base=$(date +%Y%m%d)      # e.g., 20251114
-          time=$(date +%H%M)        # e.g., 0153
-          new="${base}0${time}"     # 0 = separator
-
-          echo "build_number=$new" >> $GITHUB_OUTPUT
+          # Use 10-digit timestamp: YYMMDDHHMM
+          build_number=$(date +%y%m%d%H%M)  # e.g., 2511140153
+          echo "build_number=$build_number" >> $GITHUB_OUTPUT
