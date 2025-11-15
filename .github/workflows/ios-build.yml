@@ -3,9 +3,6 @@ name: iOS Build
 on:
   workflow_call:
     inputs:
-      version:
-        type: string
-        required: true
       build_number:
         type: string
         required: true
@@ -39,10 +36,15 @@ jobs:
           yarn global add eas-cli
           npm install -g expo-cli
 
-      - name: Update app.json with version/build
+      - name: Read version from app.json
+        id: get_version
         run: |
-          jq ".expo.version = \"${{ inputs.version }}\" |
-              .expo.ios.buildNumber = \"${{ inputs.build_number }}\"" \
+          version=$(jq -r '.expo.version' app.json)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Update build number only
+        run: |
+          jq ".expo.ios.buildNumber = \"${{ inputs.build_number }}\"" \
             app.json > t.json && mv t.json app.json
 
       - name: Prebuild
@@ -53,7 +55,8 @@ jobs:
           mkdir -p builds
 
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
-          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.ipa"
+          version="${{ steps.get_version.outputs.version }}"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.ipa"
 
           eas build \
             --platform ios \
@@ -64,7 +67,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ios-${{ inputs.version }}-${{ inputs.build_number }}
+          name: ios-${{ steps.get_version.outputs.version }}-${{ inputs.build_number }}
           path: builds
 
       - name: Submit to TestFlight / App Store
@@ -74,8 +77,10 @@ jobs:
           export EXPO_APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
           export EXPO_APPLE_ID="${{ secrets.APPLE_ID }}"
 
-          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.ipa"
+          version="${{ steps.get_version.outputs.version }}"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.ipa"
           echo "Submitting $outfile to App Store..."
+
           eas submit --platform ios \
             --path "$outfile" \
             --profile ${{ inputs.profile }} \

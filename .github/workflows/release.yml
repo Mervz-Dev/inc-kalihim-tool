@@ -1,10 +1,6 @@
 name: Release CI
 
 on:
-  create:
-    branches:
-      - "release/**"
-
   workflow_dispatch:
     inputs:
       build_android:
@@ -18,26 +14,33 @@ on:
         default: true
         type: boolean
 
+      build_type:
+        description: "Select build type"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - development
+          - production
+
 jobs:
   versioning:
     uses: ./.github/workflows/versioning.yml
 
   build-android:
-    if: ${{ github.event.inputs.build_android == 'true' || github.event_name == 'create' }}
+    if: ${{ github.event.inputs.build_android == 'true' }}
     needs: versioning
     uses: ./.github/workflows/android-build.yml
     with:
-      version: ${{ needs.versioning.outputs.version }}
       build_number: ${{ needs.versioning.outputs.build_number }}
-      profile: production
+      profile: ${{ github.event.inputs.build_type }}
     secrets: inherit
 
   build-ios:
-    if: ${{ github.event.inputs.build_ios == 'true' || github.event_name == 'create' }}
+    if: ${{ github.event.inputs.build_ios == 'true' }}
     needs: versioning
     uses: ./.github/workflows/ios-build.yml
     with:
-      version: ${{ needs.versioning.outputs.version }}
       build_number: ${{ needs.versioning.outputs.build_number }}
-      profile: production
+      profile: ${{ github.event.inputs.build_type }}
     secrets: inherit

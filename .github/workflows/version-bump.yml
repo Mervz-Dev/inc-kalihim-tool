@@ -1,0 +1,79 @@
+name: Version Bump
+
+on:
+  create:
+    branches:
+      - "release/*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number to set (e.g. 1.0.8)"
+        required: true
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    env:
+      EXPO_NO_DOCTOR: 1
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/yarn
+            node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Setup Expo CLI
+        run: npm install -g expo-cli
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ github.event.inputs.version }}"
+            echo "Manual version input: $version"
+          else
+            branch="${GITHUB_REF##*/}"
+            version="${branch#release/}"
+            echo "Extracted from branch: $version"
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Update app.json version
+        run: |
+          version=${{ steps.version.outputs.version }}
+          echo "Updating app.json to version $version"
+
+          # Only update expo.version — no versionCode, no buildNumber
+          jq ".expo.version = \"$version\"" app.json > tmp.json && mv tmp.json app.json
+
+      - name: Run Expo prebuild with clean
+        run: |
+          echo "Running expo prebuild"
+          npx expo prebuild --non-interactive
+
+      - name: Commit & push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.version.outputs.version }} and prebuild"
+          git push

@@ -3,9 +3,6 @@ name: Android Build
 on:
   workflow_call:
     inputs:
-      version:
-        type: string
-        required: true
       build_number:
         type: string
         required: true
@@ -42,11 +39,16 @@ jobs:
           mkdir -p credentials
           printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > credentials/service-account.json
 
-      - name: Update app.json with version & build number
+      - name: Read version from app.json
+        id: get_version
         run: |
-          jq ".expo.version = \"${{ inputs.version }}\" |
-              .expo.android.versionCode = (${{ inputs.build_number }} | tonumber)" \
-              app.json > tmp.json && mv tmp.json app.json
+          version=$(jq -r '.expo.version' app.json)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Update build number only
+        run: |
+          jq ".expo.android.versionCode = (${{ inputs.build_number }} | tonumber)" \
+            app.json > tmp.json && mv tmp.json app.json
 
       - name: Prebuild
         run: npx expo prebuild --non-interactive
@@ -56,7 +58,8 @@ jobs:
           mkdir -p builds
 
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
-          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.aab"
+          version="${{ steps.get_version.outputs.version }}"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.aab"
 
           eas build \
             --platform android \
@@ -67,14 +70,16 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: android-${{ inputs.version }}-${{ inputs.build_number }}
+          name: android-${{ steps.get_version.outputs.version }}-${{ inputs.build_number }}
           path: builds
 
       - name: Submit to Google Play
         run: |
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
-          outfile="builds/ikt-${{ inputs.version }}-${{ inputs.build_number }}.aab"
+          version="${{ steps.get_version.outputs.version }}"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.aab"
           echo "Submitting $outfile to Google Play..."
+
           eas submit --platform android \
             --path "$outfile" \
             --profile ${{ inputs.profile }} \
