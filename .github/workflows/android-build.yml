@@ -47,6 +47,7 @@ jobs:
 
       - name: Update build number only
         run: |
+          echo "Updating Android versionCode with build_number: ${{ inputs.build_number }}"
           jq ".expo.android.versionCode = (${{ inputs.build_number }} | tonumber)" \
             app.json > tmp.json && mv tmp.json app.json
 

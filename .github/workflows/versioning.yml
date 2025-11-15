@@ -21,4 +21,5 @@ jobs:
         run: |
           # Use 10-digit timestamp: YYMMDDHHMM
           build_number=$(date +%y%m%d%H%M)  # e.g., 2511140153
+          echo "Generated build number: $build_number"
           echo "build_number=$build_number" >> $GITHUB_OUTPUT
