@@ -1,4 +1,4 @@
-name: Android Build
+name: iOS Build
 
 on:
   workflow_call:
@@ -14,12 +14,14 @@ on:
         required: true
       EAS_PROJECT_ID:
         required: true
-      ANDROID_SERVICE_ACCOUNT_JSON:
+      APPLE_APP_SPECIFIC_PASSWORD:
         required: true
+      APPLE_ID:
+        required: false
 
 jobs:
-  android:
-    runs-on: ubuntu-latest
+  ios:
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -34,11 +36,6 @@ jobs:
           yarn global add eas-cli
           npm install -g expo-cli
 
-      - name: Configure credentials
-        run: |
-          mkdir -p credentials
-          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > credentials/service-account.json
-
       - name: Read version from app.json
         id: get_version
         run: |
@@ -47,22 +44,22 @@ jobs:
 
       - name: Update build number only
         run: |
-          jq ".expo.android.versionCode = (${{ inputs.build_number }} | tonumber)" \
-            app.json > tmp.json && mv tmp.json app.json
+          jq ".expo.ios.buildNumber = \"${{ inputs.build_number }}\"" \
+            app.json > t.json && mv t.json app.json
 
       - name: Prebuild
         run: npx expo prebuild --non-interactive
 
-      - name: Build AAB
+      - name: Build IPA
         run: |
           mkdir -p builds
 
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
           version="${{ steps.get_version.outputs.version }}"
-          outfile="builds/ikt-${version}-${{ inputs.build_number }}.aab"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.ipa"
 
           eas build \
-            --platform android \
+            --platform ios \
             --profile ${{ inputs.profile }} \
             --local \
             --output "$outfile" \
@@ -70,17 +67,21 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: android-${{ steps.get_version.outputs.version }}-${{ inputs.build_number }}
+          name: ios-${{ steps.get_version.outputs.version }}-${{ inputs.build_number }}
           path: builds
 
-      - name: Submit to Google Play
+      - name: Submit to TestFlight / App Store
+        if: ${{ inputs.profile != 'local' }}
         run: |
           export EXPO_TOKEN="${{ secrets.EXPO_TOKEN }}"
-          version="${{ steps.get_version.outputs.version }}"
-          outfile="builds/ikt-${version}-${{ inputs.build_number }}.aab"
-          echo "Submitting $outfile to Google Play..."
+          export EXPO_APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
+          export EXPO_APPLE_ID="${{ secrets.APPLE_ID }}"
 
-          eas submit --platform android \
+          version="${{ steps.get_version.outputs.version }}"
+          outfile="builds/ikt-${version}-${{ inputs.build_number }}.ipa"
+          echo "Submitting $outfile to App Store..."
+
+          eas submit --platform ios \
             --path "$outfile" \
             --profile ${{ inputs.profile }} \
             --non-interactive

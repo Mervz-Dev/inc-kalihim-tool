@@ -1,0 +1,47 @@
+name: Release CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_android:
+        description: "Build Android?"
+        required: false
+        default: true
+        type: boolean
+
+      build_ios:
+        description: "Build iOS?"
+        required: false
+        default: true
+        type: boolean
+
+      build_type:
+        description: "Select build type"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - development
+          - production
+
+jobs:
+  versioning:
+    uses: ./.github/workflows/versioning.yml
+
+  build-android:
+    if: ${{ github.event.inputs.build_android == 'true' }}
+    needs: versioning
+    uses: ./.github/workflows/android-build.yml
+    with:
+      build_number: ${{ needs.versioning.outputs.build_number }}
+      profile: ${{ github.event.inputs.build_type }}
+    secrets: inherit
+
+  build-ios:
+    if: ${{ github.event.inputs.build_ios == 'true' }}
+    needs: versioning
+    uses: ./.github/workflows/ios-build.yml
+    with:
+      build_number: ${{ needs.versioning.outputs.build_number }}
+      profile: ${{ github.event.inputs.build_type }}
+    secrets: inherit

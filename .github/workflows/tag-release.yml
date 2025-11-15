@@ -1,0 +1,36 @@
+name: Tag Release Version
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  tag-version:
+    if: ${{ startsWith(github.head_ref, 'release/') && github.event.pull_request.merged }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout merged branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version from app.json
+        id: read_version
+        run: |
+          VERSION=$(jq -r '.version' app.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Create and push tag with v prefix
+        run: |
+          TAG="v${{ steps.read_version.outputs.version }}"
+          echo "Creating Git tag: $TAG"
+          git tag "$TAG"
+          git push origin "$TAG"
