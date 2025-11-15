@@ -68,7 +68,6 @@ jobs:
             --local \
             --output "$outfile" \
             --non-interactive
-            --clear-cache
 
       - uses: actions/upload-artifact@v4
         with:
