@@ -34,10 +34,20 @@ jobs:
           yarn global add eas-cli
           npm install -g expo-cli
 
-      - name: Configure credentials
+      - name: Configure Google Play credentials
         run: |
-          mkdir -p credentials
-          printf "%s" "${{ secrets.ANDROID_SERVICE_ACCOUNT_JSON }}" > credentials/service-account.json
+          mkdir -p ./credentials
+          printf "%s" "${secrets.ANDROID_SERVICE_ACCOUNT_JSON}" > ./credentials/service-account.json
+          echo "Service account JSON copied successfully."
+
+      - name: Verify JSON structure and required keys
+        run: |
+          # Validate JSON
+          jq '.' ./credentials/service-account.json
+
+          # Verify essential keys exist
+          jq -e '.type, .project_id, .private_key_id, .private_key, .client_email' ./credentials/service-account.json
+          echo "Service account JSON structure is valid."
 
       - name: Read version from app.json
         id: get_version
