@@ -4,7 +4,7 @@ import * as FileSystem from "expo-file-system";
 import * as SecureStore from "expo-secure-store";
 import mime from "mime";
 import { Platform } from "react-native";
-import { zipWithPassword } from "react-native-zip-archive";
+import { zip, zipWithPassword } from "react-native-zip-archive";
 import { generatePasswordFromKey } from "./generate";
 
 export async function copyFileToDownloads(
@@ -60,7 +60,10 @@ export const getFileNameWithoutExtension = (uri: string): string => {
   return fileName.replace(/\.[^/.]+$/, "");
 };
 
-export const zipExcelFileWithPasswordAndroid = async (sourceUri: string) => {
+export const zipExcelFileAndroid = async (
+  sourceUri: string,
+  withPass?: boolean
+) => {
   try {
     const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
     const timestamp = getTimestampFromFileName(sourceUri);
@@ -71,7 +74,11 @@ export const zipExcelFileWithPasswordAndroid = async (sourceUri: string) => {
     const fileName = getFileNameWithoutExtension(sourceUri);
     const targetPath = `${FileSystem.documentDirectory}/${fileName}.zip`;
 
-    await zipWithPassword(sourceUri, targetPath, password);
+    if (withPass) {
+      await zipWithPassword(sourceUri, targetPath, password);
+    } else {
+      await zip(sourceUri, targetPath);
+    }
 
     return targetPath;
   } catch (error) {
@@ -79,7 +86,10 @@ export const zipExcelFileWithPasswordAndroid = async (sourceUri: string) => {
   }
 };
 
-export const zipExcelFileWithPasswordIOS = async (sourceUri: string) => {
+export const zipExcelFileIOS = async (
+  sourceUri: string,
+  withPass?: boolean
+) => {
   try {
     const stored = await SecureStore.getItemAsync(APP_PASSWORD_KEY);
     const timestamp = getTimestampFromFileName(sourceUri);
@@ -102,11 +112,17 @@ export const zipExcelFileWithPasswordIOS = async (sourceUri: string) => {
     await FileSystem.copyAsync({ from: sourceUri, to: tempFilePath });
 
     // ✅ Zip the folder, not the file
-    const zippedPath = await zipWithPassword(
-      tempDir.replace("file://", ""),
-      targetPath,
-      password
-    );
+    let zippedPath = "";
+
+    if (withPass) {
+      zippedPath = await zipWithPassword(
+        tempDir.replace("file://", ""),
+        targetPath,
+        password
+      );
+    } else {
+      zippedPath = await zip(tempDir.replace("file://", ""), targetPath);
+    }
 
     // ✅ Clean up temporary folder
     await FileSystem.deleteAsync(tempDir, { idempotent: true });
@@ -118,11 +134,11 @@ export const zipExcelFileWithPasswordIOS = async (sourceUri: string) => {
   }
 };
 
-export const zipExcelFileWithPassword = async (uri: string) => {
+export const zipExcelFile = async (uri: string, withPass?: boolean) => {
   if (Platform.OS === "android") {
-    return await zipExcelFileWithPasswordAndroid(uri);
+    return await zipExcelFileAndroid(uri);
   } else {
-    return await zipExcelFileWithPasswordIOS(uri);
+    return await zipExcelFileIOS(uri);
   }
 };
 

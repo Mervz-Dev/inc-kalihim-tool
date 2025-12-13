@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import React, { useMemo, useRef } from "react";
 import {
+  Platform,
   ScrollView,
   Switch,
   Text,
@@ -49,6 +50,9 @@ export default function SettingsScreen() {
     exportFileUri,
     showDetailedFullName,
     toggleShowDetailedFullName,
+
+    encryptedFileEnabled,
+    toggleEncryptedFile,
   } = useSettingsScreen(saveFileBottomSheet);
   const { requireAuth } = useAuthAction();
 
@@ -128,7 +132,13 @@ export default function SettingsScreen() {
               value={showDetailedFullName}
               onValueChange={toggleShowDetailedFullName}
               trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
-              thumbColor={showDetailedFullName ? "#2563eb" : "#f3f4f6"}
+              thumbColor={
+                Platform.OS === "ios"
+                  ? "#f3f4f6"
+                  : showDetailedFullName
+                  ? "#2563eb"
+                  : "#f3f4f6"
+              }
             />
           </View>
         </View>
@@ -167,7 +177,45 @@ export default function SettingsScreen() {
               value={biometricsEnabled}
               onValueChange={toggleBiometrics}
               trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
-              thumbColor={biometricsEnabled ? "#2563eb" : "#f3f4f6"}
+              thumbColor={
+                Platform.OS === "ios"
+                  ? "#f3f4f6"
+                  : biometricsEnabled
+                  ? "#2563eb"
+                  : "#f3f4f6"
+              }
+            />
+          </View>
+
+          <View className="flex-row items-center justify-between py-4 px-3">
+            <View className="flex-row items-center gap-2">
+              <Ionicons
+                name="document-lock-outline"
+                size={20}
+                color="#ef4444"
+              />
+              <Text className="text-gray-900 font-jakarta-medium text-base">
+                Enable File Encryption
+              </Text>
+            </View>
+            <Switch
+              value={encryptedFileEnabled}
+              onValueChange={() => {
+                requireAuth({
+                  description:
+                    "For security, please enter your password to apply update on encrypted file option",
+                  type: "action",
+                  onConfirm: toggleEncryptedFile,
+                });
+              }}
+              trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
+              thumbColor={
+                Platform.OS === "ios"
+                  ? "#f3f4f6"
+                  : encryptedFileEnabled
+                  ? "#2563eb"
+                  : "#f3f4f6"
+              }
             />
           </View>
         </View>

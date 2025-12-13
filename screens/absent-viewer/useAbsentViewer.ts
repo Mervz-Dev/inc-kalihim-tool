@@ -11,7 +11,7 @@ import {
 } from "@/utils/date";
 import { delay } from "@/utils/delay";
 import { plotAbsenteeToExcel } from "@/utils/excelPlotter";
-import { zipExcelFileWithPassword } from "@/utils/file";
+import { zipExcelFile } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { DateType } from "react-native-ui-datepicker";
@@ -22,7 +22,8 @@ export const useAbsentViewer = (
 ) => {
   const [sessionData, setSessionData] = useState<User.SessionData[]>([]);
   const loader = useLoading();
-  const { lokalCode, distritoCode, lokal, distrito } = useSettingsStore();
+  const { lokalCode, distritoCode, lokal, distrito, encryptedFileEnabled } =
+    useSettingsStore();
 
   const [dateRange, setDateRange] = useState<{
     startDate?: DateType;
@@ -97,7 +98,10 @@ export const useAbsentViewer = (
 
       if (!plottedExcelUri) return;
 
-      const zippedUri = await zipExcelFileWithPassword(plottedExcelUri);
+      const zippedUri = await zipExcelFile(
+        plottedExcelUri,
+        encryptedFileEnabled
+      );
 
       if (!zippedUri) return;
 

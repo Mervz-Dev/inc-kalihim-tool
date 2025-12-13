@@ -8,6 +8,7 @@ type SettingsState = {
   lokalCode?: string;
   distritoCode?: string;
   biometricsEnabled: boolean;
+  encryptedFileEnabled: boolean;
   setField: (
     key: keyof Omit<
       SettingsState,
@@ -16,6 +17,7 @@ type SettingsState = {
     value: string
   ) => void;
   setBiometrics: (enabled: boolean) => void;
+  setEncryptedFile: (enabled: boolean) => void;
   toggleShowDetailedFullName: () => void;
   showDetailedFullName: boolean;
   reset: () => void;
@@ -30,6 +32,7 @@ export const useSettingsStore = create<SettingsState>()(
       distritoCode: "",
       biometricsEnabled: false, // default value
       showDetailedFullName: false,
+      encryptedFileEnabled: true,
       toggleShowDetailedFullName: () => {
         set((v) => {
           return {
@@ -39,6 +42,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
       setField: (key, value) => set({ [key]: value }),
       setBiometrics: (enabled) => set({ biometricsEnabled: enabled }),
+      setEncryptedFile: (enabled) => set({ encryptedFileEnabled: enabled }),
       reset: () =>
         set({
           distrito: "",

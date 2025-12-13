@@ -14,7 +14,7 @@ import {
 } from "@/utils/date";
 import { delay } from "@/utils/delay";
 import { plotPercentToExcel } from "@/utils/excelPlotter";
-import { zipExcelFileWithPassword } from "@/utils/file";
+import { zipExcelFile } from "@/utils/file";
 import { generateDefaultPercentData } from "@/utils/generate";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -27,6 +27,7 @@ export const usePercentGenerator = (
   groupCount: string,
   saveBottomRef: RefObject<BottomSheetModal | null>
 ) => {
+  const { encryptedFileEnabled } = useSettingsStore();
   const loader = useLoading();
   // --- Initialization ---
 
@@ -197,7 +198,7 @@ export const usePercentGenerator = (
 
       if (!excelUri) return;
 
-      const zippedUri = await zipExcelFileWithPassword(excelUri);
+      const zippedUri = await zipExcelFile(excelUri, encryptedFileEnabled);
 
       console.log("zipped uri", zippedUri);
 
@@ -257,7 +258,7 @@ export const usePercentGenerator = (
 
       if (!excelUri) return;
 
-      const zippedUri = await zipExcelFileWithPassword(excelUri);
+      const zippedUri = await zipExcelFile(excelUri, encryptedFileEnabled);
 
       setPlottedExcelUri(zippedUri);
 

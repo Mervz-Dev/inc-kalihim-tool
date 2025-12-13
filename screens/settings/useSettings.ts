@@ -17,7 +17,7 @@ import {
 import { useSettingsStore } from "@/stores/settingsStore";
 import { User } from "@/types/user";
 import { delay } from "@/utils/delay";
-import { zipExcelFileWithPassword } from "@/utils/file";
+import { zipExcelFile } from "@/utils/file";
 import { useLoading } from "@/utils/hooks/useLoading";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -38,6 +38,8 @@ export function useSettingsScreen(
     biometricsEnabled,
     toggleShowDetailedFullName,
     showDetailedFullName,
+    encryptedFileEnabled,
+    setEncryptedFile,
   } = useSettingsStore();
 
   const [showImportModal, setShowImportModal] = useState(false);
@@ -65,6 +67,10 @@ export function useSettingsScreen(
       text1: "Success",
       text2: `Biometrics ${!biometricsEnabled ? "enabled" : "disabled"}`,
     });
+  };
+
+  const toggleEncryptedFile = async () => {
+    setEncryptedFile(!encryptedFileEnabled);
   };
 
   // --- Reset Settings Only ---
@@ -224,7 +230,7 @@ export function useSettingsScreen(
       loader.show("Zipping file...");
 
       // Step 4: Zip Excel file with password (same helper as percent)
-      const zippedUri = await zipExcelFileWithPassword(fileUri);
+      const zippedUri = await zipExcelFile(fileUri, encryptedFileEnabled);
 
       if (!zippedUri) {
         return;
@@ -276,6 +282,9 @@ export function useSettingsScreen(
     handleClearAllData,
     handleImportFile,
     exportUsersToExcel,
+
+    toggleEncryptedFile,
+    encryptedFileEnabled,
 
     // navigation
     goToPassword: () => router.push("/set-password"),
