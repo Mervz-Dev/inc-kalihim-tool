@@ -16,11 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create build number
+      - name: Create build number (8-digit hourly Manila time)
         id: build
         run: |
-          base=$(date +%Y%m%d)      # e.g., 20251114
-          time=$(date +%H%M)        # e.g., 0153
-          new="${base}0${time}"     # 0 = separator
-
-          echo "build_number=$new" >> $GITHUB_OUTPUT
+          # Use Manila timezone (UTC+8)
+          build_number=$(TZ="Asia/Manila" date +%y%m%d%H)  # e.g., 25111409
+          echo "Generated build number (Manila time): $build_number"
+          echo "build_number=$build_number" >> $GITHUB_OUTPUT

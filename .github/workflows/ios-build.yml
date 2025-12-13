@@ -8,7 +8,7 @@ on:
         required: true
       profile:
         type: string
-        default: staging
+        default: production
     secrets:
       EXPO_TOKEN:
         required: true

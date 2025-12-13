@@ -242,14 +242,14 @@ export const usePercentGenerator = (
 
       loader.show("Generating...");
 
-      const excelUri = await plotPercentToExcel(
-        result,
-        isFromLastWeekResult ? prevComputedResult : undefined
-      );
-
       const fromLast =
         weekNumber - parseInt(prevComputedResult?.info?.week || "0", 10) === 1;
       setIsFromLastWeekResult(fromLast);
+
+      const excelUri = await plotPercentToExcel(
+        result,
+        fromLast ? prevComputedResult : undefined
+      );
 
       setCurrentComputedResult(result);
 
