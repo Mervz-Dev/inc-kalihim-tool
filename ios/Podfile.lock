@@ -117,22 +117,22 @@ PODS:
   - hermes-engine (0.79.6):
     - hermes-engine/Pre-built (= 0.79.6)
   - hermes-engine/Pre-built (0.79.6)
-  - libavif/core (0.11.1)
-  - libavif/libdav1d (0.11.1):
+  - libavif/core (1.0.0)
+  - libavif/libdav1d (1.0.0):
     - libavif/core
     - libdav1d (>= 0.6.0)
   - libdav1d (1.2.0)
-  - libwebp (1.5.0):
-    - libwebp/demux (= 1.5.0)
-    - libwebp/mux (= 1.5.0)
-    - libwebp/sharpyuv (= 1.5.0)
-    - libwebp/webp (= 1.5.0)
-  - libwebp/demux (1.5.0):
+  - libwebp (1.6.0):
+    - libwebp/demux (= 1.6.0)
+    - libwebp/mux (= 1.6.0)
+    - libwebp/sharpyuv (= 1.6.0)
+    - libwebp/webp (= 1.6.0)
+  - libwebp/demux (1.6.0):
     - libwebp/webp
-  - libwebp/mux (1.5.0):
+  - libwebp/mux (1.6.0):
     - libwebp/demux
-  - libwebp/sharpyuv (1.5.0)
-  - libwebp/webp (1.5.0):
+  - libwebp/sharpyuv (1.6.0)
+  - libwebp/webp (1.6.0):
     - libwebp/sharpyuv
   - lottie-ios (4.5.0)
   - lottie-react-native (7.2.2):
@@ -2135,9 +2135,9 @@ PODS:
   - RNZipArchive/Core (7.0.2):
     - React-Core
     - SSZipArchive (~> 2.5.5)
-  - SDWebImage (5.21.3):
-    - SDWebImage/Core (= 5.21.3)
-  - SDWebImage/Core (5.21.3)
+  - SDWebImage (5.21.7):
+    - SDWebImage/Core (= 5.21.7)
+  - SDWebImage/Core (5.21.7)
   - SDWebImageAVIFCoder (0.11.1):
     - libavif/core (>= 0.11.0)
     - SDWebImage (~> 5.10)
@@ -2524,9 +2524,9 @@ SPEC CHECKSUMS:
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 44bb6fe76a6eb400d3a992e2d0b21946ae999fa9
-  libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
+  libavif: 5f8e715bea24debec477006f21ef9e95432e254d
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
-  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  libwebp: af5937a13536ef73f3784d69cc342b98961acf33
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 8bc11e10576d1a3f77f4e0ae5b70503c5c890a09
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
@@ -2598,7 +2598,7 @@ SPEC CHECKSUMS:
   RNReanimated: 2313402fe27fecb7237619e9c6fcee3177f08a65
   RNScreens: 482e9707f9826230810c92e765751af53826d509
   RNZipArchive: 4304f5100eab004eeb7349adc51997b3a28deb76
-  SDWebImage: 16309af6d214ba3f77a7c6f6fdda888cb313a50a
+  SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
@@ -2606,6 +2606,6 @@ SPEC CHECKSUMS:
   SSZipArchive: c69881e8ac5521f0e622291387add5f60f30f3c4
   Yoga: dc7c21200195acacb62fa920c588e7c2106de45e
 
-PODFILE CHECKSUM: f69967a22883dd294a0fc11d976ce67114b2b69b
+PODFILE CHECKSUM: b1708b47bdcff27d3479b75f50636bfa0ae4b202
 
 COCOAPODS: 1.16.2
