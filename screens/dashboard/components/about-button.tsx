@@ -68,7 +68,14 @@ export const AboutButton = () => {
                 colors={["#3B82F6", "#2563EB"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                className="p-6 items-center justify-center"
+                // LinearGradient isn't registered with NativeWind, so a className
+                // here is silently ignored -- the header lost its padding and
+                // centering. Plain styles apply on every platform.
+                style={{
+                  padding: 24,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
                 <Ionicons
                   name="apps-outline"
