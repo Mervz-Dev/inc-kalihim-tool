@@ -1,4 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { ParamListBase } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "expo-router";
 import { RefObject, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
@@ -63,10 +66,40 @@ export const usePercentGenerator = (
   const { lokalCode, distritoCode, lokal, distrito } = useSettingsStore();
 
   const [sNumberModalVisible, setSNumberModalVisible] = useState(false);
+
+  // The S# modal opens automatically on entry. iOS refuses to present a modal
+  // from a screen that is still being pushed, so it waits until both the data
+  // has loaded and the screen transition has finished.
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const [isScreenReady, setIsScreenReady] = useState(false);
+  const [isSNumberModalPending, setIsSNumberModalPending] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("transitionEnd", (event) => {
+      if (!event.data.closing) setIsScreenReady(true);
+    });
+
+    // Never wait forever: if the event was missed or never fires, carry on.
+    const fallback = setTimeout(() => setIsScreenReady(true), 1000);
+
+    return () => {
+      unsubscribe();
+      clearTimeout(fallback);
+    };
+  }, [navigation]);
+
+  useEffect(() => {
+    if (isSNumberModalPending && isScreenReady) {
+      setIsSNumberModalPending(false);
+      setSNumberModalVisible(true);
+    }
+  }, [isSNumberModalPending, isScreenReady]);
   const [isFromLastWeekResult, setIsFromLastWeekResult] = useState(false);
 
   // --- Load Previous Data ---
   const loadPrevData = async () => {
+    let shouldOpenModal = false;
+
     try {
       loader.show("Please wait...");
       await delay(650);
@@ -94,12 +127,18 @@ export const usePercentGenerator = (
         setIsNoPrev(true);
       }
 
-      setSNumberModalVisible(true);
+      shouldOpenModal = true;
     } catch (error) {
       console.error("Failed to load previous data:", error);
       Alert.alert("Error", "Failed to load group data.");
     } finally {
       loader.hide();
+    }
+
+    // Open only after the loader is dismissed; the effect above also waits for
+    // the screen transition to finish.
+    if (shouldOpenModal) {
+      setIsSNumberModalPending(true);
     }
   };
 
