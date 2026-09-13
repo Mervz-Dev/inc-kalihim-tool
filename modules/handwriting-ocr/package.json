@@ -1,0 +1,11 @@
+{
+  "name": "handwriting-ocr",
+  "version": "1.0.0",
+  "description": "On-device handwriting recognition for photographed attendance sheets (Apple Vision).",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "UNLICENSED",
+  "private": true,
+  "author": "Mervin Narvaez",
+  "homepage": "https://github.com/Mervz-Dev/inc-kalihim-tool"
+}

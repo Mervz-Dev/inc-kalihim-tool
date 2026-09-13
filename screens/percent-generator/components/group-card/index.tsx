@@ -1,7 +1,7 @@
 import { CODES } from "@/constants/percent";
 import { Percent } from "@/types/percent";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef } from "react";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SessionCard } from "../session-card";
 
@@ -13,10 +13,14 @@ interface GroupCardProps {
   handleButtonPress: (
     groupIndex: number,
     codeKey: keyof Percent.Session | "in" | "out",
-    sessionKey: Percent.SessionKey,
-    undo?: boolean
+    sessionKey: Percent.SessionKey
   ) => void;
   handleReset: (groupIndex: number) => void;
+  /** Undo lives in the hook so a scanned batch and a tap share one history. */
+  canUndo: boolean;
+  onUndo: (groupIndex: number) => void;
+  /** Absent when this device cannot read handwriting. */
+  onScan?: (groupIndex: number, sessionKey: Percent.SessionKey) => void;
 }
 
 export const GroupCard: React.FC<GroupCardProps> = ({
@@ -26,32 +30,10 @@ export const GroupCard: React.FC<GroupCardProps> = ({
   sNumber,
   handleButtonPress,
   handleReset,
+  canUndo,
+  onUndo,
+  onScan,
 }) => {
-  const historyRef = useRef<
-    {
-      groupIndex: number;
-      sessionKey: Percent.SessionKey;
-      codeKey: keyof Percent.Session | "in" | "out";
-    }[]
-  >([]);
-
-  const handleUndo = () => {
-    const lastAction = historyRef.current.pop();
-    if (!lastAction) return;
-
-    const { groupIndex, sessionKey, codeKey } = lastAction;
-    handleButtonPress(groupIndex, codeKey, sessionKey, true); // true = undo
-  };
-
-  const onSessionPress = (
-    groupIndex: number,
-    sessionKey: Percent.SessionKey,
-    codeKey: keyof Percent.Session | "in" | "out"
-  ) => {
-    historyRef.current.push({ groupIndex, sessionKey, codeKey });
-    handleButtonPress(groupIndex, codeKey, sessionKey);
-  };
-
   return (
     <View style={{ width }} className="p-4 pt-2">
       <View className="bg-white rounded-3xl shadow-md p-5 border border-gray-100">
@@ -71,10 +53,7 @@ export const GroupCard: React.FC<GroupCardProps> = ({
 
           <View className="flex-row space-x-1 gap-2">
             <TouchableOpacity
-              onPress={() => {
-                handleReset(index);
-                historyRef.current = []; // clear history on reset
-              }}
+              onPress={() => handleReset(index)}
               activeOpacity={0.85}
               className="flex-row items-center px-2.5 py-1.5 rounded-xl bg-yellow-100 border border-yellow-300"
             >
@@ -83,9 +62,9 @@ export const GroupCard: React.FC<GroupCardProps> = ({
                 Reset
               </Text>
             </TouchableOpacity>
-            {historyRef.current.length > 0 && (
+            {canUndo && (
               <TouchableOpacity
-                onPress={handleUndo}
+                onPress={() => onUndo(index)}
                 activeOpacity={0.7}
                 className="flex-row items-center px-2.5 py-1.5 rounded-xl bg-yellow-100 border border-yellow-300"
               >
@@ -102,20 +81,24 @@ export const GroupCard: React.FC<GroupCardProps> = ({
 
         <View className="space-y-4 gap-3">
           <SessionCard
-            title="Huwebes Session (Wed/Thu)"
+            title="Th-Session"
             session={item.firstSession}
             letters={CODES}
             sessionKey="firstSession"
             index={index}
-            handleButtonPress={(i, k, s) => onSessionPress(i, s, k)}
+            handleButtonPress={handleButtonPress}
+            onScanPress={onScan ? () => onScan(index, "firstSession") : undefined}
           />
           <SessionCard
-            title="Linggo Session (Sat/Sun)"
+            title="S-Session"
             session={item.secondSession}
             letters={CODES}
             index={index}
             sessionKey="secondSession"
-            handleButtonPress={(i, k, s) => onSessionPress(i, s, k)}
+            handleButtonPress={handleButtonPress}
+            onScanPress={
+              onScan ? () => onScan(index, "secondSession") : undefined
+            }
           />
         </View>
       </View>

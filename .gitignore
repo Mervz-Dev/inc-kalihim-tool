@@ -40,3 +40,6 @@ app-example
 
 
 credentials/
+# Native build output of local Expo modules (modules/*)
+modules/*/android/build/
+modules/*/android/.cxx/

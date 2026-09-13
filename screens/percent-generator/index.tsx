@@ -16,6 +16,8 @@ import { CarouselControls } from "./components/carousel-controls";
 import { GroupCard } from "./components/group-card";
 import { PorsyentoFeedback } from "./components/porsyento-feedback";
 import { SNumberModal } from "./components/s-number-modal";
+import { ScanReviewSheet } from "./components/scan-form/scan-review-sheet";
+import { useScanForm } from "./components/scan-form/useScanForm";
 import { usePercentGenerator } from "./usePercentGenerator";
 
 export default function PercentGenerator() {
@@ -31,6 +33,9 @@ export default function PercentGenerator() {
     handleButtonPress,
     handleChange,
     handleReset,
+    applyScannedCodes,
+    undo,
+    canUndo,
     handleSave,
     sNumberModalVisible,
     setSNumberModalVisible,
@@ -50,6 +55,8 @@ export default function PercentGenerator() {
   const carouselRef = useRef<any>(null);
   const { width, height } = Dimensions.get("window");
 
+  const scan = useScanForm(purok, groupValues, applyScannedCodes);
+
   const renderItem = useCallback(
     ({ item, index }: { item: Percent.GroupValues; index: number }) => (
       <GroupCard
@@ -59,10 +66,21 @@ export default function PercentGenerator() {
         sNumber={sNumber}
         handleButtonPress={handleButtonPress}
         handleReset={handleReset}
-        // handleUndo={handleUndo} // optional
+        canUndo={canUndo(index)}
+        onUndo={undo}
+        onScan={scan.isSupported ? scan.startScan : undefined}
       />
     ),
-    [handleButtonPress, handleReset, width, sNumber]
+    [
+      handleButtonPress,
+      handleReset,
+      canUndo,
+      undo,
+      scan.isSupported,
+      scan.startScan,
+      width,
+      sNumber,
+    ]
   );
 
   return (
@@ -124,6 +142,15 @@ export default function PercentGenerator() {
         handleChange={handleChange}
         handleSave={handleSave}
         isNoPrevious={isNoPrev}
+      />
+
+      <ScanReviewSheet
+        sheetRef={scan.sheetRef}
+        review={scan.review}
+        onSetRowCode={scan.setRowCode}
+        onSetIncludeOtherSession={scan.setIncludeOtherSession}
+        onConfirm={scan.confirm}
+        onDismiss={scan.dismiss}
       />
 
       <BottomSheetModal

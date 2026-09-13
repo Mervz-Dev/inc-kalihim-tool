@@ -52,6 +52,14 @@
       "expo-asset",
       "expo-secure-store",
       "expo-audio",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Used to photograph an attendance sheet so its handwritten reasons can be read on this device.",
+          "photosPermission": "Used to pick a photo of an attendance sheet so its handwritten reasons can be read on this device.",
+          "microphonePermission": false
+        }
+      ],
       "./plugins/with-ios-deployment-target",
       "./plugins/with-fmt-consteval-fix"
     ],

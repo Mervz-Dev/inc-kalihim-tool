@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { router } from "expo-router";
 import React, { useMemo, useRef } from "react";
 import {
   Platform,
@@ -253,6 +254,27 @@ export default function SettingsScreen() {
             className="shadow-md"
           />
         </View>
+
+        {/* Development only: calibrate handwriting recognition on real sheets. */}
+        {__DEV__ && (
+          <>
+            <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2 mt-6">
+              Development
+            </Text>
+            <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <ActionButton
+                colors={["#A78BFA", "#7C3AED"]}
+                label="OCR Lab"
+                onPress={() => router.push("/ocr-lab")}
+                icon="flask-outline"
+                iconPosition="left"
+                textColor="white"
+                textClassName="text-white font-jakarta-semibold text-base"
+                className="shadow-md"
+              />
+            </View>
+          </>
+        )}
 
         {/* Footer */}
         <View className="items-center mt-8 opacity-60">

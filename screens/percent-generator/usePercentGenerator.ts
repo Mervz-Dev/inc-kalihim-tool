@@ -25,6 +25,34 @@ import { useAudioPlayer } from "expo-audio";
 import Toast from "react-native-toast-message";
 import { DateType } from "react-native-ui-datepicker";
 
+/** Counts to add per code, e.g. `{ g: 3, b: 1 }`. */
+export type CodeCounts = Partial<Record<keyof Percent.Codes, number>>;
+
+/**
+ * One reversible change to a grupo card. Kept in the hook (not in the card)
+ * so a scanned batch and a single tap share the same Undo.
+ */
+type HistoryEntry =
+  | {
+      kind: "tap";
+      sessionKey: Percent.SessionKey;
+      codeKey: keyof Percent.Session | "in" | "out";
+    }
+  | { kind: "bulk"; sessionKeys: Percent.SessionKey[]; counts: CodeCounts };
+
+const addCounts = (
+  session: Percent.Session,
+  counts: CodeCounts,
+  sign: 1 | -1
+): Percent.Session => {
+  const updated = { ...session };
+  (Object.keys(counts) as (keyof Percent.Codes)[]).forEach((key) => {
+    const delta = counts[key] ?? 0;
+    updated[key] = Math.max((updated[key] || 0) + sign * delta, 0);
+  });
+  return updated;
+};
+
 export const usePercentGenerator = (
   purok: string,
   groupCount: string,
@@ -148,17 +176,27 @@ export const usePercentGenerator = (
 
   // --- Handlers ---
 
-  const handleButtonPress = (
+  const [history, setHistory] = useState<HistoryEntry[][]>([]);
+
+  const pushHistory = (groupIndex: number, entry: HistoryEntry) => {
+    setHistory((prev) => {
+      const updated = [...prev];
+      updated[groupIndex] = [...(updated[groupIndex] ?? []), entry];
+      return updated;
+    });
+  };
+
+  const playPop = () => {
+    player.seekTo(0);
+    player.play();
+  };
+
+  const adjustCode = (
     groupIndex: number,
     codeKey: keyof Percent.Session | "in" | "out",
     sessionKey: Percent.SessionKey,
-    undo = false
+    delta: 1 | -1
   ) => {
-    if (!undo) {
-      player.seekTo(0);
-      player.play();
-    }
-
     setGroupValues((prev) =>
       prev.map((group, i) => {
         if (i !== groupIndex) return group;
@@ -168,7 +206,7 @@ export const usePercentGenerator = (
 
         const updatedSession = {
           ...group[sessionKey],
-          [codeKey]: undo ? Math.max(currentValue - 1, 0) : currentValue + 1,
+          [codeKey]: Math.max(currentValue + delta, 0),
         };
 
         return { ...group, [sessionKey]: updatedSession };
@@ -176,21 +214,103 @@ export const usePercentGenerator = (
     );
   };
 
-  const handleReset = (groupIndex: number) => {
-    setGroupValues((prev) => {
-      const updated = [...prev];
-      const group = updated[groupIndex];
+  const handleButtonPress = (
+    groupIndex: number,
+    codeKey: keyof Percent.Session | "in" | "out",
+    sessionKey: Percent.SessionKey,
+    undo = false
+  ) => {
+    if (undo) {
+      adjustCode(groupIndex, codeKey, sessionKey, -1);
+      return;
+    }
 
-      // Reset session fields
-      const resetSession = (session: Percent.Session) => {
-        Object.keys(session).forEach((key) => {
-          session[key as keyof Percent.Session] = 0;
+    playPop();
+    adjustCode(groupIndex, codeKey, sessionKey, 1);
+    pushHistory(groupIndex, { kind: "tap", sessionKey, codeKey });
+  };
+
+  /**
+   * Adds a scanned sheet's counts to one grupo in a single update -- not one
+   * tap per person -- and records it as one Undo step.
+   */
+  const applyScannedCodes = (
+    groupIndex: number,
+    sessionKeys: Percent.SessionKey[],
+    counts: CodeCounts
+  ) => {
+    const total = Object.values(counts).reduce((sum, n) => sum + (n ?? 0), 0);
+    if (total === 0 || sessionKeys.length === 0) return;
+
+    playPop();
+    setGroupValues((prev) =>
+      prev.map((group, i) => {
+        if (i !== groupIndex) return group;
+
+        const updated = { ...group };
+        sessionKeys.forEach((sessionKey) => {
+          updated[sessionKey] = addCounts(group[sessionKey], counts, 1);
         });
-      };
+        return updated;
+      })
+    );
+    pushHistory(groupIndex, { kind: "bulk", sessionKeys, counts });
+  };
 
-      resetSession(group.firstSession);
-      resetSession(group.secondSession);
+  const canUndo = (groupIndex: number) =>
+    (history[groupIndex]?.length ?? 0) > 0;
 
+  const undo = (groupIndex: number) => {
+    const entries = history[groupIndex] ?? [];
+    const last = entries[entries.length - 1];
+    if (!last) return;
+
+    setHistory((prev) => {
+      const updated = [...prev];
+      updated[groupIndex] = entries.slice(0, -1);
+      return updated;
+    });
+
+    if (last.kind === "tap") {
+      adjustCode(groupIndex, last.codeKey, last.sessionKey, -1);
+      return;
+    }
+
+    setGroupValues((prev) =>
+      prev.map((group, i) => {
+        if (i !== groupIndex) return group;
+
+        const updated = { ...group };
+        last.sessionKeys.forEach((sessionKey) => {
+          updated[sessionKey] = addCounts(group[sessionKey], last.counts, -1);
+        });
+        return updated;
+      })
+    );
+  };
+
+  const handleReset = (groupIndex: number) => {
+    const resetSession = (session: Percent.Session): Percent.Session =>
+      Object.keys(session).reduce(
+        (acc, key) => ({ ...acc, [key]: 0 }),
+        {} as Percent.Session
+      );
+
+    setGroupValues((prev) =>
+      prev.map((group, i) =>
+        i === groupIndex
+          ? {
+              ...group,
+              firstSession: resetSession(group.firstSession),
+              secondSession: resetSession(group.secondSession),
+            }
+          : group
+      )
+    );
+
+    setHistory((prev) => {
+      const updated = [...prev];
+      updated[groupIndex] = [];
       return updated;
     });
   };
@@ -342,6 +462,9 @@ export const usePercentGenerator = (
     setSNumberModalVisible,
     handleButtonPress,
     handleReset,
+    applyScannedCodes,
+    undo,
+    canUndo,
     handleChange,
     handleSave,
     generatePercentData,

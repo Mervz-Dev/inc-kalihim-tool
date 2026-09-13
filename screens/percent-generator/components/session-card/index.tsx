@@ -13,9 +13,11 @@ interface SessionCardProps {
   index: number;
   handleButtonPress: (
     index: number,
-    key: keyof Percent.Session,
+    key: keyof Percent.Session | "in" | "out",
     session: "firstSession" | "secondSession"
   ) => void;
+  /** Opens the sheet scanner for this session; omitted when unsupported. */
+  onScanPress?: () => void;
 }
 
 export const SessionCard = ({
@@ -25,6 +27,7 @@ export const SessionCard = ({
   index,
   sessionKey,
   handleButtonPress,
+  onScanPress,
 }: SessionCardProps) => {
   const handleLetterPress = useCallback(
     (code: keyof Percent.Codes) => {
@@ -41,7 +44,7 @@ export const SessionCard = ({
           {title}
         </Text>
 
-        {/* IN / OUT Buttons */}
+        {/* IN / OUT / Scan Buttons */}
         <View className="flex-row gap-2">
           {/* IN Button */}
           <TouchableOpacity
@@ -102,6 +105,31 @@ export const SessionCard = ({
               </Text>
             </LinearGradient>
           </TouchableOpacity>
+
+          {/* Scan Button */}
+          {onScanPress && (
+            <TouchableOpacity
+              className="rounded-xl overflow-hidden shadow-sm"
+              activeOpacity={0.7}
+              onPress={onScanPress}
+              accessibilityLabel={`Scan the ${title} sheet`}
+            >
+              <LinearGradient
+                colors={["#bfdbfe", "#93c5fd"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  height: 34,
+                  width: 40,
+                  borderRadius: 12,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="camera" size={18} color="#1e3a8a" />
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 

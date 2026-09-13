@@ -1,4 +1,5 @@
 import { ActionButton } from "@/components/action-button";
+import { CODE_DEFINITIONS } from "@/constants/codes";
 import { CodeReason } from "@/types/code";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -10,54 +11,11 @@ import React, { useMemo, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const CODE_DATA: CodeReason[] = [
-  {
-    code: "A",
-    reason: "Kahirapan, walang salapi, walang pamasahe, walang pang-gugol.",
-  },
-  {
-    code: "B",
-    reason: "Trabaho, duty or busy sa work, gipit sa oras dahil sa work.",
-  },
-  { code: "C", reason: "Pamalagiang may sakit (PMS), bed ridden." },
-  {
-    code: "D",
-    reason:
-      "May sakit, nahihilo, masakit ang ulo, may sipon at inuubo, dinala sa hospital.",
-  },
-  { code: "E", reason: "Hinahadlangan, inuusig, ayaw pasambahin." },
-  {
-    code: "F",
-    reason:
-      "Iba’t ibang klaseng dahilan, nag-alaga ng bata, nag-bantay ng tindahan or bahay kaya di maka-alis.",
-  },
-  {
-    code: "G",
-    reason:
-      "UWP, di matagpuan, walang impormasyon, hindi maabutan sa bahay, umiiwas.",
-  },
-  {
-    code: "H",
-    reason:
-      "Hindi umabot sa oras ng pagsamba, napag-sarhan ng pintuan, nahuling dumating.",
-  },
-  {
-    code: "I",
-    reason: "R1-06, nasa ibang dako o lugar, nasa ibang bayan o abroad.",
-  },
-  { code: "J", reason: "Wala sa lokal." },
-  { code: "K", reason: "Kalamidad, binagyo, binaha, nasunugan." },
-  { code: "L", reason: "Pag-aaral, may exam, busy sa school, OJT." },
-  {
-    code: "M",
-    reason: "Sumamba, tumupad di nakapag taob ng tarheta, without R1-07.",
-  },
-  {
-    code: "N",
-    reason:
-      "TS, madalang sumamba (MS), nag-wawalang bahala, tinamad, may ulat na, may pinuntahan.",
-  },
-];
+// The letter codes A–N as listed on the official form. R1-07 is a button on
+// the R1-04 card but not a reason code, so it stays off this list.
+export const CODE_DATA: CodeReason[] = CODE_DEFINITIONS.filter(
+  (definition) => definition.key !== "r107"
+).map(({ code, reason }) => ({ code, reason }));
 
 export const CodesButton = () => {
   const bottomSheetRef = useRef<BottomSheetModal>(null);

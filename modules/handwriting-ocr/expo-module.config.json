@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["HandwritingOcrModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.handwritingocr.HandwritingOcrModule"]
+  }
+}
