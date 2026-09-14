@@ -220,6 +220,110 @@ describe("buildRows", () => {
     expect(buildRows(withFooter).rows).toHaveLength(6);
   });
 
+  it("keeps row numbers out of the names when the sheet sits narrower in the frame", () => {
+    // Photographed with margins around the sheet: every column is shifted
+    // right, so the Blg numbers are no longer in the leftmost strip.
+    const shifted: OcrResult = {
+      ...sampleSheet,
+      lines: sampleSheet.lines.map((l) => ({
+        ...l,
+        box: { ...l.box, x: l.box.x + 0.14 },
+        words: l.words.map((w) => ({ ...w, box: { ...w.box, x: w.box.x + 0.14 } })),
+      })),
+    };
+
+    const result = buildRows(shifted);
+    expect(result.rows.map((row) => row.blg)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(result.rows.map((row) => row.nameText)).toEqual([
+      "BALITCHA, LORETO",
+      "ENRIQUEZ, RHAIYEN",
+      "ENRIQUEZ, ROMUALDO",
+      "MONEDERO, ANDREW",
+      "SANTILLAN, JESMAR",
+      "ENRIQUEZ, MARY LOREEN",
+    ]);
+    expect(result.rows[4].reasonText).toBe("NASA TRABAHO PO");
+  });
+
+  it("ignores the diagonal watermark printed across the table", () => {
+    // The recognizer reads the slanted "16381103-2651587" as words with big
+    // boxes that land in the name and reason columns of several rows.
+    const withWatermark: OcrResult = {
+      ...sampleSheet,
+      lines: [
+        ...sampleSheet.lines,
+        line([{ text: "16381103-2651587", x: 0.1, width: 0.2 }], 0.34, { height: 0.08 }),
+        line([{ text: "16381103", x: 0.4, width: 0.12 }, { text: "2651587", x: 0.55, width: 0.1 }], 0.45, { height: 0.06 }),
+      ],
+    };
+
+    const result = buildRows(withWatermark);
+    expect(result.rows.map((row) => row.blg)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(result.rows[1].nameText).toBe("ENRIQUEZ, RHAIYEN");
+    expect(result.rows[4].reasonText).toBe("NASA TRABAHO PO");
+    result.rows.forEach((row) => {
+      expect(row.nameText).not.toMatch(/\d{4}/);
+      expect(row.reasonText).not.toMatch(/\d{4}/);
+    });
+  });
+
+  it("keeps a printed two-line note with the row it is centred on", () => {
+    // Sheet 1-4: "Dumalo sa ALABANG, METRO MANILA SOUTH (…)" is printed
+    // centred on DE LEON, MAE ANN's row, so its first line lies exactly on
+    // the boundary with DE LEON, ALYZZA's row above.
+    const printed: OcrResult = {
+      imageWidth: 1200,
+      imageHeight: 1600,
+      lines: [
+        header,
+        line([{ text: "1.", x: 0.03 }, { text: "DE", x: 0.06 }, { text: "LEON,", x: 0.09 }, { text: "ARIES", x: 0.15 }], 0.3),
+        line([{ text: "2.", x: 0.03 }, { text: "DE", x: 0.06 }, { text: "LEON,", x: 0.09 }, { text: "ALYZZA", x: 0.15 }], 0.336),
+        line([{ text: "3.", x: 0.03 }, { text: "DE", x: 0.06 }, { text: "LEON,", x: 0.09 }, { text: "MAE", x: 0.15 }, { text: "ANN", x: 0.2 }], 0.372),
+        // Block centred on row 3 (centre 0.382): first line's centre lands on
+        // the row 2/3 boundary (0.364), second line at row 3's centre.
+        line([{ text: "Dumalo", x: 0.42 }, { text: "sa", x: 0.5 }, { text: "ALABANG,", x: 0.53 }], 0.358, { height: 0.012 }),
+        line([{ text: "SOUTH", x: 0.45 }, { text: "(Jul", x: 0.52 }, { text: "23)", x: 0.57 }], 0.372, { height: 0.012 }),
+      ],
+    };
+
+    const result = buildRows(printed);
+    expect(result.rows.map((row) => row.nameText)).toEqual([
+      "DE LEON, ARIES",
+      "DE LEON, ALYZZA",
+      "DE LEON, MAE ANN",
+    ]);
+    expect(result.rows.map((row) => row.reasonText)).toEqual([
+      "",
+      "",
+      "Dumalo sa ALABANG, SOUTH (Jul 23)",
+    ]);
+
+    // The same note read a hair higher, so its first line falls in row 2:
+    // it still follows the line it is attached to.
+    const higher: OcrResult = {
+      ...printed,
+      lines: printed.lines.map((l, i) =>
+        i === 4
+          ? { ...l, box: { ...l.box, y: 0.356 }, words: l.words.map((w) => ({ ...w, box: { ...w.box, y: 0.356 } })) }
+          : l
+      ),
+    };
+    expect(buildRows(higher).rows.map((row) => row.reasonText)).toEqual([
+      "",
+      "",
+      "Dumalo sa ALABANG, SOUTH (Jul 23)",
+    ]);
+  });
+
+  it("still gives each handwritten row its own reason", () => {
+    // Neighbouring handwritten reasons sit at row centre; none may migrate.
+    const { rows } = buildRows(sampleSheet);
+    expect(rows[1].reasonText).toBe("UWP PO");
+    expect(rows[2].reasonText).toBe("UWP PO");
+    expect(rows[3].reasonText).toBe("NAGWAWALANG BAHALA PO");
+    expect(rows[4].reasonText).toBe("NASA TRABAHO PO");
+  });
+
   it("falls back to fixed columns when the header is unreadable", () => {
     const withoutHeader = {
       ...sampleSheet,

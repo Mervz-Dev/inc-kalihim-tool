@@ -20,6 +20,8 @@ import { useSettingsScreen } from "./useSettings";
 
 import { ActionButton } from "@/components/action-button";
 import { SaveFileView } from "@/components/save-file-view";
+import { SCAN_CAPTURE_OPTIONS } from "@/constants/scan-capture";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { useAuthAction } from "@/utils/hooks/useAuthAction";
 import {
   BottomSheetBackdrop,
@@ -30,6 +32,10 @@ import {
 export default function SettingsScreen() {
   const saveFileBottomSheet = useRef<BottomSheetModal>(null);
   const saveFileSheetPoints = useMemo(() => ["50%"], []);
+  const scanCapture = useSettingsStore((s) => s.scanCapture);
+  const setScanCapture = useSettingsStore((s) => s.setScanCapture);
+  const scanAutoApply = useSettingsStore((s) => s.scanAutoApply);
+  const setScanAutoApply = useSettingsStore((s) => s.setScanAutoApply);
 
   const {
     distrito,
@@ -137,6 +143,71 @@ export default function SettingsScreen() {
                 Platform.OS === "ios"
                   ? "#f3f4f6"
                   : showDetailedFullName
+                  ? "#2563eb"
+                  : "#f3f4f6"
+              }
+            />
+          </View>
+        </View>
+
+        {/* Scan capture: what the R1-04 camera button opens, with no prompt. */}
+        <Text className="text-gray-500 font-jakarta-semibold text-sm mb-2 mt-6">
+          Scan Capture
+        </Text>
+        <View className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+          {SCAN_CAPTURE_OPTIONS.map((option) => {
+            const selected = option.mode === scanCapture;
+            return (
+              <TouchableOpacity
+                key={option.mode}
+                activeOpacity={0.8}
+                onPress={() => setScanCapture(option.mode)}
+                className="flex-row items-center justify-between py-4 px-3 border-b border-gray-100"
+              >
+                <View className="flex-row items-center gap-2 flex-1 mr-2">
+                  <Ionicons
+                    name={option.icon}
+                    size={20}
+                    color={selected ? "#2563eb" : "#6b7280"}
+                  />
+                  <View className="flex-1">
+                    <Text className="text-gray-900 font-jakarta-medium text-base">
+                      {option.label}
+                    </Text>
+                    <Text className="text-gray-500 font-jakarta-regular text-xs">
+                      {option.hint}
+                    </Text>
+                  </View>
+                </View>
+                <Ionicons
+                  name={selected ? "radio-button-on" : "radio-button-off"}
+                  size={22}
+                  color={selected ? "#2563eb" : "#9CA3AF"}
+                />
+              </TouchableOpacity>
+            );
+          })}
+
+          <View className="flex-row items-center justify-between py-4 pl-3 pr-4">
+            <View className="flex-row items-center gap-2 flex-1 mr-4">
+              <Ionicons name="flash-outline" size={20} color="#d97706" />
+              <View className="flex-1">
+                <Text className="text-gray-900 font-jakarta-medium text-base">
+                  Apply without review
+                </Text>
+                <Text className="text-gray-500 font-jakarta-regular text-xs">
+                  Counts go on the card right after the scan; Undo reverses it
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={scanAutoApply}
+              onValueChange={setScanAutoApply}
+              trackColor={{ false: "#d1d5db", true: "#3b82f6" }}
+              thumbColor={
+                Platform.OS === "ios"
+                  ? "#f3f4f6"
+                  : scanAutoApply
                   ? "#2563eb"
                   : "#f3f4f6"
               }

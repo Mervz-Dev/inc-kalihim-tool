@@ -139,6 +139,24 @@ const scoreKeyword = (
 const NEGATIONS = new Set(["WALANG", "WALA", "WITHOUT", "HINDI", "DI"]);
 
 /**
+ * "Nasa <place>" means the member is somewhere else (I) -- unless the place
+ * is one the other codes already speak for: work (B), the hospital (D), a
+ * lokal (R1-07), or simply home.
+ */
+const NOT_A_PLACE_AWAY = new Set([
+  "BAHAY",
+  "TRABAHO",
+  "WORK",
+  "DUTY",
+  "OSPITAL",
+  "HOSPITAL",
+  "LOKAL",
+  "LOCAL",
+  "KAPILYA",
+  "SIMBAHAN",
+]);
+
+/**
  * Rules that no keyword list can express.
  *
  * - "Lokal ng Madrigal", "nakasamba sa lokal ng Makati": a lokal named after
@@ -149,7 +167,7 @@ const NEGATIONS = new Set(["WALANG", "WALA", "WITHOUT", "HINDI", "DI"]);
  *   the name so it outranks any shorter keyword inside it.
  * - A negated R1-07 ("walang R1-07") must not count as having one.
  */
-const scoreRules = (tokens: string[]): CodeCandidate[] => {
+const scoreRules = (tokens: string[], noKeywordMatched: boolean): CodeCandidate[] => {
   const candidates: CodeCandidate[] = [];
 
   const lokal = tokens.findIndex((token) => token === "LOKAL" || token === "LOCAL");
@@ -159,6 +177,19 @@ const scoreRules = (tokens: string[]): CodeCandidate[] => {
       key: "r107",
       score: SCORE_EXACT,
       matched: tokens.slice(0, lokal + 2).join(" ").toLowerCase(),
+    });
+  }
+
+  // "Nasa Pasig", "nasa Japan", "nasa Cavite": away somewhere (I). Only when
+  // no keyword recognized the reading -- a place the codes speak for
+  // (trabaho, ospital, even misread as "trabajo") keeps its own code.
+  const nasa = tokens.findIndex((token) => token === "NASA");
+  const place = nasa >= 0 ? tokens[nasa + 1] : undefined;
+  if (noKeywordMatched && place && place.length >= 3 && !NOT_A_PLACE_AWAY.has(place)) {
+    candidates.push({
+      key: "i",
+      score: SCORE_CONTAINED,
+      matched: `nasa ${place.toLowerCase()}`,
     });
   }
 
@@ -227,15 +258,17 @@ export const classifyReasonText = (
   const tokens = normalized.split(" ");
   const joined = tokens.join("");
 
+  const fromKeywords = PREPARED_KEYWORDS.flatMap((keyword) => {
+    if (isNegatedFormCode(tokens, keyword)) return [];
+    const score = scoreKeyword(tokens, joined, keyword);
+    return score > 0
+      ? [{ key: keyword.key, score, matched: keyword.original }]
+      : [];
+  });
+
   const candidates = rankCandidates([
-    ...scoreRules(tokens),
-    ...PREPARED_KEYWORDS.flatMap((keyword) => {
-      if (isNegatedFormCode(tokens, keyword)) return [];
-      const score = scoreKeyword(tokens, joined, keyword);
-      return score > 0
-        ? [{ key: keyword.key, score, matched: keyword.original }]
-        : [];
-    }),
+    ...scoreRules(tokens, fromKeywords.length === 0),
+    ...fromKeywords,
   ]);
 
   const top = candidates[0];

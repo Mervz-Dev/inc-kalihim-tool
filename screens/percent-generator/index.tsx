@@ -17,6 +17,7 @@ import { GroupCard } from "./components/group-card";
 import { PorsyentoFeedback } from "./components/porsyento-feedback";
 import { SNumberModal } from "./components/s-number-modal";
 import { ScanReviewSheet } from "./components/scan-form/scan-review-sheet";
+import { ScanSettingsSheet } from "./components/scan-form/scan-settings-sheet";
 import { useScanForm } from "./components/scan-form/useScanForm";
 import { usePercentGenerator } from "./usePercentGenerator";
 
@@ -92,6 +93,17 @@ export default function PercentGenerator() {
           title="R1-04"
           subtitle={`Purok ${purok} | Week ${weekNumber}`}
           buttons={[
+            ...(scan.isSupported
+              ? [
+                  {
+                    icon: "options-outline" as const,
+                    color: "#7c3aed",
+                    bgColor: "bg-violet-50",
+                    borderColor: "border-violet-200",
+                    onPress: scan.openSettings,
+                  },
+                ]
+              : []),
             {
               icon: "create-outline",
               color: "#2563eb",
@@ -148,10 +160,11 @@ export default function PercentGenerator() {
         sheetRef={scan.sheetRef}
         review={scan.review}
         onSetRowCode={scan.setRowCode}
-        onSetIncludeOtherSession={scan.setIncludeOtherSession}
         onConfirm={scan.confirm}
         onDismiss={scan.dismiss}
       />
+
+      <ScanSettingsSheet sheetRef={scan.settingsSheetRef} />
 
       <BottomSheetModal
         index={1}

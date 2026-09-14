@@ -10,7 +10,9 @@ import {
   recognizeText,
   scanDocument,
 } from "@/modules/handwriting-ocr";
+import { requestCapture } from "@/screens/scan-camera/capture-bridge";
 import { getUsersByPurokGrupo } from "@/services/sql-lite/db";
+import { ScanCaptureMode, useSettingsStore } from "@/stores/settingsStore";
 import { Percent } from "@/types/percent";
 import { User } from "@/types/user";
 import { useLoading } from "@/utils/hooks/useLoading";
@@ -28,7 +30,6 @@ import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useRef, useState } from "react";
-import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
 import type { CodeCounts } from "../../usePercentGenerator";
 
@@ -63,6 +64,8 @@ export interface ReviewRow {
   key: keyof Percent.Codes | null;
   /** Nothing was written in the Dahilan cell; counted as G by convention. */
   blankReason: boolean;
+  /** Something was written but matched no known reason; counted as G, flagged. */
+  unrecognized: boolean;
   /** Something about this row deserves a look before applying. */
   needsAttention: boolean;
   lowConfidence: boolean;
@@ -72,7 +75,6 @@ export interface ReviewState {
   groupIndex: number;
   group: number;
   sessionKey: Percent.SessionKey;
-  includeOtherSession: boolean;
   rows: ReviewRow[];
 }
 
@@ -80,9 +82,6 @@ const SESSION_LABEL: Record<Percent.SessionKey, string> = {
   firstSession: "Huwebes",
   secondSession: "Linggo",
 };
-
-export const otherSession = (key: Percent.SessionKey): Percent.SessionKey =>
-  key === "firstSession" ? "secondSession" : "firstSession";
 
 export const sessionLabel = (key: Percent.SessionKey) => SESSION_LABEL[key];
 
@@ -117,81 +116,59 @@ interface PickedImage {
   temporary: boolean;
 }
 
-const pickImage = (): Promise<PickedImage | null> =>
-  new Promise((resolve) => {
-    const fromCamera = async () => {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-      if (!permission.granted) {
-        Toast.show({
-          type: "error",
-          text1: "Camera not allowed",
-          text2: "Allow camera access in Settings to photograph a sheet.",
-        });
-        resolve(null);
-        return;
-      }
+/**
+ * Gets a picture of the sheet the way the Kalihim chose in Settings ("Scan
+ * Capture"), with no prompt in between: the scan button opens the source
+ * straight away.
+ */
+const pickImage = async (mode: ScanCaptureMode): Promise<PickedImage | null> => {
+  if (mode === "library") {
+    // The picker copies the chosen photo into the app's cache; the original
+    // in the library is untouched, so the copy can go once it is read.
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      quality: 1,
+      allowsEditing: false,
+      exif: false,
+      selectionLimit: 1,
+    });
+    return result.canceled ? null : { uri: result.assets[0].uri, temporary: true };
+  }
 
-      // The system document scanner finds the sheet, captures when it is
-      // steady and in focus, and flattens and cleans the page -- the best
-      // photo we can get, with no processing of our own. Plain camera where
-      // it is not available (Simulator).
-      if (isDocumentScannerSupported) {
-        try {
-          const uri = await scanDocument();
-          resolve(uri ? { uri, temporary: true } : null);
-        } catch (error) {
-          Toast.show({
-            type: "error",
-            text1: "Scanner failed",
-            text2:
-              error instanceof Error ? error.message : "Could not open the scanner.",
-          });
-          resolve(null);
-        }
-        return;
-      }
-
-      // The picker hands back its own copy of the photo (not saved to the
-      // Photos library), which we delete after reading it.
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ["images"],
-        quality: 1,
-        allowsEditing: false,
-        exif: false,
+  // The system document scanner finds the sheet, captures when it is steady
+  // and in focus, and flattens and cleans the page -- the best photo we can
+  // get, with no processing of our own. Our own camera where it is not
+  // available (Simulator).
+  if (mode === "scanner" && isDocumentScannerSupported) {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Toast.show({
+        type: "error",
+        text1: "Camera not allowed",
+        text2: "Allow camera access in Settings to photograph a sheet.",
       });
-      resolve(
-        result.canceled ? null : { uri: result.assets[0].uri, temporary: true }
-      );
-    };
+      return null;
+    }
 
-    const fromLibrary = async () => {
-      // The picker copies the chosen photo into the app's cache; the original
-      // in the library is untouched, so the copy can go once it is read.
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        quality: 1,
-        allowsEditing: false,
-        exif: false,
-        selectionLimit: 1,
+    try {
+      const uri = await scanDocument();
+      return uri ? { uri, temporary: true } : null;
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Scanner failed",
+        text2:
+          error instanceof Error ? error.message : "Could not open the scanner.",
       });
-      resolve(
-        result.canceled ? null : { uri: result.assets[0].uri, temporary: true }
-      );
-    };
+      return null;
+    }
+  }
 
-    Alert.alert(
-      "Scan attendance sheet",
-      isDocumentScannerSupported
-        ? "Point the camera at the sheet; it captures on its own when the page is steady and in focus."
-        : "Lay the sheet flat, fill the frame, and avoid shadows.",
-      [
-        { text: "Scan with camera", onPress: () => void fromCamera() },
-        { text: "Choose from library", onPress: () => void fromLibrary() },
-        { text: "Cancel", style: "cancel", onPress: () => resolve(null) },
-      ],
-      { cancelable: true, onDismiss: () => resolve(null) }
-    );
-  });
+  // Our one-tap camera: no "retake / use photo" step, the picture is used as
+  // soon as it is taken. It writes to the app's cache; deleted after reading.
+  const uri = await requestCapture();
+  return uri ? { uri, temporary: true } : null;
+};
 
 /**
  * Reads every handwritten reason again, on its own cell, three ways: raw
@@ -249,16 +226,71 @@ export const useScanForm = (
 ) => {
   const db = useSQLiteContext();
   const loader = useLoading();
+  const scanCapture = useSettingsStore((s) => s.scanCapture);
+  const scanAutoApply = useSettingsStore((s) => s.scanAutoApply);
   const sheetRef = useRef<BottomSheetModal>(null);
+  const settingsSheetRef = useRef<BottomSheetModal>(null);
   const [review, setReview] = useState<ReviewState | null>(null);
   const aliasesRef = useRef<ReasonAliases>({});
+
+  const openSettings = useCallback(() => {
+    settingsSheetRef.current?.present();
+  }, []);
+
+  /**
+   * Puts a reviewed (or auto-applied) scan onto the card: counts the codes
+   * the card takes, learns any corrections, applies in one step and reports.
+   */
+  const applyReview = useCallback(
+    async (state: ReviewState, note?: string) => {
+      const counts: CodeCounts = {};
+      const learned: ReasonAliases = { ...aliasesRef.current };
+      let learnedSomething = false;
+
+      state.rows.forEach((row) => {
+        if (!row.key) return;
+
+        // A correction teaches the app how this Kalihim writes that reason,
+        // whether or not the code is one the card counts.
+        const normalized = normalizeText(row.reasonText);
+        if (normalized && row.key !== row.suggestion.key) {
+          learned[normalized] = row.key;
+          learnedSomething = true;
+        }
+
+        if (isApplied(row.key)) {
+          counts[row.key] = (counts[row.key] ?? 0) + 1;
+        }
+      });
+
+      const sessionKeys: Percent.SessionKey[] = [state.sessionKey];
+
+      applyScannedCodes(state.groupIndex, sessionKeys, counts);
+
+      if (learnedSomething) {
+        aliasesRef.current = learned;
+        await saveAliases(learned);
+      }
+
+      const total = Object.values(counts).reduce((sum, n) => sum + (n ?? 0), 0);
+      Toast.show({
+        type: "success",
+        text1: `Added ${total} code${total === 1 ? "" : "s"} to Grupo ${state.group}`,
+        text2: [sessionKeys.map(sessionLabel).join(" and ") + " session", note]
+          .filter(Boolean)
+          .join(" · "),
+        visibilityTime: note ? 4000 : 2500,
+      });
+    },
+    [applyScannedCodes]
+  );
 
   const startScan = useCallback(
     async (groupIndex: number, sessionKey: Percent.SessionKey) => {
       const group = groupValues[groupIndex];
       if (!group) return;
 
-      const picked = await pickImage();
+      const picked = await pickImage(scanCapture);
       if (!picked) return;
       const { uri } = picked;
 
@@ -318,6 +350,10 @@ export const useScanForm = (
               ? matched
               : null;
 
+          // Blank and unrecognized both count as G (walang impormasyon); an
+          // unrecognized reading stays highlighted so it gets a look.
+          const unrecognized = hasReason && suggestion.key === null;
+
           return {
             blg: row.blg,
             nameText: row.nameText,
@@ -325,11 +361,12 @@ export const useScanForm = (
             reasonText,
             understoodAs,
             suggestion,
-            key: hasReason ? suggestion.key : BLANK_REASON_KEY,
+            key: suggestion.key ?? BLANK_REASON_KEY,
             blankReason: !hasReason,
+            unrecognized,
             lowConfidence,
             needsAttention:
-              (hasReason && suggestion.key === null) ||
+              unrecognized ||
               guessed ||
               lowConfidence ||
               // A name that is not in this grupo's records is only worth a
@@ -338,13 +375,27 @@ export const useScanForm = (
           };
         });
 
-        setReview({
+        const state: ReviewState = {
           groupIndex,
           group: group.group,
           sessionKey,
-          includeOtherSession: false,
           rows: reviewRows,
-        });
+        };
+
+        if (scanAutoApply) {
+          // Straight onto the card. Rows the scanner was unsure about are
+          // still applied, so say so -- Undo on the card reverses the scan.
+          const unsure = reviewRows.filter((row) => row.needsAttention).length;
+          await applyReview(
+            state,
+            unsure > 0
+              ? `${unsure} row${unsure === 1 ? " was" : "s were"} unsure`
+              : undefined
+          );
+          return;
+        }
+
+        setReview(state);
         sheetRef.current?.present();
       } catch (error) {
         console.log("startScan error:", error);
@@ -367,7 +418,7 @@ export const useScanForm = (
         }
       }
     },
-    [db, groupValues, loader, purok]
+    [applyReview, db, groupValues, loader, purok, scanAutoApply, scanCapture]
   );
 
   const setRowCode = useCallback(
@@ -386,12 +437,6 @@ export const useScanForm = (
     []
   );
 
-  const setIncludeOtherSession = useCallback((value: boolean) => {
-    setReview((prev) =>
-      prev ? { ...prev, includeOtherSession: value } : prev
-    );
-  }, []);
-
   const dismiss = useCallback(() => {
     sheetRef.current?.dismiss();
     setReview(null);
@@ -399,56 +444,18 @@ export const useScanForm = (
 
   const confirm = useCallback(async () => {
     if (!review) return;
-
-    const counts: CodeCounts = {};
-    const learned: ReasonAliases = { ...aliasesRef.current };
-    let learnedSomething = false;
-
-    review.rows.forEach((row) => {
-      if (!row.key) return;
-
-      // A correction teaches the app how this Kalihim writes that reason,
-      // whether or not the code is one the card counts.
-      const normalized = normalizeText(row.reasonText);
-      if (normalized && row.key !== row.suggestion.key) {
-        learned[normalized] = row.key;
-        learnedSomething = true;
-      }
-
-      if (isApplied(row.key)) {
-        counts[row.key] = (counts[row.key] ?? 0) + 1;
-      }
-    });
-
-    const sessionKeys: Percent.SessionKey[] = review.includeOtherSession
-      ? [review.sessionKey, otherSession(review.sessionKey)]
-      : [review.sessionKey];
-
-    applyScannedCodes(review.groupIndex, sessionKeys, counts);
-
-    if (learnedSomething) {
-      aliasesRef.current = learned;
-      await saveAliases(learned);
-    }
-
-    const total = Object.values(counts).reduce((sum, n) => sum + (n ?? 0), 0);
-    Toast.show({
-      type: "success",
-      text1: `Added ${total} code${total === 1 ? "" : "s"} to Grupo ${review.group}`,
-      text2: sessionKeys.map(sessionLabel).join(" and ") + " session",
-      visibilityTime: 2500,
-    });
-
+    await applyReview(review);
     dismiss();
-  }, [applyScannedCodes, dismiss, review]);
+  }, [applyReview, dismiss, review]);
 
   return {
     isSupported: isHandwritingOcrSupported,
     sheetRef,
+    settingsSheetRef,
+    openSettings,
     review,
     startScan,
     setRowCode,
-    setIncludeOtherSession,
     confirm,
     dismiss,
   };

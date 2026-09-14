@@ -41,6 +41,13 @@ const DIGIT_TO_LETTER: Record<string, string> = {
 const FORM_CODE = /\bR ?1 ?[- ]?(0?[67])\b/g;
 
 /**
+ * The sheets carry a diagonal watermark ("16381103-2651587") that the
+ * recognizer reads as text wherever it crosses a cell. No reason is a run
+ * of digits, so such tokens are dropped (row numbers are one or two digits).
+ */
+const isWatermarkToken = (token: string): boolean => /^\d{4,}$/.test(token);
+
+/**
  * Handwritten "UWP" as the recognizer tends to read it: the cursive W comes
  * back as a, v, n, m or u ("uap", "uvp"), and the trailing "po" is sometimes
  * glued on ("UWPPO"). No Tagalog word looks like any of these.
@@ -84,6 +91,7 @@ export const normalizeText = (value: string): string => {
     .replace(/[^A-Z0-9]+/g, " ")
     .split(" ")
     .filter(Boolean)
+    .filter((token) => !isWatermarkToken(token))
     .map(fixDigitConfusions)
     .map(fixAbbreviations)
     .filter((token) => !FILLER_TOKENS.has(token))

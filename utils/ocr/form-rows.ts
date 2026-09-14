@@ -44,18 +44,29 @@ const center = (box: OcrBox) => ({
   y: box.y + box.height / 2,
 });
 
+/**
+ * The sheets carry a diagonal watermark ("16381103-2651587") printed across
+ * the table. The recognizer reads it wherever it crosses a cell; a word made
+ * of four or more digits and nothing else is never a name, a reason or a row
+ * number, so it is dropped before any geometry is looked at.
+ */
+const isWatermarkWord = (text: string): boolean =>
+  /^[\d\s-]+$/.test(text) && (text.match(/\d/g) || []).length >= 4;
+
 const flattenWords = (lines: OcrLine[]): PositionedWord[] =>
   lines.flatMap((line, lineIndex) =>
-    line.words.map((word) => {
-      const { x, y } = center(word.box);
-      return {
-        ...word,
-        lineIndex,
-        centerX: x,
-        centerY: y,
-        confidence: line.confidence,
-      };
-    })
+    line.words
+      .filter((word) => !isWatermarkWord(word.text))
+      .map((word) => {
+        const { x, y } = center(word.box);
+        return {
+          ...word,
+          lineIndex,
+          centerX: x,
+          centerY: y,
+          confidence: line.confidence,
+        };
+      })
   );
 
 const findHeaderWord = (
@@ -158,10 +169,19 @@ export const detectLayout = (words: PositionedWord[]): FormLayout => {
   return { reasonLeft, reasonRight, headerBottom, fromHeaders: true };
 };
 
+/** "1", "2.", "12" -- a row number, wherever the Blg column happens to sit. */
+const isRowNumberText = (text: string): boolean =>
+  /^\d{1,2}$/.test(normalizeText(text));
+
+/**
+ * A row number is a one- or two-digit word anywhere left of the reason
+ * column: names never contain numbers, and the Blg column's position on the
+ * photo depends on how the sheet was framed.
+ */
 const isBlgNumber = (word: PositionedWord, layout: FormLayout): boolean =>
-  word.centerX <= BLG_MAX_X &&
+  word.centerX < layout.reasonLeft &&
   word.centerY > layout.headerBottom &&
-  /^\d{1,2}$/.test(normalizeText(word.text));
+  isRowNumberText(word.text);
 
 const letterCount = (text: string): number =>
   (text.toUpperCase().match(/[A-Z]/g) || []).length;
@@ -350,6 +370,81 @@ const joinWords = (words: PositionedWord[]): string =>
     .join(" ")
     .trim();
 
+/** A reason line's centre this close to a row boundary is ambiguous. */
+const BOUNDARY_TOLERANCE = 0.25;
+
+/** Two lines closer than this fraction of a line's height are one block. */
+const ATTACHED_GAP = 0.5;
+
+/**
+ * Printed multi-line cell text (the "Dumalo sa <lokal>…" note) is centred on
+ * its row, which puts its first line right on the boundary with the row
+ * above, where the nearest-row rule hands it to the wrong member. A line
+ * whose centre sits on a boundary and which is vertically attached to a line
+ * on the other side follows that line. Handwriting sits at row centre, so it
+ * is never a candidate.
+ *
+ * Returns, per observation index, the band the whole line moves to.
+ */
+const attachBoundaryLines = (
+  reasonWords: PositionedWord[],
+  bands: RowBand[],
+  bandIndexAt: (y: number) => number
+): Map<number, number> => {
+  const overrides = new Map<number, number>();
+  if (bands.length < 2) return overrides;
+
+  const pitch = lowerMedian(bands.map((band) => band.bottom - band.top));
+
+  interface ReasonLine {
+    lineIndex: number;
+    top: number;
+    bottom: number;
+    centerY: number;
+    height: number;
+    band: number;
+  }
+
+  const byLine = new Map<number, PositionedWord[]>();
+  reasonWords.forEach((word) => {
+    const line = byLine.get(word.lineIndex) ?? [];
+    line.push(word);
+    byLine.set(word.lineIndex, line);
+  });
+
+  const lines: ReasonLine[] = Array.from(byLine.entries()).map(([lineIndex, line]) => {
+    const top = Math.min(...line.map((word) => word.box.y));
+    const bottom = Math.max(...line.map((word) => word.box.y + word.box.height));
+    const centerY = (top + bottom) / 2;
+    return { lineIndex, top, bottom, centerY, height: bottom - top, band: bandIndexAt(centerY) };
+  });
+
+  lines.forEach((line) => {
+    if (line.band < 0) return;
+    const band = bands[line.band];
+    const nearTop = line.centerY - band.top <= BOUNDARY_TOLERANCE * pitch && line.band > 0;
+    const nearBottom = band.bottom - line.centerY <= BOUNDARY_TOLERANCE * pitch && line.band < bands.length - 1;
+    if (!nearTop && !nearBottom) return;
+
+    const gapTo = (other: ReasonLine) =>
+      other.centerY < line.centerY ? line.top - other.bottom : other.top - line.bottom;
+    const isAttached = (other: ReasonLine) =>
+      other.lineIndex !== line.lineIndex &&
+      gapTo(other) <= ATTACHED_GAP * Math.max(line.height, other.height);
+
+    // A wrapped handwritten reason ("NAGWAWALANG" / "BAHALA PO") can also
+    // brush the next row's writing; it stays with the line of its own row.
+    if (lines.some((other) => other.band === line.band && isAttached(other))) return;
+
+    const neighbourBand = nearTop ? line.band - 1 : line.band + 1;
+    if (lines.some((other) => other.band === neighbourBand && isAttached(other))) {
+      overrides.set(line.lineIndex, neighbourBand);
+    }
+  });
+
+  return overrides;
+};
+
 export interface BuildRowsResult {
   rows: ScannedRow[];
   layout: FormLayout;
@@ -370,12 +465,28 @@ export const buildRows = (result: OcrResult): BuildRowsResult => {
         ...Array.from(blgWords).map((word) => word.box.x + word.box.width)
       )
     : 0;
+  // "DE" in "DE LEON" is two letters at the left edge and must survive; a
+  // misread number ("l.", "1") has at most one letter.
   const isBlgStrip = (word: PositionedWord) =>
     blgWords.has(word) ||
     word.centerX <= blgRight ||
-    (word.centerX <= BLG_MAX_X && letterCount(word.text) + (word.text.match(/\d/g) || []).length <= 2);
+    (word.centerX <= BLG_MAX_X &&
+      letterCount(word.text) <= 1 &&
+      letterCount(word.text) + (word.text.match(/\d/g) || []).length <= 2);
 
-  const rows = bands.map((band) => {
+  const isReasonWord = (word: PositionedWord) =>
+    word.centerX >= layout.reasonLeft && word.centerX <= layout.reasonRight;
+  const bandIndexAt = (y: number) =>
+    bands.findIndex((band) => y >= band.top && y < band.bottom);
+  const reasonBandOverride = attachBoundaryLines(
+    words.filter((word) => !isBlgStrip(word) && isReasonWord(word)),
+    bands,
+    bandIndexAt
+  );
+  const reasonBandOf = (word: PositionedWord) =>
+    reasonBandOverride.get(word.lineIndex) ?? bandIndexAt(word.centerY);
+
+  const rows = bands.map((band, bandIndex) => {
     const cell: OcrBox = {
       x: layout.reasonLeft,
       y: band.top,
@@ -383,17 +494,20 @@ export const buildRows = (result: OcrResult): BuildRowsResult => {
       height: band.bottom - band.top,
     };
 
-    const inBand = words.filter(
+    // A row number that slipped past the anchor step (read as part of the
+    // name line, for instance) must not become part of the name either.
+    const nameWords = words.filter(
       (word) =>
         !isBlgStrip(word) &&
-        word.centerY >= band.top &&
-        word.centerY < band.bottom
+        word.centerX < layout.reasonLeft &&
+        !isRowNumberText(word.text) &&
+        bandIndexAt(word.centerY) === bandIndex
     );
-
-    const nameWords = inBand.filter((word) => word.centerX < layout.reasonLeft);
-    const reasonWords = inBand.filter(
+    const reasonWords = words.filter(
       (word) =>
-        word.centerX >= layout.reasonLeft && word.centerX <= layout.reasonRight
+        !isBlgStrip(word) &&
+        isReasonWord(word) &&
+        reasonBandOf(word) === bandIndex
     );
 
     // Alternative readings come from the lines the reason words belong to.

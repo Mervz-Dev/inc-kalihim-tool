@@ -94,6 +94,15 @@ const RootLayout = () => {
                       headerTitle: "Settings",
                     }}
                   />
+                  <Stack.Screen
+                    name="scan-camera"
+                    options={{
+                      headerShown: false,
+                      headerTitle: "Scan Camera",
+                      presentation: "fullScreenModal",
+                      animation: "fade",
+                    }}
+                  />
                 </Stack>
               </SafeAreaProvider>
             </BottomSheetModalProvider>

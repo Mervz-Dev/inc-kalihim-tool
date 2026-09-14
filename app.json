@@ -60,6 +60,14 @@
           "microphonePermission": false
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Used to photograph an attendance sheet so its handwritten reasons can be read on this device.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
       "./plugins/with-ios-deployment-target",
       "./plugins/with-fmt-consteval-fix"
     ],

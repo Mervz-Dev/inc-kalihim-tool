@@ -83,6 +83,24 @@ describe("classifyReasonText", () => {
     expect(suggestion.candidates.map((c) => c.key)).not.toContain("i");
   });
 
+  it("ignores the diagonal watermark digits read across a cell", () => {
+    expect(classifyReasonText("nahuli po 16381103-2651587").key).toBe("h");
+    expect(classifyReasonText("UWP 2651587").key).toBe("g");
+    expect(classifyReasonText("16381103-2651587").key).toBeNull();
+    // A form code keeps its digits.
+    expect(classifyReasonText("may R1-07 2651587").key).toBe("r107");
+  });
+
+  it("reads the sheets the user photographed", () => {
+    expect(classifyReasonText("nagbantay ng APO").key).toBe("f");
+    expect(classifyReasonText("nahuli po").key).toBe("h");
+    expect(
+      classifyReasonText(
+        "Dumalo sa ALABANG, METRO MANILA SOUTH (Jul 23, 2026-08:00 PM)"
+      ).key
+    ).toBe("r107");
+  });
+
   it("codes worship in another lokal as R1-07", () => {
     [
       "nakasamba sa ibang lokal",
@@ -95,9 +113,79 @@ describe("classifyReasonText", () => {
     });
   });
 
+  it("codes 'nasa <somewhere else>' as I", () => {
+    [
+      "NASA PASIG PO",
+      "nasa Japan",
+      "nasa ibang bansa",
+      "nasa ibang lugar",
+      "nasa probinsya po",
+      "nasa Cavite",
+    ].forEach((text) => {
+      const suggestion = classifyReasonText(text);
+      expect(suggestion.key).toBe("i");
+      expect(suggestion.score).toBeGreaterThanOrEqual(0.9);
+    });
+  });
+
+  it("does not turn work, hospital, home or a lokal into I", () => {
+    expect(classifyReasonText("nasa trabaho po").key).toBe("b");
+    expect(classifyReasonText("nasa work").key).toBe("b");
+    expect(classifyReasonText("nasa ospital").key).toBe("d");
+    expect(classifyReasonText("nasa lokal ng Makati").key).toBe("r107");
+    expect(classifyReasonText("nasa bahay").key).not.toBe("i");
+  });
+
+  it("codes illness phrases as D", () => {
+    [
+      "hindi makalakad",
+      "di makalakad po",
+      "lagnat",
+      "may lagnat po",
+      "nagkasakit",
+      "LBM",
+      "lbm po",
+      "nagtatae",
+    ].forEach((text) => {
+      expect(classifyReasonText(text).key).toBe("d");
+    });
+  });
+
+  it("codes reported or lapsed members as N", () => {
+    [
+      "tigil samba",
+      "TIGIL SAMBA PO",
+      "naulat na po",
+      "nakaulat",
+      "nakaulat na po",
+      "ayaw na po sa INC",
+      "ayaw na sumamba",
+    ].forEach((text) => {
+      expect(classifyReasonText(text).key).toBe("n");
+    });
+  });
+
+  it("codes unreachable members as G", () => {
+    [
+      "UMALIS NE WALANG PAALAM",
+      "hindi nag rereply",
+      "hindi nagrereply po",
+      "walang reply",
+      "hindi makausap",
+      "di makausap po",
+      "ayaw sumagot",
+    ].forEach((text) => {
+      expect(classifyReasonText(text).key).toBe("g");
+    });
+  });
+
   it("keeps I and J apart, and J apart from R1-07", () => {
     expect(classifyReasonText("wala sa lokal").key).toBe("j");
     expect(classifyReasonText("wala sa lokal po").key).toBe("j");
+    // In another lokal is J; worshipped in another lokal is R1-07.
+    expect(classifyReasonText("nasa ibang lokal").key).toBe("j");
+    expect(classifyReasonText("ibang lokal po").key).toBe("j");
+    expect(classifyReasonText("nakasamba sa ibang lokal").key).toBe("r107");
     expect(classifyReasonText("nasa ibang lugar").key).toBe("i");
     expect(classifyReasonText("abroad po").key).toBe("i");
   });

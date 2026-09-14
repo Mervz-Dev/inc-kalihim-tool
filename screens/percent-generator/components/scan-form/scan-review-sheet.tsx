@@ -9,21 +9,14 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import React, { RefObject, useMemo, useState } from "react";
-import { Switch, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  ReviewRow,
-  ReviewState,
-  isApplied,
-  otherSession,
-  sessionLabel,
-} from "./useScanForm";
+import { ReviewRow, ReviewState, isApplied, sessionLabel } from "./useScanForm";
 
 interface ScanReviewSheetProps {
   sheetRef: RefObject<BottomSheetModal | null>;
   review: ReviewState | null;
   onSetRowCode: (blg: number, key: keyof Percent.Codes | null) => void;
-  onSetIncludeOtherSession: (value: boolean) => void;
   onConfirm: () => void;
   onDismiss: () => void;
 }
@@ -127,6 +120,7 @@ const Row = ({
               ? "no reason written · counted as G"
               : row.reasonText || "unreadable"}
             {row.understoodAs ? ` → ${row.understoodAs}` : ""}
+            {row.unrecognized ? "  · not recognized, counted as G" : ""}
             {row.lowConfidence ? "  · unsure" : ""}
             {row.key && !isApplied(row.key) ? "  · not added to the card" : ""}
           </Text>
@@ -156,7 +150,6 @@ export const ScanReviewSheet = ({
   sheetRef,
   review,
   onSetRowCode,
-  onSetIncludeOtherSession,
   onConfirm,
   onDismiss,
 }: ScanReviewSheetProps) => {
@@ -253,27 +246,13 @@ export const ScanReviewSheet = ({
                   Not added to the card: {skipped.join("   ")}
                 </Text>
               )}
-
-              <View className="flex-row items-center justify-between mt-3">
-                <Text className="text-sm font-jakarta-medium text-gray-700 flex-1 mr-2">
-                  Also apply to {sessionLabel(otherSession(review.sessionKey))}{" "}
-                  session
-                </Text>
-                <Switch
-                  value={review.includeOtherSession}
-                  onValueChange={onSetIncludeOtherSession}
-                  trackColor={{ true: "#2563eb", false: "#d1d5db" }}
-                />
-              </View>
             </View>
 
             <ActionButton
               colors={total > 0 ? ["#60A5FA", "#2563EB"] : ["#E5E7EB", "#D1D5DB"]}
               label={
                 total > 0
-                  ? `Apply to ${sessionLabel(review.sessionKey)}${
-                      review.includeOtherSession ? " and " + sessionLabel(otherSession(review.sessionKey)) : ""
-                    }`
+                  ? `Apply to ${sessionLabel(review.sessionKey)}`
                   : "Nothing to apply"
               }
               onPress={onConfirm}
