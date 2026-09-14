@@ -139,10 +139,19 @@ export const detectLayout = (words: PositionedWord[]): FormLayout => {
     };
   }
 
-  const headerBottom = Math.max(
-    pangalan.box.y + pangalan.box.height,
-    dahilan.box.y + dahilan.box.height
-  );
+  // Rows are anchored in the name column, so the cut-off below the header
+  // comes from the Pangalan word alone: on a slightly tilted photo the
+  // Dahilan word can sit lower than the first name, and taking the lower of
+  // the two would swallow row 1. The header line's own words are excluded
+  // separately (see buildRows).
+  const headerBottom = pangalan.box.y + pangalan.box.height;
+  const headerLine = {
+    fromX: pangalan.centerX,
+    fromY: pangalan.centerY,
+    toX: dahilan.centerX,
+    toY: dahilan.centerY,
+    height: Math.max(pangalan.box.height, dahilan.box.height),
+  };
 
   const dataWords = words.filter(
     (word) => word.centerY > headerBottom && word.centerX > BLG_MAX_X
@@ -166,7 +175,21 @@ export const detectLayout = (words: PositionedWord[]): FormLayout => {
     ? Math.max(reasonLeft + 0.1, nextHeading.box.x - REASON_RIGHT_MARGIN)
     : FALLBACK_LAYOUT.reasonRight;
 
-  return { reasonLeft, reasonRight, headerBottom, fromHeaders: true };
+  return { reasonLeft, reasonRight, headerBottom, headerLine, fromHeaders: true };
+};
+
+/**
+ * Words on the header line itself ("Blg", "Dahilan", "Lagda", "Code"). The
+ * line is followed at its own slope, so on a tilted photo a heading that sags
+ * to the height of the first name is still a heading, and the name is not.
+ */
+const isHeaderLineWord = (word: PositionedWord, layout: FormLayout): boolean => {
+  const line = layout.headerLine;
+  if (!line) return false;
+
+  const slope = line.toX === line.fromX ? 0 : (line.toY - line.fromY) / (line.toX - line.fromX);
+  const headerYAt = line.fromY + slope * (word.centerX - line.fromX);
+  return Math.abs(word.centerY - headerYAt) < line.height;
 };
 
 /** "1", "2.", "12" -- a row number, wherever the Blg column happens to sit. */
@@ -299,14 +322,11 @@ const buildBands = (anchors: RowAnchor[], layout: FormLayout): RowBand[] => {
         )
       : clusters[0].height * 2.5;
 
-  // Printed text in the name column above the first numbered row (a sheet
-  // title, the header when it was not recognized) is not a member.
-  const firstNumbered = clusters.find((cluster) => cluster.blg !== null);
-  if (firstNumbered) {
-    clusters = clusters.filter(
-      (cluster) => cluster.centerY >= firstNumbered.centerY - 1.5 * pitch
-    );
-  }
+  // Printed text above the first row (a sheet title when the header was not
+  // recognized) is handled by the numbering below: it comes out as row 0 or
+  // less and is dropped. Nothing is trimmed by distance from the first Blg
+  // number that happened to be read -- when "1." and "2." are missed and "3."
+  // is not, rows 1 and 2 are still members.
 
   // The rows are one block; anything far below it is the sheet's footer
   // (signatures, "Kalihim ng Grupo"), never a member.
@@ -451,8 +471,9 @@ export interface BuildRowsResult {
 }
 
 export const buildRows = (result: OcrResult): BuildRowsResult => {
-  const words = flattenWords(result.lines);
-  const layout = detectLayout(words);
+  const allWords = flattenWords(result.lines);
+  const layout = detectLayout(allWords);
+  const words = allWords.filter((word) => !isHeaderLineWord(word, layout));
 
   const bands = buildBands(collectAnchors(words, layout), layout);
   const blgWords = new Set(bands.flatMap((band) => band.blgWords));

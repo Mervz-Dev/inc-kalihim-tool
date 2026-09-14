@@ -136,6 +136,28 @@ describe("classifyReasonText", () => {
     expect(classifyReasonText("nasa bahay").key).not.toBe("i");
   });
 
+  it("codes 'attended but did not tap / QR' as M", () => {
+    [
+      "hindi nakapag tap",
+      "hindi nakapag QR",
+      "hindi po nakapag QR",
+      "Hindi po nakapag-QR",
+      "nakalimutan",
+      "nakalimutan mag QR",
+      "nakalimutan mag tap po",
+      "di nakapag QR po",
+      "pagsambang sambahayan",
+      "Pagsambang Sambahayan po",
+      "sambahayan",
+      "HWS",
+      "hws po",
+      "house worshipped",
+      "house worship",
+    ].forEach((text) => {
+      expect(classifyReasonText(text).key).toBe("m");
+    });
+  });
+
   it("codes illness phrases as D", () => {
     [
       "hindi makalakad",

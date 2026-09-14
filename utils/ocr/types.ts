@@ -55,8 +55,13 @@ export interface FormLayout {
   reasonLeft: number;
   /** Right edge of the Dahilan column (before the tick-box columns). */
   reasonRight: number;
-  /** Bottom of the header row; nothing above it is a data row. */
+  /** Bottom of the header row (its Pangalan word); nothing above it is a data row. */
   headerBottom: number;
+  /**
+   * The header line as read, from the Pangalan word to the Dahilan word, so
+   * its slope on a tilted photo is known; `height` is the taller of the two.
+   */
+  headerLine?: { fromX: number; fromY: number; toX: number; toY: number; height: number };
   /** Whether the layout came from detected headers or the fallback constants. */
   fromHeaders: boolean;
 }

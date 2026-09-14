@@ -181,6 +181,48 @@ describe("buildRows", () => {
     expect(result.rows[5].reasonText).toBe("UWP PO");
   });
 
+  it("keeps rows 1 and 2 when only later Blg numbers were read", () => {
+    // Seen on the device: the review started at row 3 because "1." and "2."
+    // were not read and the top rows were trimmed away.
+    const laterOnly: OcrResult = {
+      ...sampleSheet,
+      lines: sampleSheet.lines.map((l) => {
+        const kept = l.words.filter((word) => !["1.", "2."].includes(word.text));
+        return { ...l, words: kept, text: kept.map((w) => w.text).join(" ") };
+      }),
+    };
+
+    const result = buildRows(laterOnly);
+    expect(result.rows.map((row) => row.blg)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(result.rows[0].nameText).toBe("BALITCHA, LORETO");
+    expect(result.rows[1].reasonText).toBe("UWP PO");
+  });
+
+  it("keeps row 1 when a tilted photo puts the Dahilan heading below it", () => {
+    const tiltedHeader = line(
+      [
+        { text: "Blg", x: 0.02 },
+        { text: "Pangalan", x: 0.17 },
+        { text: "Dahilan", x: 0.55 },
+        { text: "Lagda", x: 0.9, width: 0.05 },
+      ],
+      0.25
+    );
+    // The right-hand heading words sag to the height of the first name.
+    tiltedHeader.words[2].box.y = 0.295;
+    tiltedHeader.words[3].box.y = 0.3;
+
+    const tilted: OcrResult = {
+      ...sampleSheet,
+      lines: sampleSheet.lines.map((l) => (l === header ? tiltedHeader : l)),
+    };
+
+    const result = buildRows(tilted);
+    expect(result.rows.map((row) => row.blg)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(result.rows[0].nameText).toBe("BALITCHA, LORETO");
+    expect(result.rows[0].reasonText).toBe("");
+  });
+
   it("numbers the rows from the names alone when no Blg number was read", () => {
     const withoutNumbers: OcrResult = {
       ...sampleSheet,
